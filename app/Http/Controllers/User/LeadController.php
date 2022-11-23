@@ -7,6 +7,7 @@ use App\Http\Requests\LeadStoreRequest;
 use App\Models\Country;
 use App\Models\lead;
 use App\Models\Project_assign_user;
+use App\Models\ProjectAssignUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,10 +26,16 @@ class LeadController extends Controller
      */
     public function index(Request $request)
     {
+     
+        $employee = ProjectAssignUser::where('user_id',auth()->user()->id)->get();
+        echo '<pre>';
+        print_r($employee);
+        echo '<pre>';
+        die();
+        $sale_person = User::where('id',$employee->pluck('project_id')->toArray());
         $sale_person = User::whereHas('roles', function ($q) {
             $q->where('name', 'sale_person');
         })->get();
-
         $country = Country::get();
         $sales = lead::orderBy('id', 'desc')->paginate($request->limit)->appends(request()->query());
 
@@ -194,7 +201,10 @@ class LeadController extends Controller
     }
     public function changeStatus(Request $request)
     {
-
+echo '<pre>';
+print_r($request->all());
+echo '<pre>';
+die();
         $validator = Validator::make($request->all(), [
             'date' => 'required',
             'comment' => 'required'

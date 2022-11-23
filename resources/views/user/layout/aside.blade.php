@@ -62,6 +62,9 @@
                           <div class="collapse" id="sidebarEcommerce">
                               <ul class="nav-second-level">
                                   <li>
+                                      <a href="{{route('leads.create', ['RolePrefix' => RolePrefix()])}}">Add Lead</a>
+                                  </li>
+                                  <li>
                                       <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">All Lead</a>
                                   </li>
                               </ul>

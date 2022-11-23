@@ -55,16 +55,16 @@
                     <div class="col-md-12 form-inline">
                         <form id="projectForm" method="post" class="form-inline" action="{{route('leads.store', ['RolePrefix' => RolePrefix()])}}">
                             @csrf
-                          
-                                <select name="project" class="form-control ml-auto" style="border-radius: 5px">
-                                    <option value="" disabled selected style="color:rgb(75, 106, 108)">Search By Projects</option>
-                                    @if (!empty($building))
-                                    @foreach ($building as $data)
-                                    <option value="{{ ($data->id!== null) ? $data->id :"" }}">{{ ($data->name!== null) ? $data->name :"" }}</option>
-                                    @endforeach
-                                    @endif
-                                </select>
-                            
+
+                            <select name="project" class="form-control ml-auto" style="border-radius: 5px">
+                                <option value="" disabled selected style="color:rgb(75, 106, 108)">Search By Projects</option>
+                                @if (!empty($building))
+                                @foreach ($building as $data)
+                                <option value="{{ ($data->id!== null) ? $data->id :"" }}">{{ ($data->name!== null) ? $data->name :"" }}</option>
+                                @endforeach
+                                @endif
+                            </select>
+
                             <input type="hidden" name="project_name">
                         </form>
                         <form id="dateForm" class="form-inline ml-auto" method="POST" action="searchByDAte">
@@ -378,7 +378,7 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-whitesmoke br">
-                <input type="submit" class="btn btn-primary" value="submit" />
+                    <input type="submit" class="btn btn-primary" value="submit" />
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -528,27 +528,27 @@
             $('input[name="end_time"]').attr('min', startTime);
         })
 
-        $('#statusForm').submit(function(e) {
-            e.preventDefault();
-            let formData = $(this).serialize();
-            $.ajax({
-                url: "{{ route('lead.change_status', ['RolePrefix' => RolePrefix()]) }}",
-                type: "POST",
-                data: formData,
-                success: function(data) {
-                    if (data.status == 'success') {
-                        $('#statusModal').modal('hide');
-                        successMsg(data.message);
-                        setTimeout(function() {
-                            window.location.href = "";
-                        }, 1000);
-                    }
-                    if (data.status == 'error') {
-                        errorMsg(data.message);
-                    }
-                },
-            });
-        });
+        // $('#statusForm').submit(function(e) {
+        //     e.preventDefault();
+        //     let formData = $(this).serialize();
+        //     $.ajax({
+        //         url: "{{ route('lead.change_status', ['RolePrefix' => RolePrefix()]) }}",
+        //         type: "POST",
+        //         data: formData,
+        //         success: function(data) {
+        //             if (data.status == 'success') {
+        //                 $('#statusModal').modal('hide');
+        //                 successMsg(data.message);
+        //                 setTimeout(function() {
+        //                     window.location.href = "";
+        //                 }, 1000);
+        //             }
+        //             if (data.status == 'error') {
+        //                 errorMsg(data.message);
+        //             }
+        //         },
+        //     });
+        // });
     });
 
     //Change Status 

@@ -9,7 +9,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{  asset('assets/css/app.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('/assets/css/login.css')}}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/login.css')}}" />
     <link rel='shortcut icon' type='image/x-icon' href="{{ asset('assets/img/favicon.ico') }}" />
 </head>
 

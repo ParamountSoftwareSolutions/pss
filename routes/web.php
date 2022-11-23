@@ -17,7 +17,8 @@ Route::get('/fake_leads', function () {
         $data = [
             'name' => $faker->unique()->name,
             'number' => $faker->unique()->phoneNumber,
-            'status' => 'new'
+            'status' => 'new',
+            'type' => 'lead'
         ];
 
         lead::create($data);
