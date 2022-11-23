@@ -1,0 +1,79 @@
+.container-fluid{
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+.form-control{
+    background-color: transparent;
+    border-top: transparent;
+    border-left: transparent;
+    border-right: transparent;
+}
+.form-control:focus{
+    background-color: transparent;
+    color: white;
+    box-shadow: none;
+}
+.box{
+    margin-top: 100px;
+    padding-top: 30px;
+    padding-bottom: 40px;
+    padding-left: 50px;
+    padding-right: 50px;
+    width: 700px;
+    background-color: rgba(0, 0, 0, 0.677);
+}
+.btn{
+    margin-top: 30px;
+}
+.body{
+    background-image: url('../img/background-login.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: fit-content;
+}
+.style1{
+    position: absolute;
+    border-top: 3px solid;
+    border-left: 3px solid;
+    left: 0px;
+    top: 0;
+    width: 50px;
+    height: 50px;
+}
+.style2{
+    position: absolute;
+    border-top: 3px solid;
+    border-right: 3px solid;
+    right: 0px;
+    top: 0;
+    width: 50px;
+    height: 50px;
+}
+.style3{
+    position: absolute;
+    border-bottom: 3px solid;
+    border-left: 3px solid;
+    left: 0px;
+    bottom: 0;
+    width: 50px;
+    height: 50px;
+}
+.style4{
+    position: absolute;
+    border-bottom: 3px solid;
+    border-right: 3px solid;
+    bottom: 0px;
+    right: 0;
+    width: 50px;
+    height: 50px;
+}
+.footer{
+    margin-top: 170px;
+    background-color: rgba(0, 0, 0, 0);
+    box-shadow: 20px 20px 20px 30px;
+    color: white;
+}
+.logo{
+    margin-top: -10px;
+}

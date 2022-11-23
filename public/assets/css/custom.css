@@ -1,0 +1,132 @@
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tLmNzcyIsInNvdXJjZXMiOlsiY3VzdG9tLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiJ9 */
+
+/*# sourceMappingURL=custom.css.map */
+.body-custom{
+    overflow-x: hidden !important;
+    background-color: #ffffff;
+}
+@media only screen and (max-width: 768px) {
+    .login-section  {
+        padding: 10px;
+        margin: 10px;
+        overflow-x: hidden;
+    }
+}
+
+.login-section{
+    padding-top: 20px;
+}
+.logo-ppms img {
+    width: 250px;
+    height: auto;
+}
+@media only screen and (max-width: 768px) {
+    .logo-ppms img {
+        padding: 10px;
+        margin: 10px;
+
+    }
+}
+.login-section h3{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 130px;
+    color: #000000;
+}
+.login-section .form-group {
+    margin-bottom: 40px;
+    width: 75%;
+}
+@media only screen and (max-width: 768px) {
+    .login-section .form-group {
+        width: 100%;
+    }
+}
+.login-section .form-group input{
+    font-weight: 400 !important;
+    font-size: 18px !important;
+    line-height: 32px !important;
+    color: #595959 !important;
+    padding: 22px !important;
+    border-radius: 25px;
+    border: 1px solid;
+}
+
+.login-section .btn-danger, .btn-danger.disabled {
+    background-color: #FF3300;
+    border-color: #fc544b;
+    color: #fff;
+    box-shadow: 0px 5.4544px 5.4544px rgb(0 0 0 / 25%);
+    border-radius: 49.0171px;
+}
+.login-section .btn.btn-lg {
+    padding: 20px 1.5rem;
+    font-size: 31px;
+}
+
+.Welcome-section {
+
+    background-size: cover !important;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
+    height: 100vh !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .Welcome-section{
+        background-position: top;
+        padding: 0px 20px;
+    }
+}
+
+.Welcome-section h3 {
+    font-style: normal;
+    padding-top:40px;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 46px;
+    text-transform: capitalize;
+    color: #000000;
+}
+.Welcome-section h2 {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 58px;
+    line-height:46px;
+    color: #EC2F00;
+    /* padding-bottom: 70%; */
+}
+@media only screen and (max-width: 768px) {
+    .Welcome-section h2{
+        font-size: 38px;
+        line-height: 36px;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .Welcome-section h3{
+        font-size: 28px;
+        line-height: 36px;
+    }
+}
+
+.container-custom{
+    margin: 0px;
+    padding: 0px;
+    max-width: 100%;
+    height: 100vh;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
