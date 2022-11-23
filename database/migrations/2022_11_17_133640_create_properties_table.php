@@ -15,11 +15,10 @@ class CreatePropertiesTable extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->string('title')->nullable();
             $table->longText('description')->nullable();
             $table->foreignId('payment_plan_id')->unsigned()->nullable()->constrained('payment_plans')->nullOnDelete();
-            $table->string('unit_id');
+            //$table->string('unit_id');
             $table->string('area')->nullable();
             $table->string('address')->nullable();
             $table->string('latitude')->nullable();
@@ -34,8 +33,8 @@ class CreatePropertiesTable extends Migration
             $table->foreignId('bath_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->foreignId('type_id')->unsigned()->nullable()->constrained('categories')->nullOnDelete();
-            $table->foreignId('created_by_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('status_id')->unsigned()->nullable()->constrained('statuses')->nullOnDelete();
+            $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->string('status');
             $table->timestamps();
         });
     }

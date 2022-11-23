@@ -35,7 +35,7 @@ class CreateSocietiesTable extends Migration
             $table->text('healthcare_feature')->nullable();
             $table->text('other_facilities')->nullable();*/
             $table->text('social_media')->unique();/*Json data save*/
-            $table->foreignId('created_by_id')->unsigned()->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

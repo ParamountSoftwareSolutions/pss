@@ -3,6 +3,7 @@
 
 <head>
 
+
     <meta charset="utf-8" />
     <title>Psm Property</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -59,7 +60,7 @@
 
     <!-- App js-->
     <script src="{{asset('/')}}/assets/js/app.min.js"></script>
-    @yield('script')
+
 </body>
 
 </html>

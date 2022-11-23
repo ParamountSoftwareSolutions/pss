@@ -22,8 +22,8 @@ class CreateSocietyInventoriesTable extends Migration
             $table->foreignId('size_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->integer('quantity')->nullable();
-            $table->foreignId('created_by_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('status_id')->unsigned()->nullable()->constrained('statuses')->nullOnDelete();
+            $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->string('status');
             $table->timestamps();
         });
     }

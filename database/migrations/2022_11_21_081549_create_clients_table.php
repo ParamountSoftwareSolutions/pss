@@ -27,7 +27,7 @@ class CreateClientsTable extends Migration
             $table->enum('priority', ['very_hot', 'hot', 'moderate', 'cold'])->nullable();
             $table->string('comment')->nullable();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('status_id')->unsigned()->nullable()->constrained('statuses')->nullOnDelete();
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -1,9 +1,8 @@
 <?php
 
-use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
 
 class UsersTablesSeeder extends Seeder
 {
@@ -15,9 +14,10 @@ class UsersTablesSeeder extends Seeder
     public function run()
     {
         Admin::create([
-            'name'    => 'Rehman Saab',
-            'email'    => 'admin@gmail.com',
-            'password'   =>  Hash::make('password')
+            'name' => 'Rehman Saab',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('password'),
+            'remember_token' =>  str_random(10),
         ]);
     }
 }

@@ -484,6 +484,7 @@
             $('.push_form').submit();
         }
 
+
         //Change Status 
         $("body").on("click", ".change_status", function() {
             $('.start_time').hide();
@@ -527,27 +528,27 @@
             $('input[name="end_time"]').attr('min', startTime);
         })
 
-        // $('#statusForm').submit(function(e) {
-        //     e.preventDefault();
-        //     let formData = $(this).serialize();
-        //     $.ajax({
-        //         url: "{{ route('lead.change_status', ['RolePrefix' => RolePrefix()]) }}",
-        //         type: "POST",
-        //         data: formData,
-        //         success: function(data) {
-        //             if (data.status == 'success') {
-        //                 $('#statusModal').modal('hide');
-        //                 successMsg(data.message);
-        //                 setTimeout(function() {
-        //                     window.location.href = "";
-        //                 }, 1000);
-        //             }
-        //             if (data.status == 'error') {
-        //                 errorMsg(data.message);
-        //             }
-        //         },
-        //     });
-        // });
+        $('#statusForm').submit(function(e) {
+            e.preventDefault();
+            let formData = $(this).serialize();
+            $.ajax({
+                url: "{{ route('lead.change_status', ['RolePrefix' => RolePrefix()]) }}",
+                type: "POST",
+                data: formData,
+                success: function(data) {
+                    if (data.status == 'success') {
+                        $('#statusModal').modal('hide');
+                        successMsg(data.message);
+                        setTimeout(function() {
+                            window.location.href = "";
+                        }, 1000);
+                    }
+                    if (data.status == 'error') {
+                        errorMsg(data.message);
+                    }
+                },
+            });
+        });
     });
 
     //Change Status 

@@ -6,6 +6,8 @@
         <div class="section-body">
             <div class="row">
                 <div class="col-12 col-md-12 col-lg-12">
+<<<<<<< HEAD
+=======
                 <form method="POST" action="{{route('leads.store', ['RolePrefix' => RolePrefix()])}}">
                         <div class="card">
                             @csrf
@@ -382,6 +384,7 @@
         <div class="section-body">
             <div class="row">
                 <div class="col-12 col-md-12 col-lg-12">
+>>>>>>> 11b5463d7b2c3aa720aa0cca1591679795e6cc6b
                     <form method="POST" action="{{route('leads.store', ['RolePrefix' => RolePrefix()])}}">
                         <div class="card">
                             @csrf
@@ -526,4 +529,8 @@
 @endsection
 @section('script')
 
+<<<<<<< HEAD
+@endsection
+=======
 @endsection -->
+>>>>>>> 11b5463d7b2c3aa720aa0cca1591679795e6cc6b

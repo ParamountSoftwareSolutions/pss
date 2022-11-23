@@ -28,7 +28,7 @@ class CreateRequestsTable extends Migration
             $table->string('phone_number')->nullable();
             $table->string('cnic')->nullable();
             $table->enum('type', ['transfer', 'possession', 'file', 'reserve'])->default('possession');
-            $table->foreignId('status_id')->unsigned()->nullable()->constrained('statuses')->nullOnDelete();
+            $table->string('status');
             $table->timestamps();
         });
     }

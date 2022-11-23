@@ -23,7 +23,7 @@ class CreateEmployeesTable extends Migration
             $table->integer('salary')->nullable();
             $table->integer('commission')->nullable();
             $table->text('file')->nullable();
-            $table->foreignId('created_by_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -20,7 +20,7 @@ class CreateEmployeePayrollsTable extends Migration
             $table->string('payment_method');
             $table->string('comments');
             $table->date('date');
-            $table->foreignId('created_by_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

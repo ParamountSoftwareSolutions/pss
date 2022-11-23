@@ -100,10 +100,6 @@ class LeadController extends Controller
             'status' => 'new',
             'type' => 'lead',
         ];
-        echo '<pre>';
-        print_r($data);
-        echo '<pre>';
-        die();
         $response = lead::create($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');

@@ -24,8 +24,8 @@ class CreateBuildingInventoriesTable extends Migration
             $table->foreignId('bath_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->foreignId('type_id')->unsigned()->nullable()->constrained('categories')->nullOnDelete();
-            $table->foreignId('created_by_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
-            $table->foreignId('status_id')->unsigned()->nullable()->constrained('statuses')->nullOnDelete();
+            $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->string('status');
             $table->timestamps();
         });
     }

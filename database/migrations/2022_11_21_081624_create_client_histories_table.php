@@ -16,9 +16,11 @@ class CreateClientHistoriesTable extends Migration
         Schema::create('client_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->unsigned()->nullable()->constrained('clients')->nullOnDelete();
-            $table->string('key');
-            $table->string('data');
+            $table->foreignId('user_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->string('status')->nullable();
             $table->text('comment')->nullable();
+            $table->dateTime('date')->nullable();
+            $table->string('is_read')->nullable();
             $table->timestamps();
         });
     }

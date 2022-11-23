@@ -20,13 +20,14 @@ class CreateUsersTable extends Migration
             $table->string('cnic')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone_number')->unique();
+            $table->string('phone_number')->unique()->nullable();
             $table->string('alt_number')->unique()->nullable();
             $table->string('address')->nullable();
             $table->foreignId('country_id')->unsigned()->nullable()->constrained('countries')->nullOnDelete();
             $table->foreignId('state_id')->unsigned()->nullable()->constrained('states')->nullOnDelete();
             $table->foreignId('city_id')->unsigned()->nullable()->constrained('cities')->nullOnDelete();
             $table->string('dob')->nullable();
+            $table->integer('building')->nullable();
             $table->integer('status')->default(1);
             $table->rememberToken();
             $table->timestamps();

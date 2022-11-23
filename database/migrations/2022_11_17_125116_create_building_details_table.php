@@ -28,7 +28,7 @@ class CreateBuildingDetailsTable extends Migration
             $table->text('healthcare_feature')->nullable();
             $table->text('other_facilities')->nullable();
             $table->text('property_type')->nullable();
-            $table->foreignId('created_by_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
