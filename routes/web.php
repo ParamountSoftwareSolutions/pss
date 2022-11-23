@@ -16,9 +16,16 @@ Route::get('/fake_leads', function () {
     for ($i = 0; $i < $limit; $i++) {
         $data = [
             'name' => $faker->unique()->name,
+<<<<<<< HEAD
             'number' => $faker->unique()->phoneNumber 
         ];
         
+=======
+            'number' => $faker->unique()->phoneNumber,
+            'status' => 'new'
+        ];
+
+>>>>>>> 11b5463d7b2c3aa720aa0cca1591679795e6cc6b
         lead::create($data);
     }
 });
@@ -50,7 +57,30 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // //=============//
 
     Route::resource('leads', LeadController::class);
+<<<<<<< HEAD
 
+=======
+    Route::get('lead/change_priority/{priority}/{id}', [LeadController::class, 'changepriority'])->name('lead.change_priority');
+   
+    //             //New Routes Added
+    Route::get('lead/building_info/{building_id}', 'LeadController@buildinginfo')->name('lead.building_info');
+    Route::post('lead/filter', 'LeadController@filter')->name('lead.filter');
+    Route::post('lead/search', 'LeadController@search')->name('lead.search');
+    Route::post('lead/searchbydate', 'LeadController@searchbydate')->name('lead.searchByDate');
+    Route::post('lead/change_status', 'LeadController@changestatus')->name('lead.change_status');
+    
+    Route::get('lead/comments/{id}', 'LeadController@comments')->name('lead.comments');
+    Route::any('lead-assign', 'LeadController@lead_assign')->name('lead.assign');
+    Route::get('is-read/', 'LeadController@isread')->name('lead.isread');
+    Route::get('meeting-read/', 'LeadController@meetingread')->name('lead.meetingread');
+    Route::get('follow-up/', 'LeadController@followup')->name('lead.followup');
+
+    Route::get('insingleDay/', 'LeadController@insingleDay')->name('lead.insingleDay');
+    Route::get('intwoDay/', 'LeadController@intwoDay')->name('lead.intwoDay');
+    Route::get('overdueDay/', 'LeadController@overdueDay')->name('lead.overdueDay');
+    Route::get('aftertwoDay/', 'LeadController@aftertwoDay')->name('lead.aftertwoDay');
+    //             //End New Routes
+>>>>>>> 11b5463d7b2c3aa720aa0cca1591679795e6cc6b
     // //=============//
     // /* Acccounts */
     // //=============//

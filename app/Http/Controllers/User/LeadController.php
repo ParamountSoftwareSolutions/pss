@@ -4,8 +4,10 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LeadStoreRequest;
+use App\Models\Country;
 use App\Models\lead;
 use App\Models\Project_assign_user;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 // use DataTables;
@@ -19,10 +21,15 @@ class LeadController extends Controller
      */
     public function index(Request $request)
     {
+        $sale_person = User::whereHas('roles', function ($q) {
+            $q->where('name', 'sale_person');
+        })->get();
+
+        $country = Country::get();
+        $sales = lead::orderBy('id', 'desc')->paginate($request->limit)->appends(request()->query());
 
 
         // if ($request->ajax()) {
-        $sales = lead::orderBy('id', 'desc')->paginate($request->limit)->appends(request()->query());
         //     return datatables()->of($datas)->toJson();
         // }
         // if ($request->ajax()) {
@@ -46,101 +53,7 @@ class LeadController extends Controller
         // return view('user.lead.index', get_defined_vars());
     }
     // Fetch DataTable data
-    public function getEmployees(Request $request)
-    {
 
-        ## Read value
-        $draw = $request->get('draw');
-        $start = $request->get("start");
-        $rowperpage = $request->get("length"); // Rows display per page
-
-        $columnIndex_arr = $request->get('order');
-        $columnName_arr = $request->get('columns');
-        $order_arr = $request->get('order');
-        $search_arr = $request->get('search');
-
-        $columnIndex = $columnIndex_arr[0]['column']; // Column index
-        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
-        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-        $searchValue = $search_arr['value']; // Search value
-
-        // Custom search filter 
-        $searchCity = $request->get('searchCity');
-        $searchGender = $request->get('searchGender');
-        $searchName = $request->get('searchName');
-
-        // Total records
-        $records = get_leads_from_user_auth();
-        // $records = lead::select('count(*) as allcount');
-
-        ## Add custom filter conditions
-        if (!empty($searchCity)) {
-            $records->where('city', $searchCity);
-        }
-        if (!empty($searchGender)) {
-            $records->where('gender', $searchGender);
-        }
-        if (!empty($searchName)) {
-            $records->where('name', 'like', '%' . $searchName . '%');
-        }
-        $totalRecords = $records->count();
-
-        // Total records with filter
-        // $records = lead::select('count(*) as allcount')->where('name', 'like', '%' . $searchValue . '%');
-
-        ## Add custom filter conditions
-        if (!empty($searchCity)) {
-            $records->where('city', $searchCity);
-        }
-        if (!empty($searchGender)) {
-            $records->where('gender', $searchGender);
-        }
-        if (!empty($searchName)) {
-            $records->where('name', 'like', '%' . $searchName . '%');
-        }
-        $totalRecordswithFilter = $records->count();
-
-        // Fetch records
-        // $records = lead::orderBy($columnName, $columnSortOrder)
-        //     ->select('users_4.*')
-        //     ->where('users_4.name', 'like', '%' . $searchValue . '%');
-        ## Add custom filter conditions
-        if (!empty($searchCity)) {
-            $records->where('city', $searchCity);
-        }
-        if (!empty($searchGender)) {
-            $records->where('gender', $searchGender);
-        }
-        if (!empty($searchName)) {
-            $records->where('name', 'like', '%' . $searchName . '%');
-        }
-        $employees = $records->skip($start)
-            ->take($rowperpage)
-            ->get();
-
-        $data_arr = array();
-        foreach ($employees as $employee) {
-
-            $name = $employee->name;
-            $email = $employee->email;
-            $number = $employee->number;
-
-            $data_arr[] = array(
-                "name" => $name,
-                "email" => $email,
-                "number" => $number,
-            );
-        }
-
-        $response = array(
-            "draw" => intval($draw),
-            "iTotalRecords" => $totalRecords,
-            "iTotalDisplayRecords" => $totalRecordswithFilter,
-            "aaData" => $data_arr
-        );
-
-        return response()->json($response);
-    }
     /**
      * Show the form for creating a new resource.
      *
@@ -183,7 +96,6 @@ class LeadController extends Controller
             'status' => 'new',
             'type' => 'lead',
         ];
-    
         $response = lead::create($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
@@ -245,7 +157,7 @@ class LeadController extends Controller
             'source' => $request->source,
         ];
 
-        $response = lead::where('id',$lead->id)->update($data);
+        $response = lead::where('id', $lead->id)->update($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Update Successfully');
         } else {
@@ -262,5 +174,18 @@ class LeadController extends Controller
     public function destroy(lead $lead)
     {
         //
+    }
+
+    public function changePriority($priority, $id)
+    {
+        $data = [
+            'priority' => $priority,
+        ];
+        $response = lead::where('id', $id)->update($data);
+        if ($response) {
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Priority Update Successfully');
+        } else {
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+        }
     }
 }
