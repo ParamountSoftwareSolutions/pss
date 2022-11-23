@@ -5,62 +5,57 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-12">
+    <div class="col-md-6">
         <div class="page-title-box">
-            <h4 class="page-title">Datatables</h4>
-            <div class="page-title-right">
-            
-            <a href="{{route('leads.store', ['RolePrefix' => RolePrefix()])}}" class="btn btn-success">Add New</a>
+            <h4 class="page-title">Leads</h4>
         </div>
-        </div>
-       
     </div>
 </div>
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="cardContent  pl-3 pr-4">
-                    <div class="row d-flex mb-3 pt-3">
-                        <div class="">
-                            <a href="" class="btn " style="background-color:darkcyan;">All Leads</a>
-                        </div>
-                        <div class="">
-                            <button class=" btn arrange" style="background-color: #bb6a06" type="button">Meetings ()</button>
-                        </div>
-                        <div class="">
-                            <button class=" btn pushed" style="background-color: #bb6a06" type="button">Meetings Pushed ()</button>
-                        </div>
-                        <form id="countryForm" class="form-inline ml-auto" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
-                            @csrf
-                            <input type="hidden" name="country_filter">
-                            <div class="form-group mr-2">
-                                <select name="country" class="form-control" style="border-radius: 5px">
-                                    <option value="" disabled selected style="color:rgb(75, 106, 108)">Country</option>
-                                    @foreach($country as $data)
-                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control mr-sm-2" name="searchRequest" placeholder="Id, Name, Number">
-                            </div>
-                            <input type="hidden" name="country_name">
-                            <button type="submit" class="btn" style="background-color: #06a6bb">Search</button>
-                        </form>
+                <div class="row d-flex mb-3 pt-3">
 
-                    </div>
-                    <div class="row justify-content-end mb-3 pl-2">
-                        <div class="mr-auto d-flex align-items-center">
-                            <h6 class="mr-5">Deadline Keys:</h6>
-                            <a href="{{ route('lead.overdueDay', ['RolePrefix' => RolePrefix()]) }}" class="mr-5 "><i class="fa fa-exclamation-triangle mr-2" style="color:orange!important"></i>Overdue</a>
-                            <a href="{{ route('lead.insingleDay', ['RolePrefix' => RolePrefix()]) }}" class="mr-5 "><i class="fa fa-circle mr-2" style="color: red !important"></i>Within 1 Day</a>
-                            <a href="{{ route('lead.intwoDay', ['RolePrefix' => RolePrefix()]) }}" class="mr-5 "><i class="fa fa-circle mr-2" style="color: yellow !important"></i>Within 2 Day</a>
-                            <a href="{{ route('lead.aftertwoDay', ['RolePrefix' => RolePrefix()]) }}" class="mr-5 "><i class="fa fa-circle mr-2" style="color: green !important"></i>After 2 Day</a>
+                    <a href="javascript:void(0)" class="btn btn-success">All Leads</a>
+                    <a href="javascript:void(0)" class="btn btn-success arrange ml-1" type="button">Meetings ()</a>
+                    <a href="javascript:void(0)" class="btn btn-success pushed ml-1" type="button">Meetings Pushed ()</a>
+
+                    <form id="countryForm" class="form-inline ml-auto" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                        @csrf
+                        <input type="hidden" name="country_filter">
+                        <div class="form-group mr-2">
+                            <select name="country" class="form-control" style="border-radius: 5px">
+                                <option value="" disabled selected style="color:rgb(75, 106, 108)">Country</option>
+                                @foreach($country as $data)
+                                <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control mr-sm-2" name="searchRequest" placeholder="Id, Name, Number">
+                        </div>
+                        <input type="hidden" name="country_name">
+                        <button type="submit" class="btn" style="background-color: #06a6bb">Search</button>
+                    </form>
+                </div>
+                <!-- Deadline Keys -->
+                <div class="row justify-content-end mb-3 pl-2">
+                    <div class="mr-auto d-flex align-items-center">
+                        <h6 class="mr-5">Deadline Keys:</h6>
+                        <a href="{{ route('lead.overdueDay', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-success mr-5 "><i class="fa fa-exclamation-triangle mr-2" style="color:orange!important"></i>Overdue</a>
+                        <a href="{{ route('lead.insingleDay', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-success mr-5 "><i class="fa fa-circle mr-2" style="color: red !important"></i>Within 1 Day</a>
+                        <a href="{{ route('lead.intwoDay', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-success mr-5 "><i class="fa fa-circle mr-2" style="color: yellow !important"></i>Within 2 Day</a>
+                        <a href="{{ route('lead.aftertwoDay', ['RolePrefix' => RolePrefix()]) }}" class=" btn btn-success mr-5 "><i class="fa fa-circle mr-2" style="color: green !important"></i>After 2 Day</a>
+                    </div>
+                </div>
+                <!-- Deadline Keys -->
+                <!-- Search By Project And Date Range -->
+                <div class="row">
+                    <div class="col-md-12 form-inline">
                         <form id="projectForm" method="post" class="form-inline" action="{{route('leads.store', ['RolePrefix' => RolePrefix()])}}">
                             @csrf
-                            <div class="form-group col-md-6 pr-2">
+                          
                                 <select name="project" class="form-control ml-auto" style="border-radius: 5px">
                                     <option value="" disabled selected style="color:rgb(75, 106, 108)">Search By Projects</option>
                                     @if (!empty($building))
@@ -69,67 +64,9 @@
                                     @endforeach
                                     @endif
                                 </select>
-                            </div>
+                            
                             <input type="hidden" name="project_name">
                         </form>
-                    </div>
-                    <div class="row justify-content-end pb-3 pr-0">
-
-                        <div class="mr-auto d-flex">
-                            <div class="dropdown">
-                                <button href="#" data-toggle="dropdown" style="background-color: #8d7300" class="btn dropdown-toggle" aria-expanded="false">Assign Lead</button>
-                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                    <a class="dropdown-item has-icon lead_assign" data-id="{{Auth::user()->id}}">{{Auth::user()->username}}</a>
-
-                                    <a class="dropdown-item has-icon lead_assign" data-id="">sale person</a>
-
-                                </div>
-                            </div>
-
-                            <div class="dropdown">
-                                <button href="#" data-toggle="dropdown" style="background-color: #82003a" class="btn dropdown-toggle" aria-expanded="false">Agents</button>
-                                <div class="dropdown-menu overflow-auto" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-
-
-
-                                    <a class="dropdown-item has-icon sales_manager" data-id="">sale manager<span class="badge ml-2 " style="background-color:#5F4B8BFF">Sale Manager</span></a>
-
-
-                                </div>
-                            </div>
-
-
-                            <div class="dropdown">
-                                <button href="#" data-toggle="dropdown" style="background-color: #42007c" class="btn dropdown-toggle" aria-expanded="false">All Tasks</button>
-                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                    <a class="dropdown-item has-icon status" data-value="new">New</a>
-                                    <a class="dropdown-item has-icon status" data-value="follow_up">Follow Up</a>
-                                    <a class="dropdown-item has-icon status" data-value="arrange_meeting">Arrange Meeting</a>
-                                    <a class="dropdown-item has-icon status" data-value="meet_client">Meet Client</a>
-                                    <a class="dropdown-item has-icon status" data-value="mature">Mature</a>
-                                    <a class="dropdown-item has-icon status" data-value="lost">Lost</a>
-                                    <a class="dropdown-item has-icon status" data-value="unassigned">UnAssigned</a>
-                                </div>
-                            </div>
-                            <div class="dropdown">
-                                <button href="#" data-toggle="dropdown" style="background-color: #a60202" class="btn dropdown-toggle" aria-expanded="false">Filter By Day</button>
-                                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                    <a class="dropdown-item has-icon filter_date" data-value="today">Today</a>
-                                    <a class="dropdown-item has-icon filter_date" data-value="yesterday">Yesterday</a>
-                                    <a class="dropdown-item has-icon filter_date" data-value="this_week">This week</a>
-                                    <a class="dropdown-item has-icon filter_date" data-value="this_month">This Month</a>
-                                    <a class="dropdown-item has-icon filter_date" data-value="last_month">Last Month</a>
-                                </div>
-                            </div>
-
-                            <div class="dropdown">
-                                <button href="#" data-toggle="dropdown" style="background-color: #00578d" class="btn fb_lead" data-id="fb_lead" aria-expanded="false">Facebook Leads ()</button>
-                            </div>
-
-                            <div class="">
-                                <a href="followup" class="btn mb-1 " style="background-color: #0ba254;  box-shadow: 0px 0px 20px 3px rgb(201, 245, 162)" type="button">Follow Up Leads (count)</a>
-                            </div>
-                        </div>
                         <form id="dateForm" class="form-inline ml-auto" method="POST" action="searchByDAte">
                             @csrf
                             <div class="form-group d-flex">
@@ -144,6 +81,62 @@
                         </form>
                     </div>
                 </div>
+                <!-- Search By Project And Date Range -->
+                <div class="row justify-content-end pb-3 pr-0">
+                    <div class="mr-auto d-flex">
+
+                        <div class="dropdown">
+                            <button href="javascript:void(0)" data-toggle="dropdown" style="background-color: #8d7300" class="btn dropdown-toggle" aria-expanded="false">Assign Lead</button>
+                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                <a class="dropdown-item has-icon lead_assign" data-id="{{Auth::user()->id}}">{{Auth::user()->username}}</a>
+                                <a class="dropdown-item has-icon lead_assign" data-id="">sale person</a>
+                            </div>
+                        </div>
+
+                        <div class="dropdown">
+                            <button href="javascript:void(0)" data-toggle="dropdown" style="background-color: #82003a" class="btn dropdown-toggle" aria-expanded="false">Agents</button>
+                            <div class="dropdown-menu overflow-auto" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
+
+                                <a class="dropdown-item has-icon sales_manager" data-id="">sale manager<span class="badge ml-2 " style="background-color:#5F4B8BFF">Sale Manager</span></a>
+
+                            </div>
+                        </div>
+
+
+                        <div class="dropdown">
+                            <button href="#" data-toggle="dropdown" class="btn dropdown-toggle" aria-expanded="false">All Tasks</button>
+                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                <a class="dropdown-item has-icon status" data-value="new">New</a>
+                                <a class="dropdown-item has-icon status" data-value="follow_up">Follow Up</a>
+                                <a class="dropdown-item has-icon status" data-value="arrange_meeting">Arrange Meeting</a>
+                                <a class="dropdown-item has-icon status" data-value="meet_client">Meet Client</a>
+                                <a class="dropdown-item has-icon status" data-value="mature">Mature</a>
+                                <a class="dropdown-item has-icon status" data-value="lost">Lost</a>
+                                <a class="dropdown-item has-icon status" data-value="unassigned">UnAssigned</a>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button href="#" data-toggle="dropdown" style="background-color: #a60202" class="btn dropdown-toggle" aria-expanded="false">Filter By Day</button>
+                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                <a class="dropdown-item has-icon filter_date" data-value="today">Today</a>
+                                <a class="dropdown-item has-icon filter_date" data-value="yesterday">Yesterday</a>
+                                <a class="dropdown-item has-icon filter_date" data-value="this_week">This week</a>
+                                <a class="dropdown-item has-icon filter_date" data-value="this_month">This Month</a>
+                                <a class="dropdown-item has-icon filter_date" data-value="last_month">Last Month</a>
+                            </div>
+                        </div>
+
+                        <div class="dropdown">
+                            <button href="#" data-toggle="dropdown" style="background-color: #00578d" class="btn fb_lead" data-id="fb_lead" aria-expanded="false">Facebook Leads ()</button>
+                        </div>
+
+                        <div class="">
+                            <a href="followup" class="btn mb-1 " style="background-color: #0ba254;  box-shadow: 0px 0px 20px 3px rgb(201, 245, 162)" type="button">Follow Up Leads (count)</a>
+                        </div>
+                    </div>
+
+                </div>
+
                 <form action="filtter" class="filter_form" method="POST">
                     @csrf
                     <input type="hidden" name="sales_person">
@@ -321,7 +314,7 @@
 
 
 <!-- basic modal -->
-<form id="statusForm">
+<form id="statusForm" method="POST">
     @csrf
     <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -385,7 +378,7 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-whitesmoke br">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                <input type="submit" class="btn btn-primary" value="submit" />
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -394,6 +387,7 @@
 </form>
 @endsection
 @section('script')
+
 <script>
     var elements = document.getElementsByClassName("actions")
     for (var i = 0; i < elements.length; i++) {
@@ -491,11 +485,7 @@
         }
 
         //Change Status 
-        $('.change_status').click(function() {
-            alert();
-        });
-        $("body").on("click", ".change_stsatus", function() {
-            alert();
+        $("body").on("click", ".change_status", function() {
             $('.start_time').hide();
             $('.end_time').hide();
             $('.call_time').hide();
@@ -537,27 +527,27 @@
             $('input[name="end_time"]').attr('min', startTime);
         })
 
-        $('#statusForm').submit(function(e) {
-            e.preventDefault();
-            let formData = $(this).serialize();
-            $.ajax({
-                url: "{{ route('lead.change_status', ['RolePrefix' => RolePrefix()]) }}",
-                type: "POST",
-                data: formData,
-                success: function(data) {
-                    if (data.status == 'success') {
-                        $('#statusModal').modal('hide');
-                        successMsg(data.message);
-                        setTimeout(function() {
-                            window.location.href = "";
-                        }, 1000);
-                    }
-                    if (data.status == 'error') {
-                        errorMsg(data.message);
-                    }
-                },
-            });
-        });
+        // $('#statusForm').submit(function(e) {
+        //     e.preventDefault();
+        //     let formData = $(this).serialize();
+        //     $.ajax({
+        //         url: "{{ route('lead.change_status', ['RolePrefix' => RolePrefix()]) }}",
+        //         type: "POST",
+        //         data: formData,
+        //         success: function(data) {
+        //             if (data.status == 'success') {
+        //                 $('#statusModal').modal('hide');
+        //                 successMsg(data.message);
+        //                 setTimeout(function() {
+        //                     window.location.href = "";
+        //                 }, 1000);
+        //             }
+        //             if (data.status == 'error') {
+        //                 errorMsg(data.message);
+        //             }
+        //         },
+        //     });
+        // });
     });
 
     //Change Status 

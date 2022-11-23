@@ -4,13 +4,13 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>Dashboard | UBold - Responsive Admin Dashboard Template</title>
+    <title>Psm Property</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{asset('/')}}/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="{{asset('/assets/images/favicon.ico')}}">
 
     <!-- App css -->
     <link href="{{asset('/')}}/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" id="bs-default-stylesheet" />
@@ -21,7 +21,7 @@
 
     <!-- icons -->
     <link href="{{asset('/')}}/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-
+    @yield('style')
 </head>
 
 <body data-layout='{"mode": "light", "width": "fluid", "menuPosition": "fixed", "sidebar": { "color": "light", "size": "default", "showuser": false}, "topbar": {"color": "dark"}, "showRightSidebarOnPageLoad": true}'>
@@ -53,13 +53,13 @@
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
-
+    <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script>
     <!-- Vendor js -->
     <script src="{{asset('/')}}/assets/js/vendor.min.js"></script>
 
     <!-- App js-->
     <script src="{{asset('/')}}/assets/js/app.min.js"></script>
-
+    @yield('script')
 </body>
 
 </html>

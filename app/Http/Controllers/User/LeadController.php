@@ -8,8 +8,12 @@ use App\Models\Country;
 use App\Models\lead;
 use App\Models\Project_assign_user;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpKernel\HttpCache\Ssi;
+use Illuminate\Support\Facades\Validator;
 // use DataTables;
 
 class LeadController extends Controller
@@ -140,7 +144,6 @@ class LeadController extends Controller
      */
     public function update(Request $request, lead $lead)
     {
-
         $data = [
             'project_id' => $request->building_id,
             'user_id' => $request->sale_person_id,
@@ -188,6 +191,59 @@ class LeadController extends Controller
         ];
         $response = lead::where('id', $id)->update($data);
         if ($response) {
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Priority Update Successfully');
+        } else {
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+        }
+    }
+    public function changeStatus(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'date' => 'required',
+            'comment' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->with('error', $validator->errors()->first());
+        }
+
+        $sale = BuildingSale::find($request->id);
+        if ($request->status == 'mature') {
+            $sale->order_type = "sale";
+            if ($sale->floor_detail_id !== null) {
+                FloorDetail::where('id', $sale->floor_detail_id)->update(['status' => 'hold']);
+            }
+        }
+        $sale->updated_at = Carbon::parse($request->date)->format('Y-m-d H:i:s');
+        $sale->order_status = $request->status;
+        $sale->update();
+
+        $data = [
+            'date' => Carbon::parse($request->date)->format('Y-m-d H:i:s'),
+            //'comment' => $request->comment,
+            'status' => $request->status,
+            'user_id' => Auth::user()->id,
+        ];
+        if ($request->status == 'arrange_meeting' || $request->status == 'follow_up') {
+            $old_histories = BuildingSaleHistory::where('building_sale_id', $request->id)->get();
+            foreach ($old_histories as $his) {
+                $old_data = json_decode($his->data);
+                $old_data->is_read = 1;
+                $his->data = json_encode($old_data);
+                $his->save();
+            }
+            $data['is_read'] = 0;
+        }
+        $history = new BuildingSaleHistory;
+        $history->building_sale_id = $request->id;
+        $history->key = 'lead';
+        $history->comment = $request->comment;
+        $history->data = json_encode($data);
+        $history->save();
+
+
+
+        if ($history) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Priority Update Successfully');
         } else {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
