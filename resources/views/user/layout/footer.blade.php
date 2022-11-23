@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-<footer class="main-footer">
-    <div class="footer-left">
-        <a href="#">Psm Property</a>
-    </div>
-    <div class="footer-right">
-    </div>
-</footer>
-=======
 <!-- Footer Start -->
 <footer class="footer">
     <div class="container-fluid">
@@ -27,4 +18,3 @@
     </div>
 </footer>
 <!-- end Footer -->
->>>>>>> 11b5463d7b2c3aa720aa0cca1591679795e6cc6b
