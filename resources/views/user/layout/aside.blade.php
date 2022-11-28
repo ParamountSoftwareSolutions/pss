@@ -67,6 +67,18 @@
                                   <li>
                                       <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">All Lead</a>
                                   </li>
+                                  <li>
+                                      <a href="{{route('leads.mature', ['RolePrefix' => RolePrefix()])}}">Matured</a>
+                                  </li>
+                                  <li>
+                                      <a href="{{route('leads.closed', ['RolePrefix' => RolePrefix()])}}">Closed</a>
+                                  </li>
+                                  <li>
+                                      <a href="{{route('webhook.index', ['RolePrefix' => RolePrefix()])}}">Facebook leads</a>
+                                  </li>
+                                  <li>
+                                      <a href="{{route('lead.employee', ['RolePrefix' => RolePrefix()])}}">Employee Reports</a>
+                                  </li>
                               </ul>
                           </div>
                       </li>

@@ -11,19 +11,26 @@
         </div>
     </div>
 </div>
+@if ($message = Session::get('success'))
+<div class="alert alert-success">
+    <span>{{ $message }}</span>
+</div>
+@elseif ($message = Session::get('error'))
+<div class="alert alert-danger">
+    <span>{{ $message }}</span>
+</div>
+@endif
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+                <h4 class="header-title">Leads Filters</h4>
                 <div class="row d-flex mb-3 pt-3">
-
-                    <a href="javascript:void(0)" class="btn btn-success">All Leads</a>
+                    <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}" class="btn btn-success">All Leads</a>
                     <a href="javascript:void(0)" class="btn btn-success arrange ml-1" type="button">Meetings ()</a>
                     <a href="javascript:void(0)" class="btn btn-success pushed ml-1" type="button">Meetings Pushed ()</a>
-
-                    <form id="countryForm" class="form-inline ml-auto" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
-                        @csrf
-                        <input type="hidden" name="country_filter">
+                    <form id="countryForm" class="form-inline float-right" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                        <!-- <input type="hidden" name="country_filter"> -->
                         <div class="form-group mr-2">
                             <select name="country" class="form-control" style="border-radius: 5px">
                                 <option value="" disabled selected style="color:rgb(75, 106, 108)">Country</option>
@@ -35,7 +42,7 @@
                         <div class="form-group">
                             <input type="text" class="form-control mr-sm-2" name="searchRequest" placeholder="Id, Name, Number">
                         </div>
-                        <input type="hidden" name="country_name">
+                        <!-- <input type="hidden" name="country_name"> -->
                         <button type="submit" class="btn" style="background-color: #06a6bb">Search</button>
                     </form>
                 </div>
@@ -43,32 +50,31 @@
                 <div class="row justify-content-end mb-3 pl-2">
                     <div class="mr-auto d-flex align-items-center">
                         <h6 class="mr-5">Deadline Keys:</h6>
-                        <a href="{{ route('lead.overdueDay', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-success mr-5 "><i class="fa fa-exclamation-triangle mr-2" style="color:orange!important"></i>Overdue</a>
-                        <a href="{{ route('lead.insingleDay', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-success mr-5 "><i class="fa fa-circle mr-2" style="color: red !important"></i>Within 1 Day</a>
-                        <a href="{{ route('lead.intwoDay', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-success mr-5 "><i class="fa fa-circle mr-2" style="color: yellow !important"></i>Within 2 Day</a>
-                        <a href="{{ route('lead.aftertwoDay', ['RolePrefix' => RolePrefix()]) }}" class=" btn btn-success mr-5 "><i class="fa fa-circle mr-2" style="color: green !important"></i>After 2 Day</a>
+                        <a href="javascript:void(0)" class="btn btn-success mr-5 deadlineFilter" data-value="overdue"><i class="fa fa-exclamation-triangle mr-2" style="color:orange!important"></i>Overdue</a>
+                        <a href="javascript:void(0)" class="btn btn-success mr-5 deadlineFilter" data-value="oneDay"><i class="fa fa-circle mr-2" style="color: red !important"></i>Within 1 Day</a>
+                        <a href="javascript:void(0)" class="btn btn-success mr-5 deadlineFilter" data-value="withInTwoDay"><i class="fa fa-circle mr-2" style="color: yellow !important"></i>Within 2 Day</a>
+                        <a href="javascript:void(0)" class=" btn btn-success mr-5 deadlineFilter" data-value="afterTwoDay"><i class="fa fa-circle mr-2" style="color: green !important"></i>After 2 Day</a>
                     </div>
                 </div>
+                <form id="deadlineFilterForm" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                    <input type="hidden" name="deadlineFilter">
+                </form>
                 <!-- Deadline Keys -->
                 <!-- Search By Project And Date Range -->
                 <div class="row">
                     <div class="col-md-12 form-inline">
-                        <form id="projectForm" method="post" class="form-inline" action="{{route('leads.store', ['RolePrefix' => RolePrefix()])}}">
-                            @csrf
-
+                        <form id="projectForm" class="form-inline float-right" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
                             <select name="project" class="form-control ml-auto" style="border-radius: 5px">
                                 <option value="" disabled selected style="color:rgb(75, 106, 108)">Search By Projects</option>
                                 @if (!empty($building))
-                                @foreach ($building as $data)
-                                <option value="{{ ($data->id!== null) ? $data->id :"" }}">{{ ($data->name!== null) ? $data->name :"" }}</option>
+                                @foreach ($building as $data_building)
+                                <option value="{{ ($data_building->id !== null) ? $data_building->id :"" }}">{{ ($data_building['projects']['name']!== null) ? $data_building['projects']['name'] :"" }}</option>
                                 @endforeach
                                 @endif
                             </select>
-
-                            <input type="hidden" name="project_name">
+                            <!-- <input type="hidden" name="project_name"> -->
                         </form>
-                        <form id="dateForm" class="form-inline ml-auto" method="POST" action="searchByDAte">
-                            @csrf
+                        <form id="dateForm" class="form-inline float-right" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
                             <div class="form-group d-flex">
                                 <label for="" class="mr-2 ">From: </label>
                                 <input type="date" id="dateFrom" class="form-control mb-2 mr-sm-2" name="from" placeholder="From" required>
@@ -84,39 +90,51 @@
                 <!-- Search By Project And Date Range -->
                 <div class="row justify-content-end pb-3 pr-0">
                     <div class="mr-auto d-flex">
-
                         <div class="dropdown">
-                            <button href="javascript:void(0)" data-toggle="dropdown" style="background-color: #8d7300" class="btn dropdown-toggle" aria-expanded="false">Assign Lead</button>
+                            <button href="javascript:void(0)" data-toggle="dropdown" class="btn dropdown-toggle" aria-expanded="false">Assign Lead</button>
                             <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                <a class="dropdown-item has-icon lead_assign" data-id="{{Auth::user()->id}}">{{Auth::user()->username}}</a>
-                                <a class="dropdown-item has-icon lead_assign" data-id="">sale person</a>
+                                @if(!empty($sale_persons))
+                                @foreach($sale_persons as $sale_val)
+                                <a class="dropdown-item has-icon lead_assign" data-id="{{$sale_val['id']}}">{{$sale_val['name']}}</a>
+                                @endforeach
+                                @endif
                             </div>
                         </div>
-
+                        <form action="{{route('leads.assign', ['RolePrefix' => RolePrefix()])}}" class="assign_form" method="POST">
+                            @csrf
+                            <input type="hidden" name="sale_id">
+                            <input type="hidden" name="sale_person_id">
+                        </form>
                         <div class="dropdown">
-                            <button href="javascript:void(0)" data-toggle="dropdown" style="background-color: #82003a" class="btn dropdown-toggle" aria-expanded="false">Agents</button>
+                            <button href="javascript:void(0)" data-toggle="dropdown" class="btn dropdown-toggle" aria-expanded="false">Sale Person</button>
                             <div class="dropdown-menu overflow-auto" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-
-                                <a class="dropdown-item has-icon sales_manager" data-id="">sale manager<span class="badge ml-2 " style="background-color:#5F4B8BFF">Sale Manager</span></a>
-
+                                @if(!empty($sale_persons))
+                                @foreach($sale_persons as $sale_value)
+                                <a class="dropdown-item has-icon salePersonFilter" data-id="{{$sale_value['id']}}">{{$sale_value['name']}}<span class="badge ml-2 " style="background-color:#5F4B8BFF">Sale Person</span></a>
+                                @endforeach
+                                @endif
                             </div>
                         </div>
-
-
+                        <form id="salePersonFilterForm" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                            <input type="hidden" name="salePersonFilter">
+                        </form>
                         <div class="dropdown">
                             <button href="#" data-toggle="dropdown" class="btn dropdown-toggle" aria-expanded="false">All Tasks</button>
                             <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                <a class="dropdown-item has-icon status" data-value="new">New</a>
-                                <a class="dropdown-item has-icon status" data-value="follow_up">Follow Up</a>
-                                <a class="dropdown-item has-icon status" data-value="arrange_meeting">Arrange Meeting</a>
-                                <a class="dropdown-item has-icon status" data-value="meet_client">Meet Client</a>
-                                <a class="dropdown-item has-icon status" data-value="mature">Mature</a>
-                                <a class="dropdown-item has-icon status" data-value="lost">Lost</a>
-                                <a class="dropdown-item has-icon status" data-value="unassigned">UnAssigned</a>
+                                <a class="dropdown-item has-icon statusFilter" data-value="new">New</a>
+                                <a class="dropdown-item has-icon statusFilter" data-value="follow_up">Follow Up</a>
+                                <a class="dropdown-item has-icon statusFilter" data-value="arrange_meeting">Arrange Meeting</a>
+                                <a class="dropdown-item has-icon statusFilter" data-value="meet_client">Meet Client</a>
+                                <a class="dropdown-item has-icon statusFilter" data-value="mature">Mature</a>
+                                <a class="dropdown-item has-icon statusFilter" data-value="lost">Lost</a>
+                                <a class="dropdown-item has-icon statusFilter" data-value="unassigned">UnAssigned</a>
                             </div>
                         </div>
+                        <form id="statusFormFilter" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                            <input type="hidden" name="statusFilter">
+                        </form>
                         <div class="dropdown">
-                            <button href="#" data-toggle="dropdown" style="background-color: #a60202" class="btn dropdown-toggle" aria-expanded="false">Filter By Day</button>
+                            <button href="#" data-toggle="dropdown" class="btn dropdown-toggle" aria-expanded="false">Filter By Day</button>
                             <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
                                 <a class="dropdown-item has-icon filter_date" data-value="today">Today</a>
                                 <a class="dropdown-item has-icon filter_date" data-value="yesterday">Yesterday</a>
@@ -125,37 +143,43 @@
                                 <a class="dropdown-item has-icon filter_date" data-value="last_month">Last Month</a>
                             </div>
                         </div>
-
+                        <form id="filter_form_by_date" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                            <input type="hidden" name="filter_date">
+                        </form>
                         <div class="dropdown">
-                            <button href="#" data-toggle="dropdown" style="background-color: #00578d" class="btn fb_lead" data-id="fb_lead" aria-expanded="false">Facebook Leads ()</button>
+                            <form method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                                <input type="hidden" name="facebook" value="fb_lead">
+                                <button type="submit" class="btn fb_lead">Facebook Leads ()</button>
+                            </form>
                         </div>
-
-                        <div class="">
-                            <a href="followup" class="btn mb-1 " style="background-color: #0ba254;  box-shadow: 0px 0px 20px 3px rgb(201, 245, 162)" type="button">Follow Up Leads (count)</a>
-                        </div>
+                        <form method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                            <input type="hidden" name="today_followup" value="today_followup">
+                            <button type="submit" class="btn fb_lead">Today Followup</button>
+                        </form>
+                        <form method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
+                            <input type="hidden" name="facebook" value="facebook">
+                            <button type="submit" class="btn btn-success">Facebook</button>
+                        </form>
                     </div>
 
                 </div>
 
-                <form action="filtter" class="filter_form" method="POST">
-                    @csrf
+
+
+                <!-- <form action="filtter" class="filter_form" method="POST"> -->
+                <!-- @csrf
                     <input type="hidden" name="sales_person">
                     <input type="hidden" name="sales_manager">
                     <input type="hidden" name="fb_lead">
                     <input type="hidden" name="status">
-                    <input type="hidden" name="filter_date">
-                </form>
-                <form action="" class="push_form" method="POST">
+                </form> -->
+                <!-- <form action="" class="push_form" method="POST">
                     @csrf
                 </form>
                 <form action="" class="arrange_form" method="POST">
                     @csrf
-                </form>
-                <form action="" class="assign_form" method="POST">
-                    @csrf
-                    <input type="hidden" name="sale_id">
-                    <input type="hidden" name="sale_person_id">
-                </form>
+                </form> -->
+
             </div>
         </div>
     </div>
@@ -166,16 +190,16 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="header-title">Basic Data Table</h4>
+                <h4 class="header-title">Leads Table</h4>
                 <div class="row">
                     <div class="col-md-6">
-                        <select class="form-control-sm" aria-label="Default select example">
+                        <!-- <select class="form-control-sm" aria-label="Default select example">
                             <option selected>10</option>
                             <option value="20">20</option>
                             <option value="30">30</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
-                        </select>
+                        </select> -->
                     </div>
                     <div class="col-md-6">
                         <form class="form-inline float-right" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
@@ -207,29 +231,6 @@
                     <tbody>
                         @if(!empty($sales))
                         @foreach($sales as $key => $data)
-                        @php
-                        if($data->order_status == 'new'){
-                        $color = 'primary';
-                        }
-                        elseif($data->order_status == 'active'){
-                        $color = 'success';
-                        }
-                        elseif($data->order_status == 'mature' || $data->order_status == 'arrange_meeting'){
-                        $color = 'danger';
-                        }
-                        elseif($data->order_status == 'follow_up'){
-                        $color = 'warning';
-                        }
-                        elseif($data->order_status == 'lost'){
-                        $color = 'light';
-                        }
-                        elseif($data->order_status == 'meet_client'){
-                        $color = 'secondary';
-                        }
-                        else{
-                        $color = 'secondary';
-                        }
-                        @endphp
                         <tr>
                             <td class="p-0 text-center">
                                 <div class="custom-checkbox custom-control">
@@ -241,14 +242,14 @@
                             <td>{{ $data->name ?? '' }}</td>
                             <td>{{ $data->email ?? '' }}</td>
                             <td>{{ $data->number ?? '' }}</td>
-                            <td>{{ $data->sale_person->username ?? ''}}</td>
-                            <td>{{ ($data->building !== null) ? $data->building->name : 'N/A'}}</td>
+                            <td>{{ (!empty($data['sale_person']['name'])) ? $data['sale_person']['name'] : 'N/A'}}</td>
+                            <td>{{ (!empty($data['building']['name'])) ? $data['building']['name'] : 'N/A'}}</td>
                             <td>
                                 <div class="dropdown">
-                                    <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-{{$color}}" aria-expanded="false">{{ ucwords(Illuminate\Support\Str::replace('_', ' ', $data->status)) }}</a>
+                                    <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-success" aria-expanded="false">{{($data->status == 'arrange_meeting') ? 'Reschedule Meeting' : $data->status }}</a>
                                     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
                                         <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="follow_up">Follow Up</a>
-                                        <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="arrange_meeting">{{$data->status == 'arrange_meeting' ? 'Reschedule Meeting' : 'Arrange Meeting' }}</a>
+                                        <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="arrange_meeting">{{($data->status == 'arrange_meeting') ? 'Reschedule Meeting' : 'Arrange Meeting' }}</a>
                                         <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="meet_client">Meet Client</a>
                                         <a href="javascript:void(0)" class="dropdown-item has-icon change_status" data-id="{{$data->id}}" data-value="mature">Mature</a>
                                         <a href="javascript:void(0)" class="dropdown-item has-icon change_status" data-id="{{$data->id}}" data-value="lost">Lost</a>
@@ -284,16 +285,13 @@
                             </td>
 
                             <td>
-
                                 <a href="{{route('leads.edit', ['RolePrefix' => RolePrefix(),$data->id])}}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
                                     <i class="fa fa-edit"></i>
                                 </a>
-
                                 <button type="button" title="Delete" data-url="" data-token="{!! csrf_token() !!}" class="btn btn-danger btn-sm px-1 py-0 deleteBtn">
                                     <i class="fa fa-trash"></i>
                                 </button>
-
-                                <a href="" class="btn btn-info btn-sm px-1 py-0"><i class="fa fa-comments"></i></a>
+                                <a href="{{route('leads.comments', ['RolePrefix' => RolePrefix(),$data->id])}}" class="btn btn-info btn-sm px-1 py-0"><i class="fa fa-comments"></i></a>
                             </td>
                         </tr>
                         @endforeach
@@ -408,9 +406,7 @@
     $(document).ready(function() {
         $('select[name="country"]').on('change', function() {
             var a = $(this).val();
-            console.log(a);
-            // $('input[name="country_filter"]').val(a);
-            // $('#countryForm').submit();
+            $('#countryForm').submit();
         });
 
         $('select[name="project"]').on('change', function() {
@@ -434,13 +430,21 @@
             $('input[name="sales_person"]').val($(this).attr('data-id'));
             submit();
         });
-        $('.status').click(function() {
-            $('input[name="status"]').val($(this).attr('data-value'));
-            submit();
+        $('.statusFilter').click(function() {
+            $('input[name="statusFilter"]').val($(this).attr('data-value'));
+            $('#statusFormFilter').submit()
+        });
+        $('.deadlineFilter').click(function() {
+            $('input[name="deadlineFilter"]').val($(this).attr('data-value'));
+            $('#deadlineFilterForm').submit()
+        });
+        $('.salePersonFilter').click(function() {
+            $('input[name="salePersonFilter"]').val($(this).attr('data-id'));
+            $('#salePersonFilterForm').submit()
         });
         $('.filter_date').click(function() {
             $('input[name="filter_date"]').val($(this).attr('data-value'));
-            submit();
+            $('#filter_form_by_date').submit();
         });
         $('.pushed').click(function() {
             meetingSubmit();
@@ -460,7 +464,7 @@
         });
 
         function submit() {
-            $('.filter_form').submit();
+            $('#filter_form').submit();
         }
         $('.lead_assign').click(function() {
             var sale_person_id = $(this).attr('data-id');
@@ -471,7 +475,6 @@
             });
             console.log(sale_id)
             $('input[name="sale_id"]').val(sale_id);
-            /*console.log($('input[name="sale_id"]').val())*/
             $('input[name="sale_person_id"]').val(sale_person_id);
             assign_form_submit();
         });

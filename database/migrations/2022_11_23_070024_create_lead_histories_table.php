@@ -15,14 +15,16 @@ return new class extends Migration
     {
         Schema::create('lead_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('client_id')->unsigned()->nullable()->constrained('clients')->nullOnDelete();
-            $table->foreignId('user_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('lead_id')->unsigned()->nullable()->constrained('leads')->nullOnDelete();
+            // $table->foreignId('client_id')->unsigned()->nullable()->constrained('clients')->nullOnDelete();
+            // $table->foreignId('user_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->string('status')->nullable();
             $table->text('comment')->nullable();
             $table->dateTime('date')->nullable();
             $table->string('call_status')->nullable();
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
+            $table->time('call_time')->nullable();
             $table->string('is_read')->nullable();
             $table->timestamps();
         });

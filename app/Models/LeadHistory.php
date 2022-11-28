@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class LeadHistory extends Model
 {
+    protected $fillable = ['id ','lead_id','status','comment','date','call_status','start_time','end_time','call_time','is_read'];
     use HasFactory;
 }
