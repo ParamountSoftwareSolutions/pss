@@ -52,6 +52,43 @@
                           </a>
                       </li>
                       <li class="menu-title mt-2">Apps</li>
+                      <li>
+                          <a href="#project" data-toggle="collapse">
+                              <i data-feather="shopping-cart"></i>
+                              <span> Project Management </span>
+                              <span class="menu-arrow"></span>
+                          </a>
+                          <div class="collapse" id="project">
+                              <ul class="nav-second-level">
+                                  <li>
+                                      <a href="{{route('project.create', ['RolePrefix' => RolePrefix()])}}">Add Project</a>
+                                  </li>
+                                  <li>
+                                      <a href="{{route('project.index', ['RolePrefix' => RolePrefix()])}}">All Project</a>
+                                  </li>
+                              </ul>
+                          </div>
+                      </li>
+                      <li>
+                          <a href="#inventory-data" data-toggle="collapse">
+                              <i data-feather="shopping-cart"></i>
+                              <span> Inventory Extra Data </span>
+                              <span class="menu-arrow"></span>
+                          </a>
+                          <div class="collapse" id="inventory-data">
+                              <ul class="nav-second-level">
+                                  <li><a href="{{route('block.index', ['RolePrefix' => RolePrefix()])}}">Block</a></li>
+                                  <li><a href="{{route('unit.index', ['RolePrefix' => RolePrefix()])}}">Unit</a></li>
+                                  <li><a href="{{route('size.index', ['RolePrefix' => RolePrefix()])}}">Size</a></li>
+                                  <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>
+                              </ul>
+                          </div>
+                      </li>
+
+
+
+
+
 
                       <li>
                           <a href="#sidebarEcommerce" data-toggle="collapse">

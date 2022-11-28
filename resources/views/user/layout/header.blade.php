@@ -2,14 +2,11 @@
       <div class="navbar-custom">
                 <div class="container-fluid">
                     <ul class="list-unstyled topnav-menu float-right mb-0">
-
-    
-    
                         <li class="dropdown notification-list topbar-dropdown">
                             <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                                 <img src="{{asset('/')}}/assets/images/users/user-1.jpg" alt="user-image" class="rounded-circle">
                                 <span class="pro-user-name ml-1">
-                                    Geneva <i class="mdi mdi-chevron-down"></i> 
+                                    Geneva <i class="mdi mdi-chevron-down"></i>
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
@@ -17,39 +14,39 @@
                                 <div class="dropdown-header noti-title">
                                     <h6 class="text-overflow m-0">Welcome !</h6>
                                 </div>
-    
+
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <i class="fe-user"></i>
                                     <span>My Account</span>
                                 </a>
-    
+
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <i class="fe-settings"></i>
                                     <span>Settings</span>
                                 </a>
-    
+
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <i class="fe-lock"></i>
                                     <span>Lock Screen</span>
                                 </a>
-    
+
                                 <div class="dropdown-divider"></div>
-    
+
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <i class="fe-log-out"></i>
                                     <span>Logout</span>
                                 </a>
-    
+
                             </div>
                         </li>
-    
-    
+
+
                     </ul>
-    
+
                     <!-- LOGO -->
                     <div class="logo-box">
                         <a href="index.html" class="logo logo-dark text-center">
@@ -62,7 +59,7 @@
                                 <!-- <span class="logo-lg-text-light">U</span> -->
                             </span>
                         </a>
-    
+
                         <a href="index.html" class="logo logo-light text-center">
                             <span class="logo-sm">
                                 <img src="{{asset('/')}}/assets/images/logo-sm.png" alt="" height="22">
@@ -72,7 +69,7 @@
                             </span>
                         </a>
                     </div>
-    
+
                     <ul class="list-unstyled topnav-menu topnav-menu-left m-0">
                         <li>
                             <button class="button-menu-mobile waves-effect waves-light">
@@ -90,12 +87,12 @@
                                 </div>
                             </a>
                             <!-- End mobile menu toggle-->
-                        </li>   
-            
+                        </li>
+
                         <li class="dropdown d-none d-xl-block">
                             <a class="nav-link dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                                 Create New
-                                <i class="mdi mdi-chevron-down"></i> 
+                                <i class="mdi mdi-chevron-down"></i>
                             </a>
                             <div class="dropdown-menu">
                                 <!-- item-->
@@ -103,45 +100,45 @@
                                     <i class="fe-briefcase mr-1"></i>
                                     <span>New Projects</span>
                                 </a>
-    
+
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item">
                                     <i class="fe-user mr-1"></i>
                                     <span>Create Users</span>
                                 </a>
-    
+
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item">
                                     <i class="fe-bar-chart-line- mr-1"></i>
                                     <span>Revenue Report</span>
                                 </a>
-    
+
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item">
                                     <i class="fe-settings mr-1"></i>
                                     <span>Settings</span>
                                 </a>
-    
+
                                 <div class="dropdown-divider"></div>
-    
+
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item">
                                     <i class="fe-headphones mr-1"></i>
                                     <span>Help & Support</span>
                                 </a>
-    
+
                             </div>
                         </li>
-    
+
                         <li class="dropdown dropdown-mega d-none d-xl-block">
                             <a class="nav-link dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                                 Mega Menu
-                                <i class="mdi mdi-chevron-down"></i> 
+                                <i class="mdi mdi-chevron-down"></i>
                             </a>
                             <div class="dropdown-menu dropdown-megamenu">
                                 <div class="row">
                                     <div class="col-sm-8">
-                            
+
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <h5 class="text-dark mt-0">UI Components</h5>
@@ -169,7 +166,7 @@
                                                     </li>
                                                 </ul>
                                             </div>
-    
+
                                             <div class="col-md-4">
                                                 <h5 class="text-dark mt-0">Applications</h5>
                                                 <ul class="list-unstyled megamenu-list">
@@ -196,7 +193,7 @@
                                                     </li>
                                                 </ul>
                                             </div>
-    
+
                                             <div class="col-md-4">
                                                 <h5 class="text-dark mt-0">Extra Pages</h5>
                                                 <ul class="list-unstyled megamenu-list">
@@ -233,7 +230,7 @@
                                         </div>
                                     </div>
                                 </div>
-    
+
                             </div>
                         </li>
                     </ul>

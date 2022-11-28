@@ -1,7 +1,11 @@
 <?php
 
 
-
+use App\Http\Controllers\User\BlockController;
+use App\Http\Controllers\User\CategoryController;
+use App\Http\Controllers\User\ProjectController;
+use App\Http\Controllers\User\SizeController;
+use App\Http\Controllers\User\UnitController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
@@ -46,6 +50,14 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePrefix']], function () {
     Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
+    // //=============//
+    // /* Project Management */
+    // //=============//
+    Route::resource('block', BlockController::class);
+    Route::resource('unit', UnitController::class);
+    Route::resource('size', SizeController::class);
+    Route::resource('category', CategoryController::class);
+    Route::resource('project', ProjectController::class);
 
     // //=============//
     // /* Leads */
@@ -54,14 +66,14 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('leads', LeadController::class);
     Route::get('lead/change_priority/{priority}/{id}', [LeadController::class, 'changepriority'])->name('lead.change_priority');
     Route::post('lead/change_status', [LeadController::class, 'changestatus'])->name('lead.change_status');
-   
+
     //             //New Routes Added
     Route::get('lead/building_info/{building_id}', 'LeadController@buildinginfo')->name('lead.building_info');
     Route::post('lead/filter', 'LeadController@filter')->name('lead.filter');
     Route::post('lead/search', 'LeadController@search')->name('lead.search');
     Route::post('lead/searchbydate', 'LeadController@searchbydate')->name('lead.searchByDate');
     // Route::post('lead/change_status', 'LeadController@changestatus')->name('lead.change_status');
-    
+
     Route::get('lead/comments/{id}', 'LeadController@comments')->name('lead.comments');
     Route::any('lead-assign', 'LeadController@lead_assign')->name('lead.assign');
     Route::get('is-read/', 'LeadController@isread')->name('lead.isread');
