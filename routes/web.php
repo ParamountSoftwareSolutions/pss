@@ -9,6 +9,7 @@ use App\Http\Controllers\User\UnitController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\User\WebHookController;
 use App\Http\Controllers\User\LeadController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,7 @@ Route::get('/fake_leads', function () {
             'name' => $faker->unique()->name,
             'number' => $faker->unique()->phoneNumber,
             'status' => 'new',
+            'user_id ' => 10,
             'type' => 'lead'
         ];
 

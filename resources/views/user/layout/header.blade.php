@@ -49,7 +49,7 @@
 
                     <!-- LOGO -->
                     <div class="logo-box">
-                        <a href="index.html" class="logo logo-dark text-center">
+                        <a href="javascript:void(0)" class="logo logo-dark text-center">
                             <span class="logo-sm">
                                 <img src="{{asset('/')}}/assets/images/logo-sm.png" alt="" height="22">
                                 <!-- <span class="logo-lg-text-light">UBold</span> -->
@@ -60,7 +60,7 @@
                             </span>
                         </a>
 
-                        <a href="index.html" class="logo logo-light text-center">
+                        <a href="javascript:void(0)" class="logo logo-light text-center">
                             <span class="logo-sm">
                                 <img src="{{asset('/')}}/assets/images/logo-sm.png" alt="" height="22">
                             </span>
@@ -87,6 +87,7 @@
                                 </div>
                             </a>
                             <!-- End mobile menu toggle-->
+<<<<<<< HEAD
                         </li>
 
                         <li class="dropdown d-none d-xl-block">
@@ -233,6 +234,10 @@
 
                             </div>
                         </li>
+=======
+                        </li>
+
+>>>>>>> 4b6132a2ee60d30be743c0cdcb7a7a51a567c2eb
                     </ul>
                     <div class="clearfix"></div>
                 </div>

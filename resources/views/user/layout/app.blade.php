@@ -53,12 +53,30 @@
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
-    <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script> -->
     <!-- Vendor js -->
     <script src="{{asset('/')}}/assets/js/vendor.min.js"></script>
 
     <!-- App js-->
-    <script src="{{asset('/')}}/assets/js/app.min.js"></script>
+    <!-- <script src="{{asset('/')}}/assets/js/app.min.js"></script> -->
+    <!-- third party js -->
+    <script src="{{asset('/')}}assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-buttons/js/buttons.flash.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/datatables.net-select/js/dataTables.select.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="{{asset('/')}}assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <!-- third party js ends -->
+    <!-- Datatables init -->
+    <script src="{{asset('/')}}assets/js/pages/datatables.init.js"></script>
+
     @yield('script')
 </body>
 
