@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\ProjectType;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -16,15 +17,18 @@ class CategoryController extends Controller
 
     public function create()
     {
-        return view('user.inventory_extra_data.category.create');
+        $project_type = ProjectType::get();
+        return view('user.inventory_extra_data.category.create', compact('project_type'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'type_id' => 'required',
             'name' => 'required',
         ]);
         $category = new Category();
+        $category->project_type_id = $request->type_id;
         $category->name = $request->name;
         $category->save();
         if ($category) {
@@ -48,15 +52,18 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::findOrFail($id);
-        return view('user.inventory_extra_data.category.edit', compact('category'));
+        $project_type = ProjectType::get();
+        return view('user.inventory_extra_data.category.edit', compact('category', 'project_type'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
+            'type_id' => 'required',
             'name' => 'required',
         ]);
         $category = Category::findOrFail($id);
+        $category->project_type_id = $request->type_id;
         $category->name = $request->name;
         $category->save();
         if ($category){

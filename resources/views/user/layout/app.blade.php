@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="utf-8" />
-    <title>Psm Property</title>
+    <title>Psm Property | @yield('title')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
     <meta content="Coderthemes" name="author" />
@@ -51,7 +51,6 @@
     <!-- END wrapper -->
 
 
-
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script> -->
@@ -80,8 +79,7 @@
     <script src="{{asset('assets/js/pages/datatables.init.js')}}"></script>
     <!-- Ckeditor -->
     <script src="{{asset('assets/js/ckeditor.js')}}"></script>
-{{--    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>--}}
-{{--    <script src="{{asset('assets/js/spartan-multi-image-picker.js')}}"></script>--}}
+    <script src="{{asset('assets/js/spartan-multi-image-picker.js')}}"></script>
 {{--    <script src="{{asset('assets/js/resumble.min.js')}}"></script>--}}
 
     <!-- Sweetalert -->

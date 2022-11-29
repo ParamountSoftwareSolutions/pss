@@ -3,19 +3,21 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProjectType;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
     public function index()
     {
-        $blocks = SocietyBlock::get();
-        return view('user.inventory_extra_data.block.index', compact('blocks'));
+        $units = Unit::get();
+        return view('user.inventory_extra_data.unit.index', compact('units'));
     }
 
     public function create()
     {
-        return view('user.inventory_extra_data.block.create');
+        return view('user.inventory_extra_data.unit.create');
     }
 
     public function store(Request $request)
@@ -23,10 +25,10 @@ class UnitController extends Controller
         $request->validate([
             'name' => 'required',
         ]);
-        $block = new SocietyBlock();
-        $block->name = $request->name;
-        $block->save();
-        if ($block) {
+        $unit = new Unit();
+        $unit->name = $request->name;
+        $unit->save();
+        if ($unit) {
             return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit has created successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Unit has not created, something went wrong. Try again', 'alert' => 'error']);
@@ -46,8 +48,8 @@ class UnitController extends Controller
 
     public function edit($id)
     {
-        $block = SocietyBlock::findOrFail($id);
-        return view('user.inventory_extra_data.block.edit', compact('block'));
+        $unit = Unit::findOrFail($id);
+        return view('user.inventory_extra_data.unit.edit', compact('unit'));
     }
 
     public function update(Request $request, $id)
@@ -55,10 +57,10 @@ class UnitController extends Controller
         $request->validate([
             'name' => 'required',
         ]);
-        $block = SocietyBlock::findOrFail($id);
-        $block->name = $request->name;
-        $block->save();
-        if ($block){
+        $unit = Unit::findOrFail($id);
+        $unit->name = $request->name;
+        $unit->save();
+        if ($unit){
             return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit has updated successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Unit has not updated, something went wrong. Try again', 'alert' => 'error']);
@@ -67,13 +69,13 @@ class UnitController extends Controller
 
     public function destroy($id)
     {
-        $block = SocietyBlock::findOrFail($id);
-        $block->delete();
+        $unit = Unit::findOrFail($id);
+        $unit->delete();
 
-        if ($block){
+        if ($unit){
             return response()->json(['message'=>'Unit has deleted successfully','status'=> 'success']);
         } else {
             return response()->json(['message'=>'Unit has not deleted, something went wrong. Try again','status'=> 'error']);
         }
-}
+    }
 }

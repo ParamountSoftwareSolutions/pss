@@ -25,6 +25,19 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
+                                            <label>Project Type</label>
+                                            <select class="form-control" name="type_id">
+                                                <option label="" disabled>Select Project Type</option>
+                                                @foreach($project_type as $data)
+                                                    <option value="{{ $data->id }}" @if($category->project_type_id == $data->id) selected @endif>{{ ucwords($data->name)
+                                                    }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
                                             <label>Category Name</label>
                                             <input type="text" class="form-control" required="" name="name" value="{{ $category->name }}">
                                             @error('name')

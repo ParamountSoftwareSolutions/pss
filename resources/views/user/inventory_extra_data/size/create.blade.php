@@ -24,9 +24,33 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
-                                            <label>Category Name</label>
+                                            <label>Project Type</label>
+                                            <select class="form-control" name="type_id">
+                                                <option label="" disabled selected>Select Project Type</option>
+                                                @foreach($project_type as $data)
+                                                    <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Size Name</label>
                                             <input type="text" class="form-control" required="" name="name">
                                             @error('name')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Unit</label>
+                                            <select class="form-control" name="unit_id" required>
+                                                <option label="" disabled selected>Select Unit</option>
+                                                @foreach($unit as $data)
+                                                    <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type_id')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>

@@ -3,30 +3,39 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProjectType;
+use App\Models\Size;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class SizeController extends Controller
 {
     public function index()
     {
-        $blocks = SocietyBlock::get();
-        return view('user.inventory_extra_data.block.index', compact('blocks'));
+        $sizes = Size::get();
+        return view('user.inventory_extra_data.size.index', compact('sizes'));
     }
 
     public function create()
     {
-        return view('user.inventory_extra_data.block.create');
+        $project_type = ProjectType::get();
+        $unit = Unit::get();
+        return view('user.inventory_extra_data.size.create', compact('project_type', 'unit'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'type_id' => 'required',
             'name' => 'required',
+            'unit_id' => 'required',
         ]);
-        $block = new SocietyBlock();
-        $block->name = $request->name;
-        $block->save();
-        if ($block) {
+        $size = new Size();
+        $size->project_type_id = $request->type_id;
+        $size->name = $request->name;
+        $size->unit_id = $request->unit_id;
+        $size->save();
+        if ($size) {
             return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has created successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Size has not created, something went wrong. Try again', 'alert' => 'error']);
@@ -46,19 +55,23 @@ class SizeController extends Controller
 
     public function edit($id)
     {
-        $block = SocietyBlock::findOrFail($id);
-        return view('user.inventory_extra_data.block.edit', compact('block'));
+        $size = Size::findOrFail($id);
+        $project_type = ProjectType::get();
+        $unit = Unit::get();
+        return view('user.inventory_extra_data.size.edit', compact('size', 'project_type', 'unit'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
+            'type_id' => 'required',
             'name' => 'required',
         ]);
-        $block = SocietyBlock::findOrFail($id);
-        $block->name = $request->name;
-        $block->save();
-        if ($block){
+        $size = Size::findOrFail($id);
+        $size->project_type_id = $request->type_id;
+        $size->name = $request->name;
+        $size->save();
+        if ($size){
             return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has updated successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Size has not updated, something went wrong. Try again', 'alert' => 'error']);
@@ -67,10 +80,10 @@ class SizeController extends Controller
 
     public function destroy($id)
     {
-        $block = SocietyBlock::findOrFail($id);
-        $block->delete();
+        $size = Size::findOrFail($id);
+        $size->delete();
 
-        if ($block){
+        if ($size){
             return response()->json(['message'=>'Size has deleted successfully','status'=> 'success']);
         } else {
             return response()->json(['message'=>'Size has not deleted, something went wrong. Try again','status'=> 'error']);
