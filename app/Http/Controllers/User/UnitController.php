@@ -11,7 +11,7 @@ class UnitController extends Controller
 {
     public function index()
     {
-        $units = Unit::get();
+        $units = Unit::latest()->get();
         return view('user.inventory_extra_data.unit.index', compact('units'));
     }
 

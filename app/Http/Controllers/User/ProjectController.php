@@ -17,7 +17,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::get();
+        $projects = Project::latest()->get();
         return view('user.project.index', compact('projects'));
     }
 
@@ -28,7 +28,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        $project_type = ProjectType::get();
+        $project_type = ProjectType::latest()->get();
         return view('user.project.create', compact('project_type'));
     }
 
@@ -75,7 +75,7 @@ class ProjectController extends Controller
     public function edit($id)
     {
         $project = Project::findOrFail($id);
-        $project_type = ProjectType::get();
+        $project_type = ProjectType::latest()->get();
         return view('user.project.edit', compact('project', 'project_type'));
 
     }

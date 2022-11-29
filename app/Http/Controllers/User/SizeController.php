@@ -12,14 +12,14 @@ class SizeController extends Controller
 {
     public function index()
     {
-        $sizes = Size::get();
+        $sizes = Size::latest()->get();
         return view('user.inventory_extra_data.size.index', compact('sizes'));
     }
 
     public function create()
     {
-        $project_type = ProjectType::get();
-        $unit = Unit::get();
+        $project_type = ProjectType::latest()->get();
+        $unit = Unit::latest()->get();
         return view('user.inventory_extra_data.size.create', compact('project_type', 'unit'));
     }
 
@@ -56,8 +56,8 @@ class SizeController extends Controller
     public function edit($id)
     {
         $size = Size::findOrFail($id);
-        $project_type = ProjectType::get();
-        $unit = Unit::get();
+        $project_type = ProjectType::latest()->get();
+        $unit = Unit::latest()->get();
         return view('user.inventory_extra_data.size.edit', compact('size', 'project_type', 'unit'));
     }
 

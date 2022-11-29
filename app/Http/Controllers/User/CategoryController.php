@@ -11,13 +11,13 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::get();
+        $categories = Category::latest()->get();
         return view('user.inventory_extra_data.category.index', compact('categories'));
     }
 
     public function create()
     {
-        $project_type = ProjectType::get();
+        $project_type = ProjectType::latest()->get();
         return view('user.inventory_extra_data.category.create', compact('project_type'));
     }
 
@@ -52,7 +52,7 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::findOrFail($id);
-        $project_type = ProjectType::get();
+        $project_type = ProjectType::latest()->get();
         return view('user.inventory_extra_data.category.edit', compact('category', 'project_type'));
     }
 

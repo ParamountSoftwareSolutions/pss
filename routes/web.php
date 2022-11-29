@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\User\PremiumController;
 use App\Http\Controllers\User\BlockController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProjectController;
@@ -57,6 +58,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // /* Project Management */
     // //=============//
     Route::resource('block', BlockController::class);
+    Route::resource('premium', PremiumController::class);
     Route::resource('unit', UnitController::class);
     Route::resource('size', SizeController::class);
     Route::resource('category', CategoryController::class);

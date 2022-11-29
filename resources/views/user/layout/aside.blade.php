@@ -77,6 +77,7 @@
                           </a>
                           <div class="collapse" id="inventory-data">
                               <ul class="nav-second-level">
+                                  <li><a href="{{route('premium.index', ['RolePrefix' => RolePrefix()])}}">Premium</a></li>
                                   <li><a href="{{route('block.index', ['RolePrefix' => RolePrefix()])}}">Block</a></li>
                                   <li><a href="{{route('unit.index', ['RolePrefix' => RolePrefix()])}}">Unit</a></li>
                                   <li><a href="{{route('size.index', ['RolePrefix' => RolePrefix()])}}">Size</a></li>
