@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Category List')
+@section('title', 'Size List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -8,8 +8,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Category List</h4>
-                                 <a href="{{ route('category.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary" style="margin-left: auto; display:
+                                <h4>Size List</h4>
+                                 <a href="{{ route('size.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary" style="margin-left: auto; display:
                                  block;">Add New</a>
                             </div>
                             <div class="card-body">
@@ -19,15 +19,17 @@
                                         <tr>
                                             <th class="text-center">#</th>
                                             <th>Name</th>
+                                            <th>Unit</th>
                                             <th>Project Type</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($categories as $data)
+                                        @forelse($sizes as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->name }}</td>
+                                                <td>{{ $data->unit->name }}</td>
                                                 <td> <span class="badge
                                                 @if($data->project_type->name == 'building')
                                                     badge-blue
@@ -40,7 +42,7 @@
                                                 @endif
                                                 ">{{ ucwords($data->project_type->name) }} </span></td>
                                                 <td>
-                                                    <a href="{{ route('category.edit', ['RolePrefix' => RolePrefix(), 'category' => $data->id]) }}"
+                                                    <a href="{{ route('size.edit', ['RolePrefix' => RolePrefix(), 'size' => $data->id]) }}"
                                                        class="btn btn-primary">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                              viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -53,7 +55,7 @@
                                                         </svg>
                                                     </a>
                                                     <form
-                                                        action="{{ route('category.destroy', ['RolePrefix' => RolePrefix(), 'category' => $data->id]) }}"
+                                                        action="{{ route('size.destroy', ['RolePrefix' => RolePrefix(), 'size' => $data->id]) }}"
                                                         method="post" style="display: inline-block;">
                                                         @csrf
                                                         @method('DELETE')

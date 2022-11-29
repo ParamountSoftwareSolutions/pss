@@ -16,7 +16,6 @@ class CreateUnitsTable extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->id();
             /*Marla, Kinal, Acer, Bed, Bath*/
-            $table->foreignId('project_type_id')->unsigned()->nullable()->constrained('project_types')->nullOnDelete();
             $table->string('name');
             $table->timestamps();
         });

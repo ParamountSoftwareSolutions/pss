@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Block List')
+@section('title', 'Category List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -16,17 +16,30 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="post" action="{{ route('block.update', ['RolePrefix' => RolePrefix(), 'block' => $block->id]) }}">
+                            <form method="post" action="{{ route('category.update', ['RolePrefix' => RolePrefix(), 'category' => $category->id]) }}">
                                 @csrf
                                 @method('put')
                                 <div class="card-header">
-                                    <h4>Block Add</h4>
+                                    <h4>Category Add</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
-                                            <label>Block Name</label>
-                                            <input type="text" class="form-control" required="" name="name" value="{{ $block->name }}">
+                                            <label>Project Type</label>
+                                            <select class="form-control" name="type_id">
+                                                <option label="" disabled>Select Project Type</option>
+                                                @foreach($project_type as $data)
+                                                    <option value="{{ $data->id }}" @if($category->project_type_id == $data->id) selected @endif>{{ ucwords($data->name)
+                                                    }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Category Name</label>
+                                            <input type="text" class="form-control" required="" name="name" value="{{ $category->name }}">
                                             @error('name')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror

@@ -3,19 +3,21 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProjectType;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
     public function index()
     {
-        $blocks = SocietyBlock::get();
-        return view('user.inventory_extra_data.block.index', compact('blocks'));
+        $units = Unit::get();
+        return view('user.inventory_extra_data.unit.index', compact('units'));
     }
 
     public function create()
     {
-        return view('user.inventory_extra_data.block.create');
+        return view('user.inventory_extra_data.unit.create');
     }
 
     public function store(Request $request)
@@ -23,13 +25,13 @@ class UnitController extends Controller
         $request->validate([
             'name' => 'required',
         ]);
-        $block = new SocietyBlock();
-        $block->name = $request->name;
-        $block->save();
-        if ($block) {
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block create successfully', 'alert' => 'success']);
+        $unit = new Unit();
+        $unit->name = $request->name;
+        $unit->save();
+        if ($unit) {
+            return redirect()->route('unit.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit create successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Society Block create error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Unit create error', 'alert' => 'error']);
         }
     }
 
@@ -46,8 +48,8 @@ class UnitController extends Controller
 
     public function edit($id)
     {
-        $block = SocietyBlock::findOrFail($id);
-        return view('user.inventory_extra_data.block.edit', compact('block'));
+        $unit = Unit::findOrFail($id);
+        return view('user.inventory_extra_data.unit.edit', compact('unit'));
     }
 
     public function update(Request $request, $id)
@@ -55,25 +57,25 @@ class UnitController extends Controller
         $request->validate([
             'name' => 'required',
         ]);
-        $block = SocietyBlock::findOrFail($id);
-        $block->name = $request->name;
-        $block->save();
-        if ($block){
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block update successfully', 'alert' => 'success']);
+        $unit = Unit::findOrFail($id);
+        $unit->name = $request->name;
+        $unit->save();
+        if ($unit){
+            return redirect()->route('unit.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit update successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Society Block update error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Unit update error', 'alert' => 'error']);
         }
     }
 
     public function destroy($id)
     {
-        $block = SocietyBlock::findOrFail($id);
-        $block->delete();
+        $unit = Unit::findOrFail($id);
+        $unit->delete();
 
-        if ($block){
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Block create successfully', 'alert' => 'success']);
+        if ($unit){
+            return redirect()->route('unit.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit create successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Block create error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Unit create error', 'alert' => 'error']);
         }
     }
 }

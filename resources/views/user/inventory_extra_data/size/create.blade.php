@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Category List')
+@section('title', 'Size List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -16,10 +16,10 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="post" action="{{ route('category.store', ['RolePrefix' => RolePrefix()]) }}">
+                            <form method="post" action="{{ route('size.store', ['RolePrefix' => RolePrefix()]) }}">
                                 @csrf
                                 <div class="card-header">
-                                    <h4>Category Add</h4>
+                                    <h4>Size Add</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
@@ -36,9 +36,21 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>Category Name</label>
+                                            <label>Size Name</label>
                                             <input type="text" class="form-control" required="" name="name">
                                             @error('name')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Unit</label>
+                                            <select class="form-control" name="unit_id" required>
+                                                <option label="" disabled selected>Select Unit</option>
+                                                @foreach($unit as $data)
+                                                    <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type_id')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>

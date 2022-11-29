@@ -42,6 +42,7 @@ Route::get('/fake_leads', function () {
 */
 
 Route::get('/', [LoginController::class, 'index'])->name('/');
+Route::get('login', [LoginController::class, 'index'])->name('/');
 Route::post('login', [LoginController::class, 'store'])->name('login');
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 

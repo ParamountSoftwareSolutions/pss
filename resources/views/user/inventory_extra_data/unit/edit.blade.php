@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Category List')
+@section('title', 'Unit List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -16,28 +16,17 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="post" action="{{ route('category.store', ['RolePrefix' => RolePrefix()]) }}">
+                            <form method="post" action="{{ route('unit.update', ['RolePrefix' => RolePrefix(), 'unit' => $unit->id]) }}">
                                 @csrf
+                                @method('put')
                                 <div class="card-header">
-                                    <h4>Category Add</h4>
+                                    <h4>Unit Add</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
-                                            <label>Project Type</label>
-                                            <select class="form-control" name="type_id">
-                                                <option label="" disabled selected>Select Project Type</option>
-                                                @foreach($project_type as $data)
-                                                    <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('type_id')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label>Category Name</label>
-                                            <input type="text" class="form-control" required="" name="name">
+                                            <label>Unit Name</label>
+                                            <input type="text" class="form-control" required="" name="name" value="{{ $unit->name }}">
                                             @error('name')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror

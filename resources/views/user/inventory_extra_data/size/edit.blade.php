@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Category List')
+@section('title', 'Size List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -16,19 +16,21 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="post" action="{{ route('category.store', ['RolePrefix' => RolePrefix()]) }}">
+                            <form method="post" action="{{ route('size.update', ['RolePrefix' => RolePrefix(), 'size' => $size->id]) }}">
                                 @csrf
+                                @method('put')
                                 <div class="card-header">
-                                    <h4>Category Add</h4>
+                                    <h4>Size Add</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label>Project Type</label>
                                             <select class="form-control" name="type_id">
-                                                <option label="" disabled selected>Select Project Type</option>
+                                                <option label="" disabled>Select Project Type</option>
                                                 @foreach($project_type as $data)
-                                                    <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
+                                                    <option value="{{ $data->id }}" @if($size->project_type_id == $data->id) selected @endif>{{ ucwords($data->name)
+                                                    }}</option>
                                                 @endforeach
                                             </select>
                                             @error('type_id')
@@ -36,9 +38,22 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>Category Name</label>
-                                            <input type="text" class="form-control" required="" name="name">
+                                            <label>Size Name</label>
+                                            <input type="text" class="form-control" required="" name="name" value="{{ $size->name }}">
                                             @error('name')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Unit Type</label>
+                                            <select class="form-control" name="type_id" required>
+                                                <option label="" disabled>Select Unit Type</option>
+                                                @foreach($unit as $data)
+                                                    <option value="{{ $data->id }}" @if($size->unit_id == $data->id) selected @endif>{{ ucwords($data->name)
+                                                    }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type_id')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
