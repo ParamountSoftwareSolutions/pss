@@ -10,7 +10,7 @@ class BlockController extends Controller
 {
     public function index()
     {
-        $blocks = SocietyBlock::get();
+        $blocks = SocietyBlock::latest()->get();
         return view('user.inventory_extra_data.block.index', compact('blocks'));
     }
 
