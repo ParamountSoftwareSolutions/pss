@@ -116,6 +116,7 @@
                                   <li><a href="{{route('size.index', ['RolePrefix' => RolePrefix()])}}">Size</a></li>
                                   <li><a href="{{route('type.index', ['RolePrefix' => RolePrefix()])}}">Type</a></li>
                                   <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>
+                                  <li><a href="{{route('payment_plan.index', ['RolePrefix' => RolePrefix()])}}">Payment Plan</a></li>
                               </ul>
                           </div>
                       </li>

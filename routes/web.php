@@ -14,6 +14,7 @@ use App\Http\Controllers\User\LeadController;
 use App\Http\Controllers\User\TypeController;
 use App\Http\Controllers\User\FarmhouseController;
 use App\Http\Controllers\User\PropertyController;
+use App\Http\Controllers\User\PaymentPlanController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +68,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('project', ProjectController::class);
     Route::resource('property', PropertyController::class);
     Route::resource('farmhouse', FarmhouseController::class);
+    Route::resource('payment_plan', PaymentPlanController::class);
 
     // //=============//
     // /* Leads */

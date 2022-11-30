@@ -29,7 +29,7 @@ class CreatePaymentPlansTable extends Migration
             $table->integer('rent_price')->nullable();
             $table->integer('confirmation_amount')->nullable();
             $table->integer('number_of_payment')->nullable();
-            $table->integer('premium')->default(0);
+            $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->integer('commission')->nullable();
             $table->timestamps();
         });
