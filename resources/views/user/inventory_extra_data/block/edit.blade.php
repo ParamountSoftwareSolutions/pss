@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Block List')
+@section('title', 'Edit Block')
 @section('content')
     <div class="main-content">
         <section class="section">

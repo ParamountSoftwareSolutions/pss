@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Size List')
+@section('title', 'Add Size')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -19,7 +19,7 @@
                             <form method="post" action="{{ route('size.store', ['RolePrefix' => RolePrefix()]) }}">
                                 @csrf
                                 <div class="card-header">
-                                    <h4>Size Add</h4>
+                                    <h4>Add Size</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">

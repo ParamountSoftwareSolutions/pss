@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Category List')
+@section('title', 'Add Category')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -19,7 +19,7 @@
                             <form method="post" action="{{ route('category.store', ['RolePrefix' => RolePrefix()]) }}">
                                 @csrf
                                 <div class="card-header">
-                                    <h4>Category Add</h4>
+                                    <h4>Add Category</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">

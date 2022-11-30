@@ -30,7 +30,6 @@ class CreateBuildingInventoriesTable extends Migration
         });
     }
 
-
     /**
      * Reverse the migrations.
      *

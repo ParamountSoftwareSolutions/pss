@@ -29,9 +29,9 @@ class UnitController extends Controller
         $unit->name = $request->name;
         $unit->save();
         if ($unit) {
-            return redirect()->route('unit.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit create successfully', 'alert' => 'success']);
+            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit has created successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Unit create error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Unit has not created, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -61,9 +61,9 @@ class UnitController extends Controller
         $unit->name = $request->name;
         $unit->save();
         if ($unit){
-            return redirect()->route('unit.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit update successfully', 'alert' => 'success']);
+            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit has updated successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Unit update error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Unit has not updated, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -73,9 +73,9 @@ class UnitController extends Controller
         $unit->delete();
 
         if ($unit){
-            return redirect()->route('unit.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Unit create successfully', 'alert' => 'success']);
+            return response()->json(['message'=>'Unit has deleted successfully','status'=> 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Unit create error', 'alert' => 'error']);
+            return response()->json(['message'=>'Unit has not deleted, something went wrong. Try again','status'=> 'error']);
         }
     }
 }

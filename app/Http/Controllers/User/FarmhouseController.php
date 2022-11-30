@@ -8,7 +8,7 @@ use App\Models\Project;
 use App\Models\ProjectType;
 use Illuminate\Http\Request;
 
-class ProjectController extends Controller
+class FarmhouseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +17,8 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::latest()->get();
-        return view('user.project.index', compact('projects'));
+        $projects = Project::where('type_id',3)->get();
+        return view('user.farmhouse.index', compact('projects'));
     }
 
     /**
@@ -28,8 +28,8 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        $project_type = ProjectType::latest()->get();
-        return view('user.project.create', compact('project_type'));
+        $project_type = ProjectType::get();
+        return view('user.farmhouse.create', compact('project_type'));
     }
 
     /**
@@ -42,16 +42,15 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'type_id' => 'required',
         ]);
         $project = new Project();
         $project->name = $request->name;
-        $project->type_id = $request->type_id;
+        $project->type_id = 3;
         $project->save();
         if ($project){
-            return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has created successfully', 'alert' => 'success']);
+            return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Project has not created, something went wrong. Try again', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Farmhouse has not created, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -75,8 +74,8 @@ class ProjectController extends Controller
     public function edit($id)
     {
         $project = Project::findOrFail($id);
-        $project_type = ProjectType::latest()->get();
-        return view('user.project.edit', compact('project', 'project_type'));
+        $project_type = ProjectType::get();
+        return view('user.farmhouse.edit', compact('project', 'project_type'));
 
     }
 
@@ -91,16 +90,14 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'type_id' => 'required',
         ]);
         $project = Project::findOrFail($id);
         $project->name = $request->name;
-        $project->type_id = $request->type_id;
         $project->save();
         if ($project){
-            return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has updated successfully', 'alert' => 'success']);
+            return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has updated successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Project has not updated, something went wrong. Try again', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Farmhouse has not updated, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -115,9 +112,9 @@ class ProjectController extends Controller
         $project = Project::findOrFail($id);
         $project->delete();
         if ($project){
-            return response()->json(['message'=>'Project has deleted successfully','status'=> 'success']);
+            return response()->json(['message'=>'Farmhouse has deleted successfully','status'=> 'success']);
         } else {
-            return response()->json(['message'=>'Project has not deleted, something went wrong. Try again','status'=> 'error']);
+            return response()->json(['message'=>'Farmhouse has not deleted, something went wrong. Try again','status'=> 'error']);
         }
     }
 }

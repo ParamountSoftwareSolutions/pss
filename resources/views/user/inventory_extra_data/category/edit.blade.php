@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Category List')
+@section('title', 'Edit Category')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -20,7 +20,7 @@
                                 @csrf
                                 @method('put')
                                 <div class="card-header">
-                                    <h4>Category Add</h4>
+                                    <h4>Edit Category</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">

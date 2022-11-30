@@ -20,7 +20,6 @@
                                             <th class="text-center">#</th>
                                             <th>Name</th>
                                             <th>Project Type</th>
-                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
@@ -45,15 +44,9 @@
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <form
-                                                        action="{{ route('project.destroy',['RolePrefix' => RolePrefix(), 'project' => $data->id]) }}"
-                                                        method="post" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" title="Delete" class="btn btn-danger px-1 py-0">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                    <button type="button" data-url="{{ route('project.destroy',['RolePrefix' => RolePrefix(), 'project' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         @empty

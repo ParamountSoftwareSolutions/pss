@@ -25,6 +25,9 @@ class ProjectSeeder extends Seeder
             [
                 'name' => 'farm_house',
             ],
+            [
+                'name' => 'property',
+            ],
         ]);
 
         Project::insert([
@@ -63,6 +66,18 @@ class ProjectSeeder extends Seeder
             [
                 'name' => 'shujaat House',
                 'type_id' => 3,
+            ],
+            [
+                'name' => 'amir House',
+                'type_id' => 4,
+            ],
+            [
+                'name' => 'qasim House',
+                'type_id' => 4,
+            ],
+            [
+                'name' => 'faisal House',
+                'type_id' => 4,
             ],
         ]);
 

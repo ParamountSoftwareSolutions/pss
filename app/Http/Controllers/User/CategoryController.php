@@ -32,9 +32,9 @@ class CategoryController extends Controller
         $category->name = $request->name;
         $category->save();
         if ($category) {
-            return redirect()->route('category.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Category create successfully', 'alert' => 'success']);
+            return redirect()->route('category.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Category has created successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Category create error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Category has not created, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -67,9 +67,9 @@ class CategoryController extends Controller
         $category->name = $request->name;
         $category->save();
         if ($category){
-            return redirect()->route('category.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Category update successfully', 'alert' => 'success']);
+            return redirect()->route('category.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Category has updated successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Category update error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Category has not updated, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -79,9 +79,9 @@ class CategoryController extends Controller
         $category->delete();
 
         if ($category){
-            return redirect()->route('category.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Category create successfully', 'alert' => 'success']);
+            return response()->json(['message'=>'Category has deleted successfully','status'=> 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Category create error', 'alert' => 'error']);
+            return response()->json(['message'=>'Category has not deleted, something went wrong. Try again','status'=> 'error']);
         }
     }
 }

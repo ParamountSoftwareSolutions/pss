@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Add Block')
+@section('title', 'Add Type')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -16,15 +16,15 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="post" action="{{ route('block.store', ['RolePrefix' => RolePrefix()]) }}">
+                            <form method="post" action="{{ route('type.store', ['RolePrefix' => RolePrefix()]) }}">
                                 @csrf
                                 <div class="card-header">
-                                    <h4>Block Add</h4>
+                                    <h4>Add Type</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
-                                            <label>Block Name</label>
+                                            <label>Type Name</label>
                                             <input type="text" class="form-control" required="" name="name">
                                             @error('name')
                                             <div class="text-danger mt-2">{{ $message }}</div>

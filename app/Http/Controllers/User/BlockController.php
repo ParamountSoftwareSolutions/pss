@@ -28,9 +28,9 @@ class BlockController extends Controller
         $block->name = $request->name;
         $block->save();
         if ($block) {
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block create successfully', 'alert' => 'success']);
+            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block has created successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Society Block create error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Society Block has not created, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -60,9 +60,9 @@ class BlockController extends Controller
         $block->name = $request->name;
         $block->save();
         if ($block){
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block update successfully', 'alert' => 'success']);
+            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block has updated successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Society Block update error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Society Block has not updated, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -72,9 +72,9 @@ class BlockController extends Controller
         $block->delete();
 
         if ($block){
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Block create successfully', 'alert' => 'success']);
+            return response()->json(['message'=>'Society Block has deleted successfully','status'=> 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Block create error', 'alert' => 'error']);
+            return response()->json(['message'=>'Society Block has not deleted, something went wrong. Try again','status'=> 'error']);
         }
     }
 }

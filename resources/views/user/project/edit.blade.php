@@ -12,7 +12,7 @@
                                 @csrf
                                 @method('put')
                                 <div class="card-header">
-                                    <h4>Add Project</h4>
+                                    <h4>Edit Project</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">

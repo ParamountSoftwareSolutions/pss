@@ -5,7 +5,7 @@
             <div class="col-md-6">
                 2015 - <script>
                     document.write(new Date().getFullYear())
-                </script> &copy; Psm Property <a href="">Psm Property</a>
+                </script> &copy; <a href="">Psm Property</a>
             </div>
             <div class="col-md-6">
                 <div class="text-md-right footer-links d-none d-sm-block">

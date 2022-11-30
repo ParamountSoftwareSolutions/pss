@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Block List')
+@section('title', 'Type List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -8,8 +8,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Block List</h4>
-                                 <a href="{{ route('block.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary" style="margin-left: auto; display: block;">Add New</a>
+                                <h4>Type List</h4>
+                                 <a href="{{ route('type.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary" style="margin-left: auto; display: block;">Add New</a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -22,16 +22,16 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($blocks as $data)
+                                        @forelse($types as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->name }}</td>
                                                 <td>
-                                                    <a href="{{ route('block.edit', ['RolePrefix' => RolePrefix(), 'block' => $data->id]) }}"
+                                                    <a href="{{ route('type.edit', ['RolePrefix' => RolePrefix(), 'type' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <button type="button" data-url="{{ route('block.destroy', ['RolePrefix' => RolePrefix(), 'block' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                    <button type="button" data-url="{{ route('type.destroy',['RolePrefix' => RolePrefix(), 'type' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>

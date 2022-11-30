@@ -12,6 +12,9 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\WebHookController;
 use App\Http\Controllers\User\LeadController;
+use App\Http\Controllers\User\TypeController;
+use App\Http\Controllers\User\FarmhouseController;
+use App\Http\Controllers\User\PropertyController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -61,8 +64,11 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('premium', PremiumController::class);
     Route::resource('unit', UnitController::class);
     Route::resource('size', SizeController::class);
+    Route::resource('type', TypeController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('project', ProjectController::class);
+    Route::resource('property', PropertyController::class);
+    Route::resource('farmhouse', FarmhouseController::class);
 
     // //=============//
     // /* Leads */

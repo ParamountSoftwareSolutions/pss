@@ -36,9 +36,9 @@ class SizeController extends Controller
         $size->unit_id = $request->unit_id;
         $size->save();
         if ($size) {
-            return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size create successfully', 'alert' => 'success']);
+            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has created successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Size create error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Size has not created, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -72,9 +72,9 @@ class SizeController extends Controller
         $size->name = $request->name;
         $size->save();
         if ($size){
-            return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size update successfully', 'alert' => 'success']);
+            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has updated successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Size update error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Size has not updated, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -84,9 +84,9 @@ class SizeController extends Controller
         $size->delete();
 
         if ($size){
-            return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size create successfully', 'alert' => 'success']);
+            return response()->json(['message'=>'Size has deleted successfully','status'=> 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Size create error', 'alert' => 'error']);
+            return response()->json(['message'=>'Size has not deleted, something went wrong. Try again','status'=> 'error']);
         }
     }
 }
