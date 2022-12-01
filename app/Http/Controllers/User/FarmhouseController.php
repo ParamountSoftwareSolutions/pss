@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\RolePrefix;
+use App\Models\Premium;
+use App\Models\Farmhouse;
 use App\Models\Project;
 use App\Models\ProjectType;
 use App\Models\Size;
@@ -11,6 +13,14 @@ use Illuminate\Http\Request;
 
 class FarmhouseController extends Controller
 {
+    private $project_type_id;
+
+    public function __construct()
+    {
+        $id = ProjectType::where('name','farm_house')->first()->id;
+        $this->project_type_id = $id;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +28,7 @@ class FarmhouseController extends Controller
      */
     public function index()
     {
-        $projects = Project::where('type_id',3)->get();
+        $projects = Project::where('type_id',$this->project_type_id)->get();
         return view('user.farmhouse.index', compact('projects'));
     }
 
@@ -29,9 +39,10 @@ class FarmhouseController extends Controller
      */
     public function create()
     {
-        $project_type = ProjectType::get();
         $sizes = Size::get();
-        return view('user.farmhouse.create', compact('project_type','sizes'));
+        $project_type_id = $this->project_type_id;
+        $premiums = Premium::where('project_type_id',$project_type_id)->get();
+        return view('user.farmhouse.create', compact('sizes','premiums','project_type_id'));
     }
 
     /**
@@ -47,24 +58,15 @@ class FarmhouseController extends Controller
         ]);
         $project = new Project();
         $project->name = $request->name;
-        $project->type_id = 3;
+        $project->type_id = $this->project_type_id;
         $project->save();
-        if ($project){
-            return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
-        } else {
-            return redirect()->back()->with(['message' => 'Farmhouse has not created, something went wrong. Try again', 'alert' => 'error']);
-        }
-
-
-
-
         if ($request->simple_unit_no == null){
             $request->validate([
                 'bulk_unit_no' => 'required',
                 'start_unit_no' => 'required',
                 'end_unit_no' => 'required',
             ], [
-                'end_unit_no' => 'Bulck Fields is required'
+                'end_unit_no' => 'Bulk Fields is required'
             ]);
         }
 
@@ -72,32 +74,30 @@ class FarmhouseController extends Controller
             $length = $request->end_unit_no - $request->start_unit_no;
             for ($i = 0; $length >= $i; $i++){
                 $unit = $request->bulk_unit_no . $request->start_unit_no++;
-                $inventory = new BuildingInventory();
-                $inventory->building_id = $request->building_id;
-                $inventory->block_id = $request->block_id;
-                $inventory->unit_no = $unit;
-                $inventory->size_id = $request->size_id;
-                $inventory->category_id = $request->category_id;
-                $inventory->nature = $request->nature;
-                $inventory->type = $request->type;
-                $inventory->purchased_price = $request->purchased_price;
-                $inventory->sold_price = $request->sold_price;
-                $inventory->down_payment = $request->down_payment;
-                $inventory->status = $request->status;
-                $inventory->save();
+                $farmhouse = new Farmhouse();
+                $farmhouse->name = $request->name;
+                $farmhouse->project_id = $project->id;
+                $farmhouse->unit_no = $unit;
+                $farmhouse->size_id = $request->size_id;
+                $farmhouse->nature = $request->nature;
+                $farmhouse->status = $request->status;
+                $farmhouse->premium_id = $request->premium_id;
+                $farmhouse->payment_plan_id = $request->payment_plan_id;
+                $farmhouse->save();
             }
         }else{
-            $formhouse = new Farmhouse();
-            $formhouse->name = $request->name;
-            $formhouse->unit_no = $request->simple_unit_no;
-            $formhouse->down_payment = $request->down_payment;
-            $formhouse->nature = $request->nature;
-            $formhouse->type = $request->type;
-            $formhouse->size_id = $request->size_id;
-            $formhouse->status = $request->status;
-            $formhouse->save();
+            $farmhouse = new Farmhouse();
+            $farmhouse->name = $request->name;
+            $farmhouse->project_id = $project->id;
+            $farmhouse->unit_no = $request->simple_unit_no;
+            $farmhouse->nature = $request->nature;
+            $farmhouse->size_id = $request->size_id;
+            $farmhouse->status = $request->status;
+            $farmhouse->premium_id = $request->premium_id;
+            $farmhouse->payment_plan_id = $request->payment_plan_id;
+            $farmhouse->save();
         }
-        if ($inventory) {
+        if ($farmhouse) {
             return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Farmhouse has not created, something went wrong. Try again', 'alert' => 'error']);
@@ -124,9 +124,10 @@ class FarmhouseController extends Controller
     public function edit($id)
     {
         $project = Project::findOrFail($id);
-        $project_type = ProjectType::get();
         $sizes = Size::get();
-        return view('user.farmhouse.edit', compact('project', 'project_type','sizes'));
+        $project_type_id = $this->project_type_id;
+        $premiums = Premium::where('project_type_id',$project_type_id)->get();
+        return view('user.farmhouse.edit', compact('project', 'sizes','premiums','project_type_id'));
 
     }
 

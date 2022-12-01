@@ -32,9 +32,9 @@ class PremiumController extends Controller
         $premium->name = $request->name;
         $premium->save();
         if ($premium) {
-            return redirect()->route('premium.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block create successfully', 'alert' => 'success']);
+            return redirect()->route('premium.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Premium Type has created successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Society Block create error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Premium Type has not created, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -67,9 +67,9 @@ class PremiumController extends Controller
         $premium->name = $request->name;
         $premium->save();
         if ($premium){
-            return redirect()->route('premium.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block update successfully', 'alert' => 'success']);
+            return redirect()->route('premium.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Premium Type has updated successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Society Block update error', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Premium Type has not updated, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -79,9 +79,14 @@ class PremiumController extends Controller
         $premium->delete();
 
         if ($premium){
-            return redirect()->route('premium.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Block create successfully', 'alert' => 'success']);
+            return response()->json(['message'=>'Premium Type has deleted successfully','status'=> 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Block create error', 'alert' => 'error']);
+            return response()->json(['message'=>'Premium Type has not deleted, something went wrong. Try again','status'=> 'error']);
         }
+    }
+    public function get_premium($type_id)
+    {
+        $premiums = Premium::where('project_type_id',$type_id)->get();
+        return response()->json($premiums);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Helpers\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\PaymentPlan;
+use App\Models\Premium;
 use App\Models\ProjectType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -71,9 +72,9 @@ class PaymentPlanController extends Controller
         }
         $payment_plan->save();
         if($payment_plan){
-            return redirect()->route('payment_plan.index',RolePrefix())->with(['alert' => 'success', 'message' =>  'Payment Plan Create Successfully']);
+            return redirect()->route('payment_plan.index',RolePrefix())->with(['alert' => 'success', 'message' =>  'Payment Plan has created successfully']);
         } else{
-            return redirect()->back()->with(['alert' => 'error', 'message' =>  'Payment Plan Create Error']);
+            return redirect()->back()->with(['alert' => 'error', 'message' =>  'Payment Plan has not created, something went wrong. Try again']);
         }
     }
 
@@ -96,8 +97,9 @@ class PaymentPlanController extends Controller
      */
     public function edit($id)
     {
-        $payment_plan = BuildingPaymentPlan::where('property_admin_id', Helpers::user_admin())->findOrFail($id);
-        return view('property_manager.payment_plan.edit', compact('payment_plan'));
+        $project_type = ProjectType::get();
+        $payment_plan = PaymentPlan::findOrFail($id);
+        return view('user.payment_plan.edit', compact('payment_plan','project_type'));
     }
 
     /**
@@ -110,14 +112,17 @@ class PaymentPlanController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+            'project_type_id' => 'required',
+            'name' => 'required',
             'total_price' => 'required',
             'booking_price' => 'required',
             'per_month_installment' => 'required',
             'balloting_price' => 'required',
             'possession_price' => 'required',
+            'total_month_installment' => 'required',
         ]);
-        $payment_plan = BuildingPaymentPlan::findOrFail($id);
-        $payment_plan->property_admin_id = Helpers::user_admin();
+        $payment_plan = PaymentPlan::findOrFail($id);
+        $payment_plan->project_type_id = $request->project_type_id;
         $payment_plan->name = $request->name;
         $payment_plan->total_month_installment = $request->total_month_installment;
         $payment_plan->total_price = $request->total_price;
@@ -130,19 +135,15 @@ class PaymentPlanController extends Controller
         $payment_plan->rent_price = $request->rent_price;
         $payment_plan->number_of_payment = $request->number_of_payment;
         $payment_plan->confirmation_amount = $request->confirmation_amount;
-        if(isset($request->premium) && $request->premium == "on"){
-            $payment_plan->premium = 1;
+        if(isset($request->premium_id)){
+            $payment_plan->premium_id = $request->premium_id;
             $payment_plan->commission = $request->commission;
-        }
-        else{
-            $payment_plan->premium = 0;
-            $payment_plan->commission = null;
         }
         $payment_plan->save();
         if($payment_plan){
-            return redirect()->route('property_manager.payment_plan.index')->with(['alert' => 'success', 'message' =>  'Payment Plan Update Successfully']);
+            return redirect()->route('payment_plan.index',RolePrefix())->with(['alert' => 'success', 'message' =>  'Payment Plan updated successfully']);
         } else{
-            return redirect()->back()->with(['alert' => 'error', 'message' =>  'Payment Plan Update Error']);
+            return redirect()->back()->with(['alert' => 'error', 'message' =>  'Payment Plan has not updated, something went wrong. Try again']);
         }
     }
 
@@ -154,12 +155,17 @@ class PaymentPlanController extends Controller
      */
     public function destroy($id)
     {
-        $payment_plan = BuildingPaymentPlan::findOrFail($id);
+        $payment_plan = PaymentPlan::findOrFail($id);
         $payment_plan->delete();
         if($payment_plan){
-            return redirect()->back()->with(['alert' => 'success', 'message' =>  'Payment Plan Delete Successfully']);
-        } else{
-            return redirect()->back()->with(['alert' => 'error', 'message' =>  'Payment Plan Delete Error']);
+            return response()->json(['message'=>'Payment Plan has deleted successfully','status'=> 'success']);
+        } else {
+            return response()->json(['message'=>'Payment Plan has not deleted, something went wrong. Try again','status'=> 'error']);
         }
+    }
+    public function get_payment_plan($premium_id,$project_type_id)
+    {
+        $payment_plan = PaymentPlan::where(['project_type_id'=>$project_type_id,'premium_id'=>$premium_id])->get();
+        return response()->json($payment_plan);
     }
 }

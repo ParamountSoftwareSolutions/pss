@@ -24,7 +24,7 @@
                                         <div class="form-group col-md-4 simple">
                                             <label class="d-flex align-items-center">
                                                 <label>Plot/Unit No <sup style="color: red">*</sup></label>
-                                                <a href="#" style="margin-left: auto; display: block;" class="btn btn-primary bulk-btn" data-value="bulk">Bulk Create</a>
+                                                <a href="#" style="margin-left: auto; display: block;" class="btn btn-primary btn-sm bulk-btn" data-value="bulk">Bulk Create</a>
                                             </label>
                                             <input type="text" class="form-control simple-input" name="simple_unit_no" value="{{ old('unit_no') }}">
                                             @error('unit_no')
@@ -34,7 +34,7 @@
                                         <div class="form-group col-md-4 bulk">
                                             <label class="d-flex align-items-center">
                                                 <label>Plot/Unit No <sup style="color: red">*</sup></label>
-                                                <a href="#" style="margin-left: auto; display: block;" class="btn btn-primary bulk-btn" data-value="simple">Simple Create</a>
+                                                <a href="#" style="margin-left: auto; display: block;" class="btn btn-primary btn-sm bulk-btn" data-value="simple">Simple Create</a>
                                             </label>
                                             <div class="input-group mb-2">
                                                 <input type="text" class="form-control bulk_unit_no" name="bulk_unit_no" class="input-group-text" value="{{ old
@@ -51,7 +51,6 @@
                                                        placeholder="end
                                                  unit">
                                             </div>
-
                                             @error('simple_unit_no')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
@@ -71,21 +70,6 @@
                                                     <option value="commercial">Commercial</option>
                                                     <option value="semi_commercial">Semi Commercial</option>
                                                     <option value="residential">Residential</option>
-                                                </select>
-                                                @error('nature')
-                                                <div class="text-danger mt-2">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <div class="form-group">
-                                                <label>Type</label>
-                                                <select class="form-control" name="type">
-                                                    <option label="" disabled selected>Select Type</option>
-                                                    <option value="corner">Corner</option>
-                                                    <option value="front_facing">Front Facing</option>
-                                                    <option value="main_boulevard">Main Boulevard</option>
-                                                    <option value="park_facing">Park Facing</option>
                                                 </select>
                                                 @error('nature')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
@@ -114,6 +98,45 @@
                                             @error('status')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Type</label>
+                                                <select class="form-control" name="premium_id">
+                                                    <option value="">Select Type</option>
+                                                    @foreach($premiums as $data)
+                                                        <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('nature')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Select Payment Plan</label>
+                                                <select class="form-control" name="payment_plan_id">
+                                                    <option value="">Select Payment Plan</option>
+                                                </select>
+                                                @error('payment_plan_id')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Multi Image Upload -->
+                            <div class="card card-primary">
+                                <div class="card-header ui-sortable-handle">
+                                    <h4>Images <small style="color: red">* (ratio 1:1)</small></h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div>
+                                            <div class="row" id="coba"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -175,6 +198,104 @@
                     $('.bulk').hide();
                 }
             });
+            $('select[name="premium_id"]').change(function () {
+                var premium_id = $(this).val();
+                var project_type_id = {{$project_type_id}};
+                $.ajax({
+                    url: "{{ url(RolePrefix().'/get-payment-plan') }}/" + premium_id + "/" + project_type_id,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        $('select[name="payment_plan_id"]').empty();
+                        if (data.length === 0) {
+                            $('select[name="payment_plan_id"]').append('<option value="">N/A</option>');
+                        } else {
+                            $('select[name="payment_plan_id"]').append('<option value="">Please  Select</option>');
+                            $.each(data, function (key, value) {
+                                let oldFloorDetailId = '{{ old('floor_detail_id') }}';
+                                let selected = value.id == oldFloorDetailId ? "selected" : "";
+                                $('select[name="payment_plan_id"]').append('<option ' + selected + ' value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                    },
+                });
+                return;
+            })
         });
     </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#main").spartanMultiImagePicker({
+                fieldName: 'main_images[]',
+                maxCount: 1,
+                rowHeight: '215px',
+                groupClassName: 'col-3',
+                maxFileSize: '',
+                placeholderImage: {
+                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    width: '100%'
+                },
+                dropFileLabel: "Drop Here",
+                onAddRow: function (index, file) {
+
+                },
+                onRenderedPreview: function (index) {
+
+                },
+                onRemoveRow: function (index) {
+
+                },
+                onExtensionErr: function (index, file) {
+                    toastr.error('Please only input png or jpg type file', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                },
+                onSizeErr: function (index, file) {
+                    toastr.error('File size too big', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#coba").spartanMultiImagePicker({
+                fieldName: 'images[]',
+                maxCount: 4,
+                rowHeight: '215px',
+                groupClassName: 'col-3',
+                maxFileSize: '',
+                placeholderImage: {
+                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    width: '100%'
+                },
+                dropFileLabel: "Drop Here",
+                onAddRow: function (index, file) {
+
+                },
+                onRenderedPreview: function (index) {
+
+                },
+                onRemoveRow: function (index) {
+
+                },
+                onExtensionErr: function (index, file) {
+                    toastr.error('Please only input png or jpg type file', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                },
+                onSizeErr: function (index, file) {
+                    toastr.error('File size too big', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                }
+            });
+        });
+    </script>
+
 @endsection

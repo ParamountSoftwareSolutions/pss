@@ -97,6 +97,11 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('intwoDay/', 'LeadController@intwoDay')->name('lead.intwoDay');
     Route::get('overdueDay/', 'LeadController@overdueDay')->name('lead.overdueDay');
     Route::get('aftertwoDay/', 'LeadController@aftertwoDay')->name('lead.aftertwoDay');
+
+    //Get Premium By Type
+    Route::get('get-premium/{type_id}', [PremiumController::class, 'get_premium']);
+    Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
+
     //             //End New Routes
     // //=============//
     // /* Acccounts */
