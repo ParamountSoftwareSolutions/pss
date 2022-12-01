@@ -68,6 +68,23 @@
                     </div>
                 </li>
                 <li>
+                    <a href="#building" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Building Management </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="building">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('building.create', ['RolePrefix' => RolePrefix()])}}">Add Building</a>
+                            </li>
+                            <li>
+                                <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">All Building</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
                     <a href="#property" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
                         <span> Property </span>
