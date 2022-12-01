@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class BuildingInventory extends Model
 {
     use HasFactory;
+
 }

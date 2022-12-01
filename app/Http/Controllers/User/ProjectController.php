@@ -4,8 +4,10 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\RolePrefix;
+use App\Models\Building;
 use App\Models\Project;
 use App\Models\ProjectType;
+use App\Models\Society;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -48,6 +50,15 @@ class ProjectController extends Controller
         $project->name = $request->name;
         $project->type_id = $request->type_id;
         $project->save();
+        $type = ProjectType::findOrFail($request->type_id)->name;
+
+        if ($type == 'society'){
+            Society::created(['project_id' => $project->id]);
+        } elseif($type == 'building'){
+            Building::created(['project_id' => $project->id]);
+        } elseif($type == 'farm_house'){
+            Society::created(['project_id' => $project->id]);
+        }
         if ($project){
             return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has created successfully', 'alert' => 'success']);
         } else {

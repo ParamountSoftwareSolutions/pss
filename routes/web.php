@@ -1,6 +1,8 @@
 <?php
 
 
+use App\Http\Controllers\User\BuildingController;
+use App\Http\Controllers\User\BuildingInventoryController;
 use App\Http\Controllers\User\PremiumController;
 use App\Http\Controllers\User\BlockController;
 use App\Http\Controllers\User\CategoryController;
@@ -58,9 +60,9 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePrefix']], function () {
     Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
-    // //=============//
-    // /* Project Management */
-    // //=============//
+    //=========================//
+    //  Project Management    //
+    //=========================//
     Route::resource('block', BlockController::class);
     Route::resource('premium', PremiumController::class);
     Route::resource('unit', UnitController::class);
@@ -72,33 +74,49 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('farmhouse', FarmhouseController::class);
     Route::resource('payment_plan', PaymentPlanController::class);
 
-    // //=============//
-    // /* Leads */
-    // //=============//
+    //=========================//
+    //  Building Management    //
+    //=========================//
+    Route::resource('building', BuildingController::class);
+    Route::resource('building.building_inventory', BuildingInventoryController::class);
+    /*Route::post('building/banner/remove', 'BuildingController@remove_image_banner');
+    Route::get('building-detail-form', 'BuildingController@detail_form')->name('building.detail_form');
+    Route::get('building_detail/{id}', 'FloorController@index')->name('building_detail.index');
+    Route::get('building/{building_id}/floor/{floor_id}/index', 'FloorDetailController@index')->name('building.inventory.index');
+    Route::get('building/{building_id}/floor/{floor_id}/create', 'FloorDetailController@create')->name('building.inventory.create');
+    Route::post('building/{building_id}/floor/{floor_id}/store', 'FloorDetailController@store')->name('building.inventory.store');
+    Route::get('building/{building_id}/floor/{floor_id}/edit/{id}', 'FloorDetailController@edit')->name('building.inventory.edit');
+    Route::post('building/{building_id}/floor/{floor_id}/update/{id}', 'FloorDetailController@update')->name('building.inventory.update');
+    Route::post('building/{building_id}/floor/{floor_id}/delete/{id}', 'FloorDetailController@destroy')->name('building.inventory.destroy');
+    Route::post('building/{building_id}/floor/{floor_id}/index/filter', 'FloorDetailController@filter')->name('building.inventory.filter');*/
+
+    //=========================//
+    //  Leads Management    //
+    //=========================//
 
     Route::resource('leads', LeadController::class);
     Route::get('lead/change_priority/{priority}/{id}', [LeadController::class, 'changepriority'])->name('lead.change_priority');
     Route::post('lead/change_status', [LeadController::class, 'changestatus'])->name('lead.change_status');
 
     //             //New Routes Added
-    Route::get('lead/building_info/{building_id}', 'LeadController@buildinginfo')->name('lead.building_info');
-    Route::post('lead/filter', 'LeadController@filter')->name('lead.filter');
-    Route::post('lead/search', 'LeadController@search')->name('lead.search');
-    Route::post('lead/searchbydate', 'LeadController@searchbydate')->name('lead.searchByDate');
-    // Route::post('lead/change_status', 'LeadController@changestatus')->name('lead.change_status');
+    Route::get('lead/building_info/{building_id}', [LeadController::class, 'buildinginfo'])->name('lead.building_info');
+    Route::post('lead/filter', [LeadController::class, 'filter'])->name('lead.filter');
+    Route::post('lead/search', [LeadController::class, 'search'])->name('lead.search');
+    Route::post('lead/searchbydate', [LeadController::class, 'searchbydate'])->name('lead.searchByDate');
+    // Route::post('lead/change_status', [LeadController::class, 'changestatus'])->name('lead.change_status');
 
-    Route::get('lead/comments/{id}', 'LeadController@comments')->name('lead.comments');
-    Route::any('lead-assign', 'LeadController@lead_assign')->name('lead.assign');
-    Route::get('is-read/', 'LeadController@isread')->name('lead.isread');
-    Route::get('meeting-read/', 'LeadController@meetingread')->name('lead.meetingread');
-    Route::get('follow-up/', 'LeadController@followup')->name('lead.followup');
+    Route::get('lead/comments/{id}', [LeadController::class, 'comments'])->name('lead.comments');
+    Route::any('lead-assign', [LeadController::class, 'lead_assign'])->name('lead.assign');
+    Route::get('is-read/', [LeadController::class, 'isread'])->name('lead.isread');
+    Route::get('meeting-read/', [LeadController::class, 'meetingread'])->name('lead.meetingread');
+    Route::get('follow-up/', [LeadController::class, 'followup'])->name('lead.followup');
 
     Route::get('insingleDay/', 'LeadController@insingleDay')->name('lead.insingleDay');
     Route::get('intwoDay/', 'LeadController@intwoDay')->name('lead.intwoDay');
     Route::get('overdueDay/', 'LeadController@overdueDay')->name('lead.overdueDay');
     Route::get('aftertwoDay/', 'LeadController@aftertwoDay')->name('lead.aftertwoDay');
 
-    //Get Premium By Type
+    //Get Premium By Type // Payment Plan By Premium
     Route::get('get-premium/{type_id}', [PremiumController::class, 'get_premium']);
     Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
 
