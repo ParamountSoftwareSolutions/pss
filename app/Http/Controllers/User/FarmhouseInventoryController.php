@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\RolePrefix;
+use App\Models\FarmhouseFile;
 use App\Models\Premium;
 use App\Models\Farmhouse;
 use App\Models\Project;
@@ -11,7 +12,7 @@ use App\Models\ProjectType;
 use App\Models\Size;
 use Illuminate\Http\Request;
 
-class FarmhouseController extends Controller
+class FarmhouseInventoryController extends Controller
 {
     private $project_type_id;
 
@@ -26,11 +27,10 @@ class FarmhouseController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function index()
+    public function index($id)
     {
-        $project_id = get_all_projects()->pluck('project_id')->toArray();
-        $projects = Project::whereIn('id',$project_id)->where('type_id',$this->project_type_id)->get();
-        return view('user.farmhouse.show', compact('projects'));
+        $farmhouses = Farmhouse::where('project_id',$id)->get();
+        return view('user.farmhouse.index', compact('farmhouses','id'));
     }
 
     /**
@@ -38,13 +38,13 @@ class FarmhouseController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create($id)
     {
-//        dd($id);
+        $project = Project::findOrFail($id);
         $sizes = Size::get();
         $project_type_id = $this->project_type_id;
         $premiums = Premium::where('project_type_id',$project_type_id)->get();
-        return view('user.farmhouse.create', compact('sizes','premiums','project_type_id'));
+        return view('user.farmhouse.create', compact('project','sizes','premiums','project_type_id'));
     }
 
     /**
@@ -53,15 +53,8 @@ class FarmhouseController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request,$id)
     {
-        $request->validate([
-            'name' => 'required',
-        ]);
-        $project = new Project();
-        $project->name = $request->name;
-        $project->type_id = $this->project_type_id;
-        $project->save();
         if ($request->simple_unit_no == null){
             $request->validate([
                 'bulk_unit_no' => 'required',
@@ -77,27 +70,32 @@ class FarmhouseController extends Controller
             for ($i = 0; $length >= $i; $i++){
                 $unit = $request->bulk_unit_no . $request->start_unit_no++;
                 $farmhouse = new Farmhouse();
-                $farmhouse->name = $request->name;
-                $farmhouse->project_id = $project->id;
+                $farmhouse->project_id = $id;
                 $farmhouse->unit_no = $unit;
                 $farmhouse->size_id = $request->size_id;
-                $farmhouse->nature = $request->nature;
-                $farmhouse->status = $request->status;
                 $farmhouse->premium_id = $request->premium_id;
                 $farmhouse->payment_plan_id = $request->payment_plan_id;
                 $farmhouse->save();
             }
         }else{
             $farmhouse = new Farmhouse();
-            $farmhouse->name = $request->name;
-            $farmhouse->project_id = $project->id;
+            $farmhouse->project_id = $id;
             $farmhouse->unit_no = $request->simple_unit_no;
-            $farmhouse->nature = $request->nature;
             $farmhouse->size_id = $request->size_id;
-            $farmhouse->status = $request->status;
             $farmhouse->premium_id = $request->premium_id;
             $farmhouse->payment_plan_id = $request->payment_plan_id;
             $farmhouse->save();
+        }
+        if ($request->has('images')) {
+            foreach ($request->file('images') as $file) {
+                $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                $file->move('images/farmhouse/', $filename);
+                $file = 'images/farmhouse/' . $filename;
+                FarmhouseFile::create([
+                    'farmhouse_id' => $farmhouse->id,
+                    'file' => $file,
+                ]);
+            }
         }
         if ($farmhouse) {
             return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
@@ -123,10 +121,10 @@ class FarmhouseController extends Controller
      * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function edit($id)
+    public function edit($project_id,$farmhouse_id)
     {
-        $project = Project::findOrFail($id);
-        $farmhouse = Farmhouse::where('project_id',$id)->first();
+        $project = Project::findOrFail($project_id);
+        $farmhouse = Farmhouse::with('files')->where('project_id',$project_id)->findOrFail($farmhouse_id);
         $sizes = Size::get();
         $project_type_id = $this->project_type_id;
         $premiums = Premium::where('project_type_id',$project_type_id)->get();

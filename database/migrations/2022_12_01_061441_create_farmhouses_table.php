@@ -15,13 +15,11 @@ return new class extends Migration
     {
         Schema::create('farmhouses', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
             $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
             $table->string('unit_no')->nullable();
             $table->foreignId('size_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
-            $table->enum('nature', ['commercial', 'semi_commercial', 'residential']);
-            $table->enum('status', ['available', 'hold', 'sold','token','canceled']);
+            $table->enum('status', ['available', 'hold', 'sold','token','canceled'])->default('available');
             $table->foreignId('payment_plan_id')->unsigned()->nullable()->constrained('payment_plans')->nullOnDelete();
             $table->timestamps();
         });

@@ -6,84 +6,46 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
-                        <form method="post" action="{{ route('farmhouse.update', ['RolePrefix' => RolePrefix(), 'farmhouse' => $project->id]) }}"
+                        <form method="post" action="{{ route('farmhouse.update', ['RolePrefix' => RolePrefix(), 'farmhouse' => $farmhouse->id]) }}"
                               enctype="multipart/form-data">
                             <div class="card">
                                 @csrf
-                                @method('put')
                                 <div class="card-header">
-                                    <h4>Edit Farmhouse</h4>
+                                    <h4>Farmhouse Detail</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label>Farmhouse Name</label>
-                                            <input type="text" class="form-control" name="name" value="{{ old('name', $project->name) }}">
+                                            <input type="text" class="form-control" name="name" readonly style="cursor: not-allowed" value="{{ $project->name }}">
                                             @error('name')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4 simple">
-                                            <label class="d-flex align-items-center">
-                                                <label>Plot/Unit No <sup style="color: red">*</sup></label>
-                                                <a href="#" style="margin-left: auto; display: block;" class="btn btn-primary btn-sm bulk-btn" data-value="bulk">Bulk Create</a>
-                                            </label>
-                                            <input type="text" class="form-control simple-input" name="simple_unit_no" value="{{ old('unit_no') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                @csrf
+                                <div class="card-header">
+                                    <h4>Inventory Detail</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Plot/Unit No <sup style="color: red">*</sup></label>
+                                            <input type="text" class="form-control" name="unit_no" required
+                                                   value="{{ old('unit_no', $farmhouse->unit_no) }}">
                                             @error('unit_no')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4 bulk">
-                                            <label class="d-flex align-items-center">
-                                                <label>Plot/Unit No <sup style="color: red">*</sup></label>
-                                                <a href="#" style="margin-left: auto; display: block;" class="btn btn-primary btn-sm bulk-btn" data-value="simple">Simple Create</a>
-                                            </label>
-                                            <div class="input-group mb-2">
-                                                <input type="text" class="form-control bulk_unit_no" name="bulk_unit_no" class="input-group-text" value="{{ old
-                                                ('unit_no') }}" placeholder="unit name">
-                                                <div class="input-group-prepend preselection-prepend">
-                                                    <div class="input-group-text">-</div>
-                                                </div>
-                                                <input type="number" class="form-control start_unit_no" name="start_unit_no" value="{{ old('start_unit_no') }}"
-                                                       placeholder="start unit">
-                                                <div class="input-group-prepend preselection-prepend">
-                                                    <div class="input-group-text">-</div>
-                                                </div>
-                                                <input type="number" class="form-control end_unit_no" name="end_unit_no" value="{{ old('end_unit_no') }}"
-                                                       placeholder="end
-                                                 unit">
-                                            </div>
-                                            @error('simple_unit_no')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label>Down Payment </label>
-                                            <input type="text" class="form-control" name="down_payment" value="{{ old('down_payment') }}">
-                                            @error('down_payment')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <div class="form-group">
-                                                <label>Nature <sup style="color: red">*</sup></label>
-                                                <select class="form-control" name="nature" required>
-                                                    <option label="" disabled selected>Select Nature</option>
-                                                    <option value="commercial">Commercial</option>
-                                                    <option value="semi_commercial">Semi Commercial</option>
-                                                    <option value="residential">Residential</option>
-                                                </select>
-                                                @error('nature')
-                                                <div class="text-danger mt-2">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
                                         <div class="form-group col-md-4">
                                             <label>Size</label>
                                             <select class="form-control" name="size_id">
-                                                <option label="" disabled selected>Select Size</option>
+                                                <option value="">Select Size</option>
                                                 @foreach($sizes as $data)
-                                                    <option value="{{ $data->id }}">{{ $data->name }} Marla</option>
+                                                    <option value="{{ $data->id }}" {{$farmhouse->size_id == $data->id ? 'selected' : ''}}>{{ $data->name }} Marla</option>
                                                 @endforeach
                                             </select>
                                             @error('size_id')
@@ -91,11 +53,11 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>Staus</label>
+                                            <label>Status</label>
                                             <select class="form-control" name="status">
-                                                <option value="available">Available</option>
-                                                <option value="sold">Sold</option>
-                                                <option value="hold">Hold</option>
+                                                <option value="available" {{$farmhouse->status == 'available' ? 'selected' : ''}}>Available</option>
+                                                <option value="sold" {{$farmhouse->status == 'sold' ? 'selected' : ''}}>Sold</option>
+                                                <option value="hold" {{$farmhouse->status == 'hold' ? 'selected' : ''}}>Hold</option>
                                             </select>
                                             @error('status')
                                             <div class="text-danger mt-2">{{ $message }}</div>
@@ -103,11 +65,11 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <div class="form-group">
-                                                <label>Type</label>
+                                                <label>Premium Type</label>
                                                 <select class="form-control" name="premium_id">
                                                     <option value="">Select Type</option>
                                                     @foreach($premiums as $data)
-                                                        <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
+                                                        <option value="{{ $data->id }}" {{$farmhouse->premium_id == $data->id ? 'selected' : ''}}>{{ ucwords($data->name) }}</option>
                                                     @endforeach
                                                 </select>
                                                 @error('nature')
@@ -128,6 +90,33 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Multi Image Upload -->
+                            <div class="card card-primary">
+                                <div class="card-header ui-sortable-handle">
+                                    <h4>Images <small style="color: red">* (ratio 1:1)</small></h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div>
+                                            <div class="row" id="coba">
+                                                @if($farmhouse->files !== null)
+                                                    @foreach($farmhouse->files as $img)
+                                                        <div class="col-3">
+                                                            <img style="height: 200px;width: 100%" class="banner-image"
+                                                                 src="{{asset($img->file)}}">
+                                                            <a href=""
+                                                               style="margin-top: -35px;border-radius: 0"
+                                                               class="btn btn-danger btn-block btn-sm remove-image-floor-detail"
+                                                               data-id="{{ $img->id }}">Remove</a>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="card-footer text-right">
                                     <button class="btn btn-primary" type="submit">Submit</button>
                                 </div>
@@ -142,6 +131,9 @@
 @section('script')
     <script>
         $(document).ready(function () {
+            var premium_id = $('select[name="premium_id"]').val();
+            var project_type_id = {{$project_type_id}};
+            getPaymentPlan(premium_id,project_type_id);
             $('.bulk').hide();
             $('.simple-input').attr('required', true);
 
@@ -205,8 +197,8 @@
                     } else {
                         $('select[name="payment_plan_id"]').append('<option value="">Please  Select</option>');
                         $.each(data, function (key, value) {
-                            let oldFloorDetailId = '{{ old('floor_detail_id') }}';
-                            let selected = value.id == oldFloorDetailId ? "selected" : "";
+                            let oldlId = '{{ $farmhouse->payment_plan_id }}';
+                            let selected = value.id == oldlId ? "selected" : "";
                             $('select[name="payment_plan_id"]').append('<option ' + selected + ' value="' + value.id + '">' + value.name + '</option>');
                         });
                     }

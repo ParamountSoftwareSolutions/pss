@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Farmhouse extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+
+    public function files()
+    {
+        return $this->hasMany(FarmhouseFile::class, 'farmhouse_id');
+    }
 }

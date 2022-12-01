@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('farmhouse_id')->unsigned()->nullable()->constrained('farmhouses')->nullOnDelete();
             $table->text('file');
-            $table->string('type');
+            $table->string('type')->default('image');
             $table->timestamps();
         });
     }

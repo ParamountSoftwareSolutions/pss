@@ -12,7 +12,7 @@ use App\Http\Controllers\User\UnitController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\User\WebHookController;
+use App\Http\Controllers\User\FarmhouseInventoryController;
 use App\Http\Controllers\User\LeadController;
 use App\Http\Controllers\User\TypeController;
 use App\Http\Controllers\User\FarmhouseController;
@@ -72,6 +72,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('project', ProjectController::class);
     Route::resource('property', PropertyController::class);
     Route::resource('farmhouse', FarmhouseController::class);
+    Route::resource('farmhouse.inventory', FarmhouseInventoryController::class);
     Route::resource('payment_plan', PaymentPlanController::class);
 
     //=========================//
