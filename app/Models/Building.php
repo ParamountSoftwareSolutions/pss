@@ -8,4 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Building extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
+
+    /*public function building_inventory()
+    {
+        return $this->belongsTo(BuildingInventory::class, 'building_id')->with('building_inventory_file');
+    }*/
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function building_file()
+    {
+        return $this->belongsTo(BuildingFile::class, 'building_id');
+    }
 }
