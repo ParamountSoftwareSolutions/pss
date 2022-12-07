@@ -15,16 +15,19 @@ class CreateLeadsTable extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
+            $table->integer('project_id')->nullable();
             $table->foreignId('user_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->string('name');
             $table->string('father_name')->nullable();
             $table->string('cnic')->nullable();
             $table->string('email')->nullable();
+            $table->string('password')->nullable();
             $table->string('number');
             $table->string('alt_number')->nullable();
-            $table->string('budget')->nullable();
+            $table->string('budget_from')->nullable();
+            $table->string('budget_to')->nullable();
+            $table->string('purpose')->nullable();
             $table->string('source')->nullable();
             $table->string('location')->nullable();
             $table->string('address')->nullable();
@@ -32,7 +35,7 @@ class CreateLeadsTable extends Migration
             $table->foreignId('country_id')->unsigned()->nullable()->constrained('countries')->nullOnDelete();
             $table->foreignId('state_id')->unsigned()->nullable()->constrained('states')->nullOnDelete();
             $table->foreignId('city_id')->unsigned()->nullable()->constrained('cities')->nullOnDelete();
-            $table->enum('priority', ['very_hot', 'hot', 'moderate','cold'])->nullable();
+            $table->enum('priority', ['very_hot', 'hot', 'moderate', 'cold'])->nullable();
             $table->string('status');
             $table->timestamps();
         });

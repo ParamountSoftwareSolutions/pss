@@ -5,8 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClientHistory extends Model
+class ClientController extends Model
 {
     use HasFactory;
-    protected $guarded = [];
 }
