@@ -82,6 +82,20 @@
                     </div>
                 </li>
                 <li>
+                    <a href="#building" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Society Management </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="building">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
                     <a href="#property" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
                         <span> Property </span>
