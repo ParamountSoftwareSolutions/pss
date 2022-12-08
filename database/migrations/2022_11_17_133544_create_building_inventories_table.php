@@ -16,6 +16,7 @@ class CreateBuildingInventoriesTable extends Migration
         Schema::create('building_inventories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('building_id')->unsigned()->nullable()->constrained('buildings')->nullOnDelete();
+            $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
             $table->foreignId('building_floor_id')->unsigned()->nullable()->constrained('building_floors')->nullOnDelete();
             $table->foreignId('payment_plan_id')->unsigned()->nullable()->constrained('payment_plans')->nullOnDelete();
             $table->string('unit_id');
@@ -23,7 +24,8 @@ class CreateBuildingInventoriesTable extends Migration
             $table->foreignId('bed_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('bath_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
-            $table->foreignId('type_id')->unsigned()->nullable()->constrained('categories')->nullOnDelete();
+            $table->foreignId('type_id')->unsigned()->nullable()->constrained('types')->nullOnDelete();
+            $table->foreignId('category_id')->unsigned()->nullable()->constrained('categories')->nullOnDelete();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->string('status');
             $table->timestamps();

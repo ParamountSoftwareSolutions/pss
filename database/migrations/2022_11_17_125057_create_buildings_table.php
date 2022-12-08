@@ -19,6 +19,7 @@ class CreateBuildingsTable extends Migration
             $table->text('floor_list')->nullable();/*Json Encode Building Floor Table Data*/
             $table->text('type')->nullable();/*Json Encode Type Table Data*/
             $table->text('apartment_size')->nullable();/*Json Encode Size Table Data*/
+            $table->string('address')->nullable();
             $table->string('total_area')->nullable();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

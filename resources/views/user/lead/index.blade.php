@@ -27,8 +27,8 @@
                 <h4 class="header-title">Leads Filters</h4>
                 <div class="row d-flex mb-3 pt-3">
                     <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}" class="btn btn-success">All Leads</a>
-                    <a href="javascript:void(0)" class="btn btn-success arrange ml-1" type="button">Meetings ()</a>
-                    <a href="javascript:void(0)" class="btn btn-success pushed ml-1" type="button">Meetings Pushed ()</a>
+                    <a href="javascript:void(0)" class="btn btn-success arrange ml-1" type="button">Meetings ({{$arrange}})</a>
+                    <a href="javascript:void(0)" class="btn btn-success pushed ml-1" type="button">Meetings Pushed ({{$pushed}})</a>
                     <form id="countryForm" class="form-inline float-right" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
                         <!-- <input type="hidden" name="country_filter"> -->
                         <div class="form-group mr-2">
@@ -91,6 +91,21 @@
                 <div class="row justify-content-end pb-3 pr-0">
                     <div class="mr-auto d-flex">
                         <div class="dropdown">
+                            <button href="javascript:void(0)" data-toggle="dropdown" class="btn dropdown-toggle" aria-expanded="false">Refer Lead</button>
+                            <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                @if(!empty($sale_persons))
+                                @foreach($sale_persons as $sale_val)
+                                <a class="dropdown-item has-icon lead_refer" data-id="{{$sale_val['id']}}">{{$sale_val['name']}}</a>
+                                @endforeach
+                                @endif
+                            </div>
+                        </div>
+                        <form action="{{route('leads.refer_lead', ['RolePrefix' => RolePrefix()])}}" class="assign_form1" method="POST">
+                            @csrf
+                            <input type="hidden" name="sale_id">
+                            <input type="hidden" name="sale_person_id">
+                        </form>
+                        <div class="dropdown">
                             <button href="javascript:void(0)" data-toggle="dropdown" class="btn dropdown-toggle" aria-expanded="false">Assign Lead</button>
                             <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
                                 @if(!empty($sale_persons))
@@ -125,7 +140,7 @@
                                 <a class="dropdown-item has-icon statusFilter" data-value="follow_up">Follow Up</a>
                                 <a class="dropdown-item has-icon statusFilter" data-value="arrange_meeting">Arrange Meeting</a>
                                 <a class="dropdown-item has-icon statusFilter" data-value="meet_client">Meet Client</a>
-                                <a class="dropdown-item has-icon statusFilter" data-value="mature">Mature</a>
+                                <a class="dropdown-item has-icon statusFilter" data-value="Mature">Mature</a>
                                 <a class="dropdown-item has-icon statusFilter" data-value="lost">Lost</a>
                                 <a class="dropdown-item has-icon statusFilter" data-value="unassigned">UnAssigned</a>
                             </div>
@@ -149,23 +164,15 @@
                         <div class="dropdown">
                             <form method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
                                 <input type="hidden" name="facebook" value="fb_lead">
-                                <button type="submit" class="btn fb_lead">Facebook Leads ()</button>
+                                <button type="submit" class="btn fb_lead">Facebook Leads ({{$facebook_count}})</button>
                             </form>
                         </div>
                         <form method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
                             <input type="hidden" name="today_followup" value="today_followup">
                             <button type="submit" class="btn fb_lead">Today Followup</button>
                         </form>
-                        <form method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
-                            <input type="hidden" name="facebook" value="facebook">
-                            <button type="submit" class="btn btn-success">Facebook</button>
-                        </form>
                     </div>
-
                 </div>
-
-
-
                 <!-- <form action="filtter" class="filter_form" method="POST"> -->
                 <!-- @csrf
                     <input type="hidden" name="sales_person">
@@ -179,18 +186,15 @@
                 <form action="" class="arrange_form" method="POST">
                     @csrf
                 </form> -->
-
             </div>
         </div>
     </div>
 </div>
-
-
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="header-title">Leads Table</h4>
+                <h4 class="header-title">Leads Table ({{$lead_count}})</h4>
                 <div class="row">
                     <div class="col-md-6">
                         <!-- <select class="form-control-sm" aria-label="Default select example">
@@ -211,12 +215,13 @@
                 <table id="basic-datatable111" class="table dt-responsive nowrap w-100">
                     <thead>
                         <tr>
-                            <th class="text-center">
+                            <!-- <th class="text-center">
                                 <div class="custom-checkbox custom-checkbox-table custom-control">
                                     <input type="checkbox" data-checkboxes="mygroup" data-checkbox-role="dad" class="custom-control-input" id="checkbox-all" name="sale[]">
                                     <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
                                 </div>
-                            </th>
+                            </th> -->
+                            <th></th>
                             <th class="text-center">#</th>
                             <th>Client Name</th>
                             <th>Client Email</th>
@@ -481,6 +486,22 @@
 
         function assign_form_submit() {
             $('.assign_form').submit();
+        }
+        $('.lead_refer').click(function() {
+            var sale_person_id = $(this).attr('data-id');
+            var data = $('input[name="sale[]"]:checked');
+            var sale_id = [];
+            data.each(function(index, value) {
+                sale_id.push($(value).val());
+            });
+            console.log(sale_id)
+            $('input[name="sale_id"]').val(sale_id);
+            $('input[name="sale_person_id"]').val(sale_person_id);
+            refer_form_submit();
+        });
+
+        function refer_form_submit() {
+            $('.assign_form1').submit();
         }
 
         function meetingSubmit() {

@@ -16,6 +16,30 @@ class CategorySeeder extends Seeder
     {
         Category::insert([
             [
+                'project_type_id' => 1,
+                'name' => 'Shop',
+            ],
+            [
+                'project_type_id' => 1,
+                'name' => 'Apartment',
+            ],
+            [
+                'project_type_id' => 1,
+                'name' => 'Office',
+            ],
+            [
+                'project_type_id' => 1,
+                'name' => 'Flats',
+            ],
+            [
+                'project_type_id' => 1,
+                'name' => 'Studio',
+            ],
+            [
+                'project_type_id' => 1,
+                'name' => 'Pent House',
+            ],
+            [
                 'project_type_id' => 2,
                 'name' => 'Plot',
             ],

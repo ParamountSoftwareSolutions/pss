@@ -15,7 +15,6 @@ class CreateClientsTable extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
             $table->integer('project_type_id')->nullable();
             $table->integer('inventory_id')->nullable();
             $table->foreignId('customer_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();

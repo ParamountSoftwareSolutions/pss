@@ -326,7 +326,7 @@
                 var down_payment_select = $(this).val();
                 downPaymentSelect(down_payment_select);
             })
-            
+
             $('#payment_plan').click(function (e) {
                 e.preventDefault();
                 var premium_id = $('select[name="premium_id"] option:selected').val();

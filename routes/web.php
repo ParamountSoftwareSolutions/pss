@@ -1,17 +1,20 @@
 <?php
 
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\User\ClientController;
+use App\Http\Controllers\User\WebHookController;
 
 use App\Http\Controllers\User\BuildingController;
 use App\Http\Controllers\User\BuildingInventoryController;
+use App\Http\Controllers\User\FloorController;
 use App\Http\Controllers\User\PremiumController;
 use App\Http\Controllers\User\BlockController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProjectController;
 use App\Http\Controllers\User\SizeController;
 use App\Http\Controllers\User\UnitController;
-use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\FarmhouseInventoryController;
 use App\Http\Controllers\User\LeadController;
 use App\Http\Controllers\User\TypeController;
@@ -24,7 +27,6 @@ use App\Http\Controllers\User\SocietyInventoryController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
-
 Route::get('/fake_leads', function () {
     $faker = Faker\Factory::create();
     $limit = 10000;
@@ -36,7 +38,6 @@ Route::get('/fake_leads', function () {
             'user_id ' => 10,
             'type' => 'lead'
         ];
-
         lead::create($data);
     }
 });
@@ -51,8 +52,8 @@ Route::get('/fake_leads', function () {
 |
 */
 
-Route::get('/', [LoginController::class, 'index'])->name('/');
-Route::get('login', [LoginController::class, 'index'])->name('/');
+Route::get('/', [LoginController::class, 'index']);
+Route::get('/login', [LoginController::class, 'index'])->name('/');
 Route::post('login', [LoginController::class, 'store'])->name('login');
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -83,8 +84,10 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //=========================//
     //  Building Management    //
     //=========================//
+    Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
     Route::resource('building', BuildingController::class);
-    Route::resource('building.building_inventory', BuildingInventoryController::class);
+    Route::resource('floor', FloorController::class);
+    Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
     /*Route::post('building/banner/remove', 'BuildingController@remove_image_banner');
     Route::get('building-detail-form', 'BuildingController@detail_form')->name('building.detail_form');
     Route::get('building_detail/{id}', 'FloorController@index')->name('building_detail.index');
@@ -101,30 +104,47 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //=========================//
 
     Route::resource('leads', LeadController::class);
+    Route::get('lead/Matured', [LeadController::class, 'matured'])->name('leads.mature');
+    Route::get('lead/closed', [LeadController::class, 'closed'])->name('leads.closed');
+    Route::get('lead/facebook', [LeadController::class, 'facebook'])->name('leads.facebook');
+    Route::get('lead/getInventory', [LeadController::class, 'facebook'])->name('lead.getInventory');
+    Route::get('lead/refer', [LeadController::class, 'refer'])->name('lead.refer');
+    Route::post('lead/refer_lead', [LeadController::class, 'refer_lead'])->name('leads.refer_lead');
+    Route::get('lead/accept/{id}', [LeadController::class, 'refer_lead_accept'])->name('lead.accept');
+    Route::get('lead/reject/{id}', [LeadController::class, 'refer_lead_reject'])->name('lead.reject');
+
     Route::get('lead/change_priority/{priority}/{id}', [LeadController::class, 'changepriority'])->name('lead.change_priority');
     Route::post('lead/change_status', [LeadController::class, 'changestatus'])->name('lead.change_status');
+    Route::get('lead/comments/{id}', [LeadController::class, 'comments'])->name('leads.comments');
+    Route::post('lead-assign', [LeadController::class, 'lead_assign'])->name('leads.assign');
+    Route::get('lead/employee', [LeadController::class, 'employees'])->name('lead.employee');
+    Route::post('lead/employee/report', [LeadController::class, 'employees_report'])->name('lead.employee_report');
 
-    //             //New Routes Added
-    Route::get('lead/building_info/{building_id}', [LeadController::class, 'buildinginfo'])->name('lead.building_info');
-    Route::post('lead/filter', [LeadController::class, 'filter'])->name('lead.filter');
-    Route::post('lead/search', [LeadController::class, 'search'])->name('lead.search');
-    Route::post('lead/searchbydate', [LeadController::class, 'searchbydate'])->name('lead.searchByDate');
-    // Route::post('lead/change_status', [LeadController::class, 'changestatus'])->name('lead.change_status');
+    Route::get('state/{country_id}',  [UserController::class, 'state'])->name('state');
+    Route::get('city/{state_id}',  [UserController::class, 'city'])->name('city');
+    //Facebook leads
+    Route::get('/webhook', [WebHookController::class, 'index'])->name('webhook.index');
+    Route::get('/webhook/show', [WebHookController::class, 'show'])->name('webhook.show');
+    Route::get('/webhook/leads_form/{page_id}/{token}', [WebHookController::class, 'leads_form'])->name('webhook.leads_form');
+    Route::get('/webhook/leads/{page_id}/{token}', [WebHookController::class, 'leads'])->name('webhook.leads');
+    Route::get('/webhook/lead_assign_to_mangers/{page_id}/{token}', [WebHookController::class, 'lead_assign_to_mangers'])->name('webhook.lead_assign_to_mangers');
+    Route::get('/webhook/lead_assign_to_sale_person/{page_id}/{token}', [WebHookController::class, 'lead_assign_to_sale_person'])->name('webhook.lead_assign_to_sale_person');
 
-    Route::get('lead/comments/{id}', [LeadController::class, 'comments'])->name('lead.comments');
-    Route::any('lead-assign', [LeadController::class, 'lead_assign'])->name('lead.assign');
-    Route::get('is-read/', [LeadController::class, 'isread'])->name('lead.isread');
-    Route::get('meeting-read/', [LeadController::class, 'meetingread'])->name('lead.meetingread');
-    Route::get('follow-up/', [LeadController::class, 'followup'])->name('lead.followup');
+    // //=============//
+    // /* Leads */
+    // //=============//
+    // //=============//
+    // /* Clients */
+    // //=============//
 
-    Route::get('insingleDay/', 'LeadController@insingleDay')->name('lead.insingleDay');
-    Route::get('intwoDay/', 'LeadController@intwoDay')->name('lead.intwoDay');
-    Route::get('overdueDay/', 'LeadController@overdueDay')->name('lead.overdueDay');
-    Route::get('aftertwoDay/', 'LeadController@aftertwoDay')->name('lead.aftertwoDay');
-
-    //Get Premium By Type // Payment Plan By Premium
-    Route::get('get-premium/{type_id}', [PremiumController::class, 'get_premium']);
-    Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
+    Route::resource('clients', ClientController::class);
+    Route::get('client/change_priority/{priority}/{id}', [ClientController::class, 'changepriority'])->name('client.change_priority');
+    Route::post('client/change_status', [ClientController::class, 'changestatus'])->name('client.change_status');
+    Route::get('client/comments/{id}', [ClientController::class, 'comments'])->name('client.comments');
+    Route::get('client/active/{id}', [ClientController::class, 'active'])->name('clients.active');
+    // //=============//
+    // /* Clients */
+    // //=============//
 
     //             //End New Routes
     // //=============//

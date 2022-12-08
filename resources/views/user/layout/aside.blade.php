@@ -76,10 +76,21 @@
                     <div class="collapse" id="building">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{route('building.create', ['RolePrefix' => RolePrefix()])}}">Add Building</a>
-                            </li>
-                            <li>
                                 <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">All Building</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#building" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Society Management </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="building">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>
                             </li>
                         </ul>
                     </div>
@@ -147,7 +158,7 @@
                             <li><a href="{{route('block.index', ['RolePrefix' => RolePrefix()])}}">Block</a></li>
                             <li><a href="{{route('unit.index', ['RolePrefix' => RolePrefix()])}}">Unit</a></li>
                             <li><a href="{{route('size.index', ['RolePrefix' => RolePrefix()])}}">Size</a></li>
-                            {{--<li><a href="{{route('type.index', ['RolePrefix' => RolePrefix()])}}">Type</a></li>--}}
+                            <li><a href="{{route('type.index', ['RolePrefix' => RolePrefix()])}}">Type</a></li>
                             <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>
                             <li><a href="{{route('payment_plan.index', ['RolePrefix' => RolePrefix()])}}">Payment Plan</a></li>
                         </ul>
@@ -173,10 +184,10 @@
                 </li>
             </ul>
         </div>
-        <!-- End Sidebar -->
-        <div class="clear-fix"></div>
+        </li>
+        </ul>
     </div>
-    <!-- Sidebar -left -->
-
+    <!-- End Sidebar -->
+    <div class="clear-fix"></div>
 </div>
-<!-- Left Sidebar End -->
+<!-- Sidebar -left -->

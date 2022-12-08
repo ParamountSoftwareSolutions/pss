@@ -16,6 +16,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpKernel\HttpCache\Ssi;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Size;
+use App\Models\Unit;
+use App\Models\BuildingFloor;
+use App\Models\BuildingInventory;
+use App\Models\LeadRefer;
+use App\Models\Project;
+use App\Models\Property;
+use App\Models\Society;
+use App\Models\SocietyInventory;
 // use DataTables;
 class LeadController extends Controller
 {
@@ -29,35 +38,8 @@ class LeadController extends Controller
         $building = get_all_projects();
         $users = get_user_by_projects();
         $lead = get_leads_from_user($users);
-        // $leads = $leads->where('country_id','=', 4);
-        // $leads->when($request->country, function ($query) use ($request) {
-        //     return $query->where('country_id', $request->country);
-        // })->get();
-        // $leads->where(
-        //     function ($query) {
-        //         return $query->country_id == 4;
-        //     }
-        // );
-        // $leadss = $leads->when($request->country, function($query) use ($request){
-        //     return $query->where('country_id', $request->country);
-        // });
-
-        // $collection = new Collection($lead);
-        // $lead = $lead->filter(function ($q) use ($request) {
-        //     return $q->country_id == $request->country;
-        // });
-        // $lead->where(function ($query) use ($request) {
-        // $collection->where('country_id', 4);
-        // });
-        // $lead->filter(function ($filter, $key) {
-        //     echo '<pre>';
-        //     print_r($filter);
-        //     echo '<pre>';
-        //     die();
-        //     return $filter->country_id != null;
-        // });
         /**
-         * Filters.
+         * /////////////////////////////////////////////Filters
          */
         //Search By Project
         if ($request->project) {
@@ -87,7 +69,7 @@ class LeadController extends Controller
 
         if ($request->today_followup) {
             $current_date = Carbon::now();
-            $lead->where('status', 'follow_up')->whereDate('created_at', $current_date);
+            $lead->where('status', 'follow_up')->whereDate('updated_at', $current_date);
         }
         //Table statusFilter
 
@@ -145,22 +127,6 @@ class LeadController extends Controller
                 $sales = $lead->latest('updated_at')->get();
             }
             if ($request->deadlineFilter == 'overdue') {
-
-                // $sale_history = BuildingSaleHistory::latest()
-                //     ->where('data->status', 'follow_up')
-                //     ->get()
-                //     ->unique('building_sale_id');
-                // foreach ($sale_history as $item) {
-                //     if (json_decode($item->data)->date <= Carbon::today()) {
-
-                //         $newarray[] = $item->toArray()['building_sale_id'];
-                //     }
-                // }
-                // $sales_details = BuildingSale::with('building_sale_history')->whereIn('id', $newarray)->whereIn('building_id', $building->pluck('id')->toArray())->where('order_status', 'follow_up');
-                // if (Auth::user()->hasRole('sale_person')) {
-                //     $sales_details->where('user_id', Auth::id());
-                // }
-                // $sales = $sales_details->latest('updated_at')->get();
                 $lead_history = LeadHistory::latest()
                     ->where('status', 'follow_up')
                     ->get()
@@ -202,7 +168,7 @@ class LeadController extends Controller
             }
         }
         /**
-         * Filters.
+         * ////////////////////////////////////Filters.
          */
         $sales = $lead->whereNot('status', 'lost')->whereNot('status', 'mature')->orderBy('updated_at', 'desc')->paginate($request->limit)->appends(request()->query());
         $sale_persons = User::whereIn('id', $users)
@@ -210,32 +176,33 @@ class LeadController extends Controller
                 $q->where('name', 'sale_person');
             })->get();
         $country = Country::get();
-        // $sales = lead::orderBy('id', 'desc')->paginate($request->limit)->appends(request()->query());
 
-
-        // if ($request->ajax()) {
-        //     return datatables()->of($datas)->toJson();
-        // }
-        // if ($request->ajax()) {
-        //     $data = lead::select('id', 'name', 'email')->get();
-        //     return datatables()::of($data)->addIndexColumn()
-        //         ->addColumn('action', function ($row) {
-        //             $btn = '<a href="javascript:void(0)" class="btn btn-primary btn-sm">View</a>';
-        //             return $btn;
-        //         })
-        //         ->rawColumns(['action'])
-        //         ->make(true);
-        // }
-
-        // return view('users');
-   
+        /**
+         *  //////////////////////// Meeting Or Pushed Meetings.
+         */
+        $salesCount = LeadHistory::selectRaw('lead_id, COUNT(lead_id) as "total"')
+            ->whereIn('lead_id', $sales->pluck('id')->toArray())->where('status', 'arrange_meeting')->where('date', '>=', Carbon::now()->format('Y-m-d'))
+            ->groupBy('lead_id')
+            ->get();
+        $arrange_data = [];
+        $pushed_data = [];
+        foreach ($salesCount as $key => $val) {
+            if ($val->total == 1) {
+                $arrange_data[] = $val->lead_id;
+            } else {
+                $pushed_data[] = $val->lead_id;
+            }
+        }
+        $arrange = count($arrange_data);
+        $pushed = count($pushed_data);
+        //lead Count
+        $lead_count = $lead->count();
+        //Facebook lead Count
+        $facebook_count = $lead->where('type', 'facebook_lead')->count();
+        /**
+         * /////////////////////////Meeting Or Pushed Meetings.
+         */
         return view('user.lead.index', get_defined_vars());
-        // $building = Project_assign_user::with('user')->get();
-        // $saless = get_leads_from_user_auth();
-        // $sales = $saless->paginate(5);
-        // $sale_person = Helpers::sales_person();
-        // $sale_manager = Helpers::sales_manager();
-        // return view('user.lead.index', get_defined_vars());
     }
     // Fetch DataTable data
 
@@ -246,9 +213,14 @@ class LeadController extends Controller
      */
     public function create()
     {
-        // $country = Country::get();
-        // $sale_person = Helpers::sales_person();
-        // $building = Helpers::building_detail();
+        $country = Country::get();
+        $users = get_user_by_projects();
+        $project = get_all_projects();
+        $projects = Project::whereIn('id', $project->pluck('project_id')->toArray())->get();
+        $sale_persons = User::whereIn('id', $users)
+            ->whereHas('roles', function ($q) {
+                $q->where('name', 'sale_person');
+            })->get();
         return view('user.lead.create', get_defined_vars());
     }
 
@@ -260,27 +232,28 @@ class LeadController extends Controller
      */
     public function store(LeadStoreRequest $request)
     {
+        $rpoject_id_val = (!empty(json_decode($request->building_id)->id))?json_decode($request->building_id)->id:"";
         $data = [
-            'project_id' => $request->building_id,
+            'project_id' => $rpoject_id_val,
             'user_id' => $request->sale_person_id,
             'created_by' => auth()->user()->id,
             'name' => $request->name,
-            'email' => $request->sale_person_id,
+            'email' => $request->email,
+            'password' => $request->password,
             'number' => $request->phone_number,
             'cnic' => $request->cnic,
             'father_name' => $request->father_name,
-            'interested_in' => $request->interested_in,
-            'country_id' => $request->country_id,
-            'state_id' => $request->state_id,
-            'city_id' => $request->city_id,
-            'budget' => $request->budget,
-            'location' => $request->building_id,
-            'source' => $request->building_id,
+            'country_id' => $request->country,
+            'state_id' => $request->state,
+            'city_id' => $request->city,
+            'budget_from' => $request->bugdetFrom,
+            'budget_to' => $request->bugdetTo,
             'location' => $request->address,
             'source' => $request->source,
             'status' => 'new',
             'type' => 'lead',
         ];
+   
         $response = lead::create($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
@@ -308,7 +281,19 @@ class LeadController extends Controller
      */
     public function edit(lead $lead)
     {
-        $lead->with('user')->first();
+        $country = Country::get();
+        $users = get_user_by_projects();
+        $project = get_all_projects();
+        $projects = Project::whereIn('id', $project->pluck('project_id')->toArray())->get();
+        $sale_persons = User::whereIn('id', $users)
+            ->whereHas('roles', function ($q) {
+                $q->where('name', 'sale_person');
+            })->get();
+        $user = $lead->user;
+        $project = $lead->project;
+        $countrys = $lead->country;
+        $state = $lead->state;
+        $city = $lead->city;
         return view('user.lead.edit', get_defined_vars());
     }
 
@@ -321,27 +306,33 @@ class LeadController extends Controller
      */
     public function update(Request $request, lead $lead)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'number' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->with(['status' => 'error', 'message' => $validator->errors()->first()]);
+        }
         $data = [
-            'project_id' => $request->building_id,
+            'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : $request->building_id,
             'user_id' => $request->sale_person_id,
             'created_by' => auth()->user()->id,
             'name' => $request->name,
-            'email' => $request->sale_person_id,
-            'number' => $request->phone_number,
+            'email' => $request->email,
+            'number' => $request->number,
             'cnic' => $request->cnic,
             'father_name' => $request->father_name,
-            'password' => $request->password,
-            'interested_in' => $request->interested_in,
-            'country_id' => $request->country_id,
-            'state_id' => $request->state_id,
-            'city_id' => $request->city_id,
-            'budget' => $request->budget,
-            'location' => $request->building_id,
-            'source' => $request->building_id,
+            'country_id' => $request->country,
+            'state_id' => $request->state,
+            'city_id' => $request->city,
+            'budget_from' => $request->bugdetFrom,
+            'budget_to' => $request->bugdetTo,
+            'purpose' => $request->purpose,
             'location' => $request->address,
             'source' => $request->source,
+            'status' => 'new',
+            'type' => 'lead',
         ];
-
         $response = lead::where('id', $lead->id)->update($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Update Successfully');
@@ -368,9 +359,9 @@ class LeadController extends Controller
         ];
         $response = lead::where('id', $id)->update($data);
         if ($response) {
-            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Priority Update Successfully');
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Priority Has Update Successfully');
         } else {
-            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'Priority not updated successfully, something went wrong. Try again');
         }
     }
     public function changeStatus(Request $request)
@@ -401,9 +392,9 @@ class LeadController extends Controller
 
         $response = LeadHistory::create($lead_histories_data);
         if ($response) {
-            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Update Successfully');
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Status has updated successfully');
         } else {
-            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'Status not updated successfully, something went wrong. Try again');
         }
     }
     public function comments($id)
@@ -425,6 +416,33 @@ class LeadController extends Controller
                 ->update([
                     'user_id' => $request->sale_person_id,
                 ]);
+            if ($response) {
+                return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Update Successfully');
+            } else {
+                return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+            }
+        } else {
+            return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('error', 'Please select first any lead');
+        }
+    }
+    public function refer_lead(Request $request)
+    {
+        if ($request->sale_id !== null) {
+            $sale_id_arr = explode(',', $request->sale_id);
+            if (in_array('on', $sale_id_arr)) {
+                $arr = array_diff($sale_id_arr, ['on']);
+            } else {
+                $arr = $sale_id_arr;
+            }
+            foreach ($arr as $key => $value) {
+                $data = [
+                    'lead_id' => $value,
+                    'from' => auth()->user()->id,
+                    'to' => $request->sale_person_id,
+                    'status' => 'pending'
+                ];
+                $response = LeadRefer::insert($data);
+            }
             if ($response) {
                 return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Update Successfully');
             } else {
@@ -493,16 +511,87 @@ class LeadController extends Controller
                 Carbon::now(),
             ])->orderBy('updated_at')->get();
         }
-        //$sales = BuildingSale::with('building_sale_history')->where('user_id', $request->id)->whereDate('updated_at', Carbon::today())->get();
-        // $followup = BuildingSale::with('customer')->where(['order_status' => 'follow_up'])->whereHas('building_sale_history', function ($q) use ($current_date) {
-        //     $q->whereDate('data->date', $current_date);
-        // });
-        // $followup_counts = ($followup->count());
-        // if ($followup_counts > 0) {
-        //     $shadow = true;
-        // } else {
-        //     $shadow = false;
-        // }
         return view('user.lead.employee_reports', get_defined_vars());
+    }
+
+
+    public function getInventory(Request $request)
+    {
+        $projectId = $request->id;
+        $projectTypeId = $request->type_id;
+        $size = null;
+        $type = null;
+        $premium = null;
+        $floor = null;
+        switch ($projectTypeId) {
+            case "1":
+
+                $building = Building::where('project_id', $projectId)->first();
+                $project = BuildingInventory::where('building_id', $building->id);
+                $floor_list = json_decode($project->floor_list);
+                $floor = BuildingFloor::whereIn('id', $floor_list)->get();
+                $size_list = json_decode($project->apartment_size);
+                $size = Size::whereIn('id', $size_list)->get();
+                $type = json_decode($project->type);
+
+                break;
+            case "2":
+                $society = Society::where('project_id', $projectId)->first();
+                $project = SocietyInventory::where('society_id', $society->id);
+                $size_list = json_decode($project->size_id)->get();
+                $size = Size::whereIn('id', $size_list);
+                $premium_list = json_decode($project->premium_id)->get();
+                $premium = premium::whereIn('id', $premium_list);
+                break;
+            case "3":
+                $project = Property::where('project_id', $projectId)->first();
+                $size_list = json_decode($project->size_id)->get();
+                $size = Size::whereIn('id', $size_list);
+                $premium_list = json_decode($project->premium_id)->get();
+                $premium = premium::whereIn('id', $premium_list);
+                break;
+                // case "4": 
+
+                //     break;
+            default:
+                $size = null;
+                $type = null;
+                $premium = null;
+                $floor = null;
+                break;
+        }
+        $data = json_encode([$size, $floor, $type, $premium]);
+        return  $data;
+    }
+
+    public function refer()
+    {
+        $refers = LeadRefer::with('lead', 'to_user', 'from_user')->where('from', auth()->user()->id)->get();
+        $requested = LeadRefer::with('lead', 'to_user', 'from_user')->where('to', auth()->user()->id)->get();
+        return view('user.lead.refers', get_defined_vars());
+    }
+    public function refer_lead_accept($id)
+    {
+        $data = [
+            'status' => 'accept'
+        ];
+        $response = LeadRefer::where('id', $id)->update($data);
+        if ($response) {
+            return redirect()->back()->with('success', 'Request Has Been Accepted Successfully');
+        } else {
+            return redirect()->back()->with('error', 'SomeThing Went Wrong');
+        }
+    }
+    public function refer_lead_reject($id)
+    {
+        $data = [
+            'status' => 'reject'
+        ];
+        $response = LeadRefer::where('id', $id)->update($data);
+        if ($response) {
+            return redirect()->back()->with('success', 'Request Has Been Rejected Successfully');
+        } else {
+            return redirect()->back()->with('error', 'SomeThing Went Wrong');
+        }
     }
 }

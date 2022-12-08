@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\PaymentPlan;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,14 +14,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
         $this->call([
             PermissionSeeder::class,
             CountrySeeder::class,
             StateSeeder::class,
             //CitySeeder::class,
             ProjectSeeder::class,
+            CategorySeeder::class,
             ProjectAssignUserSeeder::class,
+            PaymentPlanSeeder::class,
             NocTypeSeeder::class,
             UnitSeeder::class,
             SizeSeeder::class,

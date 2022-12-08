@@ -6,9 +6,9 @@
         <div class="section-body">
             <div class="row">
                 <div class="col-12 col-md-12 col-lg-12">
-                    <form method="POST" action="{{route('leads.store', ['RolePrefix' => RolePrefix()])}}">
+                    <form method="POST" action="{{ route('leads.store', ['RolePrefix' => RolePrefix()]) }}">
+                        @csrf
                         <div class="card">
-                            @csrf
                             <div class="card-header">
                                 <h4>Basic Information</h4>
                             </div>
@@ -17,225 +17,57 @@
                                     <div class="form-group col-md-4">
                                         <div class="form-group">
                                             <label>Project List <small style="color: red">*</small></label>
-                                            <select class="form-control" id="selectProject" onchange="project()" name="building_id">
-                                                <option value="" disabled selected> -- Select Building --</option>
-                                                <option value="1">Farmhouse</option>
-                                                <option value="2">Society</option>
-                                                <option value="3">Building</option>
-                                                <option value="4">Property</option>
-                                                {{-- @if(!empty($building))
-                                                    @foreach($building as $data)
-                                                        <option value="{{ $data->id }}" @if($data->id == old('building_id')) selected @endif>{{ $data->name }}</option>
+                                            <select class="form-control" id="selectProject" onchange="{project(); submitForm()}" name="building_id">
+                                                <option value="" disabled>Select Project ...
+                                                </option>
+                                                @if (!empty($projects))
+                                                @foreach ($projects as $data)
+                                                <option value="{{ $data }}">{{ $data->name }}</option>
                                                 @endforeach
-                                                @endif --}}
+                                                @endif
                                             </select>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" id="buildingDetails">
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Building Floor</label>
-                                            <select class="form-control" name="buildingFloor" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Payment Plan</label>
-                                            <select class="form-control" name="paymentPlan" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Units</label>
-                                            <select class="form-control" name="units" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Area</label>
-                                            <select class="form-control" name="area" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Building Floor</label>
-                                            <select class="form-control" name="buildingFloor" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Bed</label>
-                                            <select class="form-control" name="buildingFloor" required>
-                                                <option label="" disabled selected>bed</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Bath</label>
-                                            <select class="form-control" name="bath" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Premium</label>
-                                            <select class="form-control" name="premium" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row" id="societyDetails">
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Category</label>
-                                            <select class="form-control" name="category" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Payment Plan</label>
-                                            <select class="form-control" name="paymentPlan" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
+                                <div class="row" id="projectDetails">
+                                    <div class="form-group col-md-4" id="size">
                                         <div class="form-group">
                                             <label>Size</label>
-                                            <select class="form-control" name="size" required>
-                                                <option label="" disabled selected>Select Detail</option>
+                                            <select class="form-control" name="size" id="selectSize" required>
+                                                <option label="" disabled selected>Select Size ...</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-4" id="premium">
+                                        <div class="form-group">
+                                            <label>Premium</label>
+                                            <select class="form-control" name="premium" id="selectPremium" required>
+                                                <option label="" disabled selected>Select Premium ...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4" id="buildingfloor">
+                                        <div class="form-group">
+                                            <label>Building Floor</label>
+                                            <select class="form-control" name="buildingFloor" id="selectBuildingFloor" required>
+                                                <option label="" disabled selected>Select Building Floor ...
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4" id="quantity">
                                         <div class="form-group">
                                             <label>Quatity</label>
-                                            <select class="form-control" name="category" required>
-                                                <option label="" disabled selected>Select Detail</option>
+                                            <select class="form-control" name="quantity" id="selectQuantity" required>
+                                                <option label="" disabled selected>Select Quantity ...</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <div class="form-group col-md-4" id="type">
                                         <div class="form-group">
-                                            <label>Premium</label>
-                                            <select class="form-control" name="premium" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row" id="propertyDetails">
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Payment Plan</label>
-                                            <select class="form-control" name="paymentPlan" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Units</label>
-                                            <select class="form-control" name="units" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Size</label>
-                                            <select class="form-control" name="size" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Bed</label>
-                                            <select class="form-control" name="buildingFloor" required>
-                                                <option label="" disabled selected>bed</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Bath</label>
-                                            <select class="form-control" name="bath" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Premium</label>
-                                            <select class="form-control" name="premium" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row" id="farmhouseDetails">
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Payment Plan</label>
-                                            <select class="form-control" name="paymentPlan" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Units</label>
-                                            <select class="form-control" name="units" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Size</label>
-                                            <select class="form-control" name="size" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Bed</label>
-                                            <select class="form-control" name="buildingFloor" required>
-                                                <option label="" disabled selected>bed</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Bath</label>
-                                            <select class="form-control" name="bath" required>
-                                                <option label="" disabled selected>Select Detail</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Premium</label>
-                                            <select class="form-control" name="premium" required>
-                                                <option label="" disabled selected>Select Detail</option>
+                                            <label>Type</label>
+                                            <select class="form-control" name="type" id="selectType" required>
+                                                <option label="" disabled selected>Select Type ...</option>
                                             </select>
                                         </div>
                                     </div>
@@ -281,16 +113,29 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Sales Person</label>
-                                        <input type="text" class="form-control" name="salesPerson">
+                                        <select class="form-control" name="sale_person_id">
+                                            <option value="" disabled selected>Select Sale Person ...
+                                            </option>
+                                            @if (!empty($sale_persons))
+                                            @foreach ($sale_persons as $sale_person_val)
+                                            <option value="{{ $sale_person_val->id }}">{{ $sale_person_val->name }}</option>
+                                            @endforeach
+                                            @endif
+                                        </select>
                                     </div>
-                                    <div class="form-group col-md-4">
+                                    <!-- <div class="form-group col-md-4">
                                         <label>Client Information</label>
                                         <input type="text" class="form-control" name="clientInfo">
-                                    </div>
+                                    </div> -->
                                     <div class="form-group col-md-4">
                                         <label>Country</label>
                                         <select class="form-control" name="country">
                                             <option label="" disabled selected>Select Detail</option>
+                                            @if (!empty($country))
+                                            @foreach ($country as $country_value)
+                                            <option value="{{$country_value->id}}">{{$country_value->name}}</option>
+                                            @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                     <div class="form-group col-md-4">
@@ -335,42 +180,176 @@
         </div>
     </section>
 </div>
+@endsection
+@section('script')
 <script>
-    document.getElementById("farmhouseDetails").style.display = "none";
-    document.getElementById("societyDetails").style.display = "none";
-    document.getElementById("buildingDetails").style.display = "none";
-    document.getElementById("propertyDetails").style.display = "none";
+    $(document).ready(function() {
+        $('select[name="country"]').on('change', function() {
+            var country_id = $(this).val();
+            if (country_id) {
+                $.ajax({
+                    url: "{{route('state', ['RolePrefix' => RolePrefix(),2])}}",
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        $('select[name="state"]').empty();
+                        if (data.length === 0) {
+                            $('select[name="state"]').append('<option value="">N/A</option>');
+                        } else {
+                            $('select[name="state"]').append('<option value="">Please  Select</option>');
+                            $.each(data, function(key, value) {
+                                $('select[name="state"]').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                    },
+                });
+            } else {
+                alert('danger');
+            }
+        });
+        // City Select
+        $('select[name="state"]').on('change', function() {
+            var state = $(this).val();
+            if (state) {
+                $.ajax({
+                    url: "{{ url(RolePrefix().'/city') }}/" + state,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                        $('select[name="city"]').empty();
+                        if (data.length === 0) {
+                            $('select[name="city"]').append('<option value="">N/A</option>');
+                        } else {
+                            $('select[name="city"]').append('<option value="">Please  Select</option>');
+                            $.each(data, function(key, value) {
+                                $('select[name="city"]').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                    },
+                });
+            } else {
+                alert('danger');
+            }
+        });
+    });
+    document.getElementById("size").style.display = "none";
+    document.getElementById("quantity").style.display = "none";
+    document.getElementById("buildingfloor").style.display = "none";
+    document.getElementById("premium").style.display = "none";
+    document.getElementById("type").style.display = "none";
+    // array.forEach(element => {
+
+    // });
+
+    function submitForm() {
+        // var project = document.getElementById("selectProject").value;
+        var project = document.getElementById("selectProject").value;
+
+        project = JSON.parse(project);
+        $.ajax({
+            url: "{{ route('lead.getInventory', ['RolePrefix' => RolePrefix()]) }}",
+            data: {
+                id: project.id,
+                type_id: project.type_id,
+                _token: $('#csrf-token')[0].content
+            },
+            method: 'POST',
+            cache: false,
+            success: function(response) {
+                var data = JSON.parse(response);
+                var size = data[0];
+                var floor = data[1];
+                var type = data[2];
+                var premium = data[3];
+                console.log(size);
+                $('#selectSize').empty();
+                $('#selectBuildingFloor').empty();
+                $('#selectType').empty();
+                $('#selectPremium').empty();
+                if (project.id == 1) {
+                    size.forEach(element => {
+                        var option = document.createElement('option');
+                        option.text = element.name;
+                        option.value = element.id;
+                        document.getElementById("selectSize").append(option);
+                    });
+                    floor.forEach(element => {
+                        var option = document.createElement('option');
+                        option.text = element.name;
+                        option.value = element.id;
+                        document.getElementById("selectBuildingFloor").append(option);
+                    });
+                    type.forEach(element => {
+                        var option = document.createElement('option');
+                        option.text = element;
+                        option.value = element;
+                        document.getElementById("selectType").append(option);
+                    });
+                } else if (project.id == 2) {
+                    size.forEach(element => {
+                        var option = document.createElement('option');
+                        option.text = element.name;
+                        option.value = element.id;
+                        document.getElementById("selectSize").append(option);
+                    });
+                    premium.forEach(element => {
+                        var option = document.createElement('option');
+                        option.text = element.name;
+                        option.value = element.id;
+                        document.getElementById("selectPremium").append(option);
+                    });
+                } else if (project.id == 3) {
+                    size.forEach(element => {
+                        var option = document.createElement('option');
+                        option.text = element.name;
+                        option.value = element.id;
+                        document.getElementById("selectSize").append(option);
+                    });
+                    premium.forEach(element => {
+                        var option = document.createElement('option');
+                        option.text = element.name;
+                        option.value = element.id;
+                        document.getElementById("selectPremium").append(option);
+                    });
+                }
+            }
+        });
+    }
 
     function project() {
-        var projectId = document.getElementById("selectProject").value;
-        switch (projectId) {
-            case "1":
-                document.getElementById("farmhouseDetails").style.display = "flex";
-                document.getElementById("societyDetails").style.display = "none";
-                document.getElementById("buildingDetails").style.display = "none";
-                document.getElementById("propertyDetails").style.display = "none";
+        var project = document.getElementById("selectProject").value;
+        project = JSON.parse(project);
+        switch (project.type_id) {
+            case 1:
+                document.getElementById("size").style.display = "block";
+                document.getElementById("quantity").style.display = "none";
+                document.getElementById("buildingfloor").style.display = "block";
+                document.getElementById("premium").style.display = "none";
+                document.getElementById("type").style.display = "block";
                 break;
-            case "2":
-                document.getElementById("societyDetails").style.display = "flex";
-                document.getElementById("farmhouseDetails").style.display = "none";
-                document.getElementById("buildingDetails").style.display = "none";
-                document.getElementById("propertyDetails").style.display = "none";
+            case 2:
+                document.getElementById("size").style.display = "block";
+                document.getElementById("quantity").style.display = "block";
+                document.getElementById("buildingfloor").style.display = "none";
+                document.getElementById("premium").style.display = "block";
+                document.getElementById("type").style.display = "none";
                 break;
-            case "3":
-                document.getElementById("buildingDetails").style.display = "flex";
-                document.getElementById("societyDetails").style.display = "none";
-                document.getElementById("farmhouseDetails").style.display = "none";
-                document.getElementById("propertyDetails").style.display = "none";
+            case 3:
+                document.getElementById("size").style.display = "block";
+                document.getElementById("quantity").style.display = "none";
+                document.getElementById("buildingfloor").style.display = "none";
+                document.getElementById("premium").style.display = "block";
+                document.getElementById("type").style.display = "none";
                 break;
-            case "4":
-                document.getElementById("propertyDetails").style.display = "flex";
-                document.getElementById("societyDetails").style.display = "none";
-                document.getElementById("buildingDetails").style.display = "none";
-                document.getElementById("farmhouseDetails").style.display = "none";
+            case 4:
+                document.getElementById("size").style.display = "block";
+                document.getElementById("quantity").style.display = "none";
+                document.getElementById("buildingfloor").style.display = "none";
+                document.getElementById("premium").style.display = "none";
+                document.getElementById("type").style.display = "none";
                 break;
         }
     }
 </script>
-@endsection
-@section('script')
 @endsection

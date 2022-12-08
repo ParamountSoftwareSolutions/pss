@@ -24,6 +24,18 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
+                                            <label>Building Type</label>
+                                            <select class="form-control" name="type_id">
+                                                <option label="" disabled selected>Select Building Type</option>
+                                                @foreach($project_type as $data)
+                                                    <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
                                             <label>Type Name</label>
                                             <input type="text" class="form-control" required="" name="name">
                                             @error('name')
