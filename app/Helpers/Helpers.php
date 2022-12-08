@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Client;
 use App\Models\lead;
 use App\Models\Project;
 use App\Models\ProjectAssignUser;
@@ -38,6 +39,28 @@ if (!function_exists('get_leads_from_user')) {
         }
         if (Auth::user()->hasRole('property_admin')) {
             return Lead::with('sale_person', 'building');
+        }
+    }
+}
+/**
+ * get_leads_from_user
+ *
+ * @return response()
+ */
+if (!function_exists('get_clients_from_user')) {
+    function get_clients_from_user($users)
+    {
+        if (Auth::user()->hasRole('sale_person')) {
+            return Client::where('user_id', Auth::id());
+        }
+        if (Auth::user()->hasRole('sale_manager')) {
+            return Client::whereIn('user_id', $users);
+        }
+        if (Auth::user()->hasRole('property_manager')) {
+            return  Client::with('project','user','customer')->whereIn('user_id', $users);
+        }
+        if (Auth::user()->hasRole('property_admin')) {
+            return Client::with('sale_person', 'building');
         }
     }
 }

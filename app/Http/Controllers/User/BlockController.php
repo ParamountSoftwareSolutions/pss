@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Models\SocietyBlock;
+use App\Models\Block;
 use Illuminate\Http\Request;
 
 class BlockController extends Controller
 {
     public function index()
     {
-        $blocks = SocietyBlock::latest()->get();
+        $blocks = Block::latest()->get();
         return view('user.inventory_extra_data.block.index', compact('blocks'));
     }
 
@@ -24,13 +24,13 @@ class BlockController extends Controller
         $request->validate([
             'name' => 'required',
         ]);
-        $block = new SocietyBlock();
+        $block = new Block();
         $block->name = $request->name;
         $block->save();
         if ($block) {
             return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block has created successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Society Block has not created, something went wrong. Try again', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Block has not created, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
@@ -47,7 +47,7 @@ class BlockController extends Controller
 
     public function edit($id)
     {
-        $block = SocietyBlock::findOrFail($id);
+        $block = Block::findOrFail($id);
         return view('user.inventory_extra_data.block.edit', compact('block'));
     }
 
@@ -56,25 +56,24 @@ class BlockController extends Controller
         $request->validate([
             'name' => 'required',
         ]);
-        $block = SocietyBlock::findOrFail($id);
+        $block = Block::findOrFail($id);
         $block->name = $request->name;
-        $block->save();
-        if ($block){
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Society Block has updated successfully', 'alert' => 'success']);
+        $block->save();        if ($block){
+            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Block has updated successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Society Block has not updated, something went wrong. Try again', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Block has not updated, something went wrong. Try again', 'alert' => 'error']);
         }
     }
 
     public function destroy($id)
     {
-        $block = SocietyBlock::findOrFail($id);
+        $block = Block::findOrFail($id);
         $block->delete();
 
         if ($block){
-            return response()->json(['message'=>'Society Block has deleted successfully','status'=> 'success']);
+            return response()->json(['message'=>'Block has deleted successfully','status'=> 'success']);
         } else {
-            return response()->json(['message'=>'Society Block has not deleted, something went wrong. Try again','status'=> 'error']);
+            return response()->json(['message'=>'Block has not deleted, something went wrong. Try again','status'=> 'error']);
         }
     }
 }

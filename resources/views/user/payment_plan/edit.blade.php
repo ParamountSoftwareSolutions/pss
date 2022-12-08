@@ -7,7 +7,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form id="payment_plan_form" method="post" action="{{ route('property_manager.payment_plan.update', $payment_plan->id) }}">
+                            <form id="payment_plan_form" method="post" action="{{ route('payment_plan.update',['RolePrefix' => RolePrefix(),'payment_plan'=>$payment_plan->id]) }}">
                                 @csrf
                                 @method('put')
                                 <div class="card-header">
@@ -16,20 +16,32 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
-                                            <label class="d-block">Payment Plan Name</label>
-                                            <input type="text" class="form-control" name="name" value="{{ old('name', $payment_plan->name) }}" required>
+                                            <label class="d-block">Project Type <small style="color: red">*</small></label>
+                                            <select class="form-control" name="project_type_id" required>
+                                                <option label="" disabled selected>Select Project Type</option>
+                                                @foreach($project_type as $data)
+                                                    <option value="{{ $data->id }}" {{$payment_plan->project_type_id == $data->id ? 'selected' : ''}}>{{ ucwords($data->name) }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('project_type_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label class="d-block">Payment Plan Name <small style="color: red">*</small></label>
+                                            <input type="text" class="form-control" value="{{$payment_plan->name}}" name="name" required>
                                             @error('name')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label class="d-block">Total Amount</label>
+                                            <label class="d-block">Total Amount <small style="color: red">*</small></label>
                                             <div class="input-group mb-3">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="total_price" id="total_price" id="total_price" value="{{ old('total_price', $payment_plan->total_price) }}" required>
+                                                       name="total_price" id="total_price" value="{{$payment_plan->total_price}}" required>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -39,31 +51,13 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label class="d-block">Down Payment</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">RS</span>
-                                                </div>
-                                                <input type="number" class="form-control" aria-label="Amount"
-                                                       name="booking_price" value="{{ old('booking_price', $payment_plan->booking_price) }}" required>
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">.00</span>
-                                                </div>
-                                            </div>
-                                            @error('booking_price')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-md-4">
                                             <label class="d-block">Monthly Installment</label>
                                             <div class="input-group mb-3">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="per_month_installment" id="per_month_installment" value="{{ old('per_month_installment', $payment_plan->per_month_installment) }}">
+                                                       name="per_month_installment" id="per_month_installment" value="{{$payment_plan->per_month_installment}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -73,13 +67,13 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label class="d-block">Bi-Annual installment</label>
+                                            <label class="d-block">Bi-Annual Installment</label>
                                             <div class="input-group mb-3">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="half_year_installment" id="half_year_installment" value="{{ old('half_year_installment', $payment_plan->half_year_installment) }}">
+                                                       name="half_year_installment" id="half_year_installment" value="{{$payment_plan->half_year_installment}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -95,7 +89,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="quarterly_payment" id="quarterly_payment" value="{{ old('quarterly_payment', $payment_plan->quarterly_payment) }}">
+                                                       name="quarterly_payment" id="quarterly_payment" value="{{$payment_plan->quarterly_payment}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -104,8 +98,6 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="form-group col-md-4">
                                             <label class="d-block">Balloting Amount</label>
                                             <div class="input-group mb-3">
@@ -113,7 +105,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="balloting_price" value="{{ old('balloting_price', $payment_plan->balloting_price) }}" required>
+                                                       name="balloting_price" value="{{$payment_plan->balloting_price}}" required>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -129,7 +121,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="possession_price" value="{{ old('possession_price', $payment_plan->possession_price) }}" required>
+                                                       name="possession_price" value="{{$payment_plan->possession_price}}" required>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -140,13 +132,11 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label class="d-block">Numbers of Installment</label>
-                                            <input type="number" class="form-control" name="total_month_installment" value="{{ old('total_month_installment', $payment_plan->total_month_installment) }}" required>
+                                            <input type="number" class="form-control" name="total_month_installment" value="{{$payment_plan->total_month_installment}}" required>
                                             @error('total_month_installment')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="form-group col-md-4">
                                             <label class="d-block">Rent Amount</label>
                                             <div class="input-group mb-3">
@@ -154,7 +144,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="rent_price" value="{{ old('rent_price', $payment_plan->rent_price) }}">
+                                                       name="rent_price" value="{{$payment_plan->rent_price}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -170,7 +160,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="confirmation_amount" value="{{ old('confirmation_amount', $payment_plan->confirmation_amount) }}">
+                                                       name="confirmation_amount" value="{{$payment_plan->confirmation_amount}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -186,7 +176,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="number_of_payment" value="{{ old('number_of_payment', $payment_plan->number_of_payment) }}">
+                                                       name="number_of_payment" value="{{$payment_plan->number_of_payment}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -195,23 +185,41 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="form-group col-md-4">
-                                            <label class="d-block">Shop/Apartment Premium Location</label>
-                                            <div class="form-check">
-                                                <input class="form-check-input" {{ $payment_plan->premium == 1 ? 'checked' : ''  }} type="checkbox" name="premium"
-                                                       id="exampleRadios1">
-                                                <label class="form-check-label" for="exampleRadios1">
-                                                    Corner
-                                                </label>
+                                            <label class="d-block">Down Payment</label>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">RS</span>
+                                                </div>
+                                                <input type="number" class="form-control" aria-label="Amount"
+                                                       name="booking_price" value="{{$payment_plan->booking_price}}" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">.00</span>
+                                                </div>
+                                            </div>
+                                            @error('booking_price')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Premium Type</label>
+                                                <select class="form-control" name="premium_id" required>
+                                                    <option value="">Select Premium Type</option>
+                                                    @foreach($project_type as $data)
+                                                        <option value="{{ $data->id }}">{{ ucwords($data->nature) }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('nature')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
                                         <div class="form-group col-md-4 commission-box">
                                             <label class="d-block">Commission (In %)</label>
                                             <div class="input-group mb-3">
                                                 <input type="number" class="form-control" aria-label="Commission"
-                                                       name="commission" id="commission" value="{{ $payment_plan->commission }}">
+                                                       name="commission" id="commission" value="{{$payment_plan->commission}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">%</span>
                                                 </div>
@@ -232,7 +240,7 @@
                                                     <span class="input-group-text">.00</span>
                                                 </div>
                                             </div>
-                                            @error('number_of_payment')
+                                            @error('price_after_commission')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -252,26 +260,26 @@
 @section('script')
     <script>
         $(document).ready(function () {
-            let corner = {{ $payment_plan->premium }};
-            if(corner == 1){
-                $('.commission-box').show();
-            }else{
-                $('.commission-box').hide();
-            }
-            $('#exampleRadios1').change(function () {
-                if($(this).prop("checked") == true){
+            var project_type_id = {{$payment_plan->project_type_id}};
+            getPremium(project_type_id);
+            price_after_commission();
+            $('select[name="project_type_id"]').change(function () {
+                var type_id = $(this).val();
+                getPremium(type_id);
+                return;
+            })
+            $('select[name="premium_id"]').change(function () {
+                var val = $(this).val();
+                if(val){
                     $('.commission-box').show();
                 }else{
                     $('.commission-box').hide();
                 }
             })
             $('#commission, #total_price').on('change keypress keyup', function (e) {
-                let commission = $('#commission').val();
-                let totalPrice = $('#total_price').val();
-                let comPrice = (commission / 100) * totalPrice;
-                let afterComPrice = (Number(totalPrice) + Number(comPrice));
-                $('#price_after_commission').val(afterComPrice);
+                price_after_commission();
             })
+
 
             $('#payment_plan').click(function () {
                 let a = $('#per_month_installment').val();
@@ -279,11 +287,44 @@
                 let c = $('#per_month_installment').val();
                 if(!a || !b || !c){
                     errorMsg('You Have To Choose One of Three Given Installments')
-                    // return
                 }else{
                     $('#payment_plan_form').submit();
                 }
             })
         })
+        function getPremium(id){
+            $.ajax({
+                url: "{{ url(RolePrefix().'/get-premium') }}/" + id,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $('select[name="premium_id"]').empty();
+                    if (data.length === 0) {
+                        $('select[name="premium_id"]').append('<option value="">N/A</option>');
+                        $('.commission-box').hide();
+                    } else {
+                        $('select[name="premium_id"]').append('<option value="">Please  Select</option>');
+                        $.each(data, function (key, value) {
+                            let old_id = '{{ $payment_plan->premium_id }}';
+                            let selected = value.id == old_id ? "selected" : "";
+                            $('select[name="premium_id"]').append('<option ' + selected + ' value="' + value.id + '">' + value.name + '</option>');
+                        });
+                        let premium_id = $('select[name="premium_id"]').val();
+                        if(premium_id){
+                            $('.commission-box').show();
+                        }else{
+                            $('.commission-box').hide();
+                        }
+                    }
+                },
+            });
+        }
+        function price_after_commission(){
+            let commission = $('#commission').val();
+            let totalPrice = $('#total_price').val();
+            let comPrice = (commission / 100) * totalPrice;
+            let afterComPrice = (Number(totalPrice) + Number(comPrice));
+            $('#price_after_commission').val(afterComPrice);
+        }
     </script>
 @endsection

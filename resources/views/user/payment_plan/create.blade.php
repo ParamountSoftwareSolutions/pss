@@ -7,7 +7,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <div class="card">
-                            <form id="payment_plan_form" method="post" action="{{ route('payment_plan.store',['RolePrefix' => RolePrefix()]) }}">
+                            <form id="payment_plan_form" method="post" action="{{ route('payment_plan.store',RolePrefix()) }}">
                                 @csrf
                                 <div class="card-header">
                                     <h4>Basic Information</h4>
@@ -159,12 +159,12 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="confirmation_mount">
+                                                       name="confirmation_amount">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
                                             </div>
-                                            @error('confirmation_mount')
+                                            @error('confirmation_amount')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -205,9 +205,6 @@
                                                 <label>Premium Type</label>
                                                 <select class="form-control" name="premium_id" required>
                                                     <option value="">Select Premium Type</option>
-                                                    @foreach($project_type as $data)
-                                                        <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
-                                                    @endforeach
                                                 </select>
                                                 @error('nature')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
@@ -260,6 +257,28 @@
     <script>
         $(document).ready(function () {
             $('.commission-box').hide();
+            $('select[name="project_type_id"]').change(function () {
+                var type_id = $(this).val();
+                $.ajax({
+                    url: "{{ url(RolePrefix().'/get-premium') }}/" + type_id,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        $('select[name="premium_id"]').empty();
+                        if (data.length === 0) {
+                            $('select[name="premium_id"]').append('<option value="">N/A</option>');
+                        } else {
+                            $('select[name="premium_id"]').append('<option value="">Please  Select</option>');
+                            $.each(data, function (key, value) {
+                                let oldFloorDetailId = '{{ old('floor_detail_id') }}';
+                                let selected = value.id == oldFloorDetailId ? "selected" : "";
+                                $('select[name="premium_id"]').append('<option ' + selected + ' value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                    },
+                });
+                return;
+            })
             $('select[name="premium_id"]').change(function () {
                 var val = $(this).val();
                 if(val){

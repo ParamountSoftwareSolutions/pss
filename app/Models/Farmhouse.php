@@ -5,8 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClientHistory extends Model
+class Farmhouse extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function files()
+    {
+        return $this->hasMany(FarmhouseFile::class, 'farmhouse_id');
+    }
 }

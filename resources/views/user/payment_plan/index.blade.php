@@ -36,15 +36,9 @@
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                        <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <form
-                                                        action="{{ route('payment_plan.destroy',['RolePrefix' => RolePrefix(),'payment_plan'=>$data->id]) }}"
-                                                        method="post" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" title="Delete" class="btn btn-danger px-1 py-0">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                    <button type="button" data-url="{{ route('payment_plan.destroy',['RolePrefix' => RolePrefix(), 'payment_plan' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         @empty

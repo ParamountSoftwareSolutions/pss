@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('society_blocks', function (Blueprint $table) {
+        Schema::create('farmhouse_files', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('farmhouse_id')->unsigned()->nullable()->constrained('farmhouses')->nullOnDelete();
+            $table->text('file');
+            $table->string('type')->default('image');
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('society_blocks');
+        Schema::dropIfExists('farmhouse_files');
     }
 };

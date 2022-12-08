@@ -8,8 +8,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Farmhouse List</h4>
-                                <a href="{{ route('farmhouse.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary"
+                                <h4>Farmhouse Inventory List</h4>
+                                <a href="{{ route('farmhouse.inventory.create', ['RolePrefix' => RolePrefix(),'farmhouse'=>$id]) }}" class="btn btn-primary"
                                    style="margin-left: auto; display: block;">Add New</a>
                             </div>
                             <div class="card-body">
@@ -18,33 +18,21 @@
                                         <thead>
                                         <tr>
                                             <th class="text-center">#</th>
-                                            <th>Name</th>
-{{--                                            <th>Type</th>--}}
+                                            <th>Unit No</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($projects as $data)
+                                        @forelse($farmhouses as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->name }}</td>
-                                                {{--<td><span class="badge
-                                                @if($data->type->name == 'building')
-                                                        badge-blue
-                                                        @elseif($data->type->name == 'society')
-                                                        badge-success
-                                                        @elseif($data->type->name == 'farm_house')
-                                                        badge-danger
-                                                        @else
-                                                        badge-primary
-                                                        @endif
-                                                        ">{{ ucwords($data->type->name) }} </span></td>--}}
+                                                <td>{{ $data->unit_no }}</td>
                                                 <td>
-                                                    <a href="{{ route('farmhouse.edit', ['RolePrefix' => RolePrefix(), 'farmhouse' => $data->id]) }}"
+                                                    <a href="{{ route('farmhouse.inventory.edit', ['RolePrefix' => RolePrefix(),'farmhouse'=>$id ,'inventory' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <button type="button" data-url="{{ route('farmhouse.destroy',['RolePrefix' => RolePrefix(), 'farmhouse' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                    <button type="button" data-url="{{ route('farmhouse.inventory.destroy',['RolePrefix' => RolePrefix(),'inventory'=>$id,'farmhouse' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>

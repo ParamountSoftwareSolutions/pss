@@ -7,8 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class lead extends Model
 {
-    protected $fillable = ['id ','user_id','project_id','created_by','name','email','number','alt_number','father_name','cnic','budget','budget','source','location','country_id','state_id','city_id','status','type','priority'];
+
     use HasFactory;
+    protected $guarded = [];
+    protected $attributes = [
+        'project_id' => "NULL",
+    ];
     // public function user()
     // {
     //     return $this->belongsTo(User::class, 'user_id');
@@ -38,5 +42,13 @@ class lead extends Model
     public function lead_histories()
     {
         return $this->hasMany(LeadHistory::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
     }
 }

@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-
+use App\Models\City;
+use App\Models\State;
 class UserController extends Controller
 {
     public function index()
@@ -28,5 +29,19 @@ class UserController extends Controller
         // $user->assignRole($role);
    
         return view('user.index');
+    }
+    public function state($country_id)
+    {
+        // return json_encode($country_id);
+        //$country = Country::where('sortname', $country_id)->first();
+        $state = State::where('country_id', $country_id)->get();
+        return json_encode($state);
+    }
+
+    public function city($state_id)
+    {
+    
+        $state = City::where('state_id', $state_id)->get();
+        return json_encode($state);
     }
 }
