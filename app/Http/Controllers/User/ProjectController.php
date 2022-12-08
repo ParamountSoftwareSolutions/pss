@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\ProjectType;
 use App\Models\Society;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -30,8 +31,9 @@ class ProjectController extends Controller
      */
     public function create()
     {
+        $project = Project::get();
         $project_type = ProjectType::latest()->get();
-        return view('user.project.create', compact('project_type'));
+        return view('user.project.create', compact('project_type', 'project'));
     }
 
     /**
@@ -46,23 +48,28 @@ class ProjectController extends Controller
             'name' => 'required',
             'type_id' => 'required',
         ]);
-        $project = new Project();
-        $project->name = $request->name;
-        $project->type_id = $request->type_id;
-        $project->save();
-        $type = ProjectType::findOrFail($request->type_id)->name;
-
-        if ($type == 'society'){
-            Society::created(['project_id' => $project->id]);
-        } elseif($type == 'building'){
-            Building::created(['project_id' => $project->id]);
-        } elseif($type == 'farm_house'){
-            Society::created(['project_id' => $project->id]);
-        }
-        if ($project){
-            return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has created successfully', 'alert' => 'success']);
+        $project_limit = Project::get();
+        if (Auth::user()->project == count($project_limit)){
+            return redirect()->back()->with($this->message('Project Limit Complete. Please Contact Super Admin', 'warning'));
         } else {
-            return redirect()->back()->with(['message' => 'Project has not created, something went wrong. Try again', 'alert' => 'error']);
+            $project = new Project();
+            $project->name = $request->name;
+            $project->type_id = $request->type_id;
+            $project->save();
+            $type = ProjectType::findOrFail($request->type_id)->name;
+
+            if ($type == 'society') {
+                Society::created(['project_id' => $project->id]);
+            } elseif ($type == 'building') {
+                Building::created(['project_id' => $project->id]);
+            } elseif ($type == 'farm_house') {
+                Society::created(['project_id' => $project->id]);
+            }
+            if ($project) {
+                return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has created successfully', 'alert' => 'success']);
+            } else {
+                return redirect()->back()->with(['message' => 'Project has not created, something went wrong. Try again', 'alert' => 'error']);
+            }
         }
     }
 

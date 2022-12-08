@@ -1,19 +1,88 @@
 <?php
 
-namespace App\Http\Controllers\PropertyManager;
+namespace App\Http\Controllers\User;
 
-use App\Helpers\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\Building;
-use App\Models\Floor;
 use Illuminate\Http\Request;
 
 class FloorController extends Controller
 {
-    public function index($panel, $id)
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+
+    public function index()
     {
-        $building = Helpers::building_detail_single($id);
-        $floor = Floor::whereIn('id', json_decode($building->floor_list))->get();
-        return view('property_manager.floor.index', compact('floor', 'building'));
+
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function show($id)
+    {
+        $building = Building::findOrFail($id);
+        return view('user.building.floor_index', compact('building'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
     }
 }

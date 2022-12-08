@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\User\BuildingController;
 use App\Http\Controllers\User\BuildingInventoryController;
+use App\Http\Controllers\User\FloorController;
 use App\Http\Controllers\User\PremiumController;
 use App\Http\Controllers\User\BlockController;
 use App\Http\Controllers\User\CategoryController;
@@ -77,8 +78,10 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //=========================//
     //  Building Management    //
     //=========================//
+    Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
     Route::resource('building', BuildingController::class);
-    Route::resource('building.building_inventory', BuildingInventoryController::class);
+    Route::resource('floor', FloorController::class);
+    Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
     /*Route::post('building/banner/remove', 'BuildingController@remove_image_banner');
     Route::get('building-detail-form', 'BuildingController@detail_form')->name('building.detail_form');
     Route::get('building_detail/{id}', 'FloorController@index')->name('building_detail.index');

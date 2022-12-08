@@ -11,7 +11,9 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "spatie/laravel-permission": "^5.5",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "~9.0",
+      "ext-http": "*",
+      "ext-json": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7",
@@ -32,7 +34,7 @@
         "files": [
 
             "app/Helpers/helpers.php"
-    
+
         ]
     },
     "autoload-dev": {
@@ -55,8 +57,8 @@
             "@php artisan key:generate --ansi"
         ]
     },
-    
-  
+
+
     "extra": {
         "laravel": {
             "dont-discover": []

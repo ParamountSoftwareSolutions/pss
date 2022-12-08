@@ -27,7 +27,7 @@ class CreateUsersTable extends Migration
             $table->foreignId('state_id')->unsigned()->nullable()->constrained('states')->nullOnDelete();
             $table->foreignId('city_id')->unsigned()->nullable()->constrained('cities')->nullOnDelete();
             $table->string('dob')->nullable();
-            $table->integer('building')->nullable();
+            $table->integer('project')->nullable();
             $table->integer('status')->default(1);
             $table->rememberToken();
             $table->timestamps();

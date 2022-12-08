@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\lead;
+use App\Models\Project;
 use App\Models\ProjectAssignUser;
+use App\Models\ProjectType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -53,14 +55,29 @@ if (!function_exists('get_user_by_projects')) {
         return array_merge($user->toArray(),$a2);
     }
 }
+
+if (!function_exists('project_type')){
+    function project_type($type){
+        return ProjectType::where('name', $type)->first()->id;
+    }
+}
 /**
  * get_all_projects
  *
  * @return response()
  */
 if (!function_exists('get_all_projects')) {
-    function get_all_projects()
+    function get_all_projects($type = null)
     {
-        return ProjectAssignUser::with('projects')->where('user_id', auth()->user()->id)->get();
+        if ($type !== null){
+            $project_type = project_type($type);
+            $list = ProjectAssignUser::where('user_id', Auth::id())->get();
+            return Project::whereIn('id', $list->pluck('project_id')->toArray())->where('type_id', $project_type)->get();
+        } else {
+            $list = ProjectAssignUser::where('user_id', Auth::id())->get();
+            return Project::whereIn('id', $list->pluck('project_id')->toArray())->get();
+        }
     }
 }
+
+
