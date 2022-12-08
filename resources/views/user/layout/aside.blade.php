@@ -102,6 +102,23 @@
                     </div>
                 </li>
                 <li>
+                    <a href="#society" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Society </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="society">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('society.create', ['RolePrefix' => RolePrefix()])}}">Add Society</a>
+                            </li>
+                            <li>
+                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
                     <a href="#farmhouse" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
                         <span> Farmhouse </span>

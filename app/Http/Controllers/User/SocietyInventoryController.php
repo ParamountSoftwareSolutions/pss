@@ -4,7 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\RolePrefix;
-use App\Models\FarmhouseFile;
+use App\Models\Society;
+use App\Models\SocietyInventory;
 use App\Models\Premium;
 use App\Models\Farmhouse;
 use App\Models\Block;
@@ -13,7 +14,7 @@ use App\Models\ProjectType;
 use App\Models\Size;
 use Illuminate\Http\Request;
 
-class FarmhouseInventoryController extends Controller
+class SocietyInventoryController extends Controller
 {
     private $project_type_id;
 
@@ -31,8 +32,9 @@ class FarmhouseInventoryController extends Controller
     public function index($id)
     {
         $project = Project::findOrFail($id);
-        $farmhouses = Farmhouse::where('project_id',$id)->latest('updated_at')->get();
-        return view('user.farmhouse.index', compact('farmhouses','project'));
+        $society = Society::where('project_id',$project->id)->first();
+        $society_inventories = SocietyInventory::where('society_id',$society)->latest('updated_at')->get();
+        return view('user.society.index', compact('project','society','society_inventories'));
     }
 
     /**

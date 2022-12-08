@@ -18,6 +18,9 @@ use App\Http\Controllers\User\TypeController;
 use App\Http\Controllers\User\FarmhouseController;
 use App\Http\Controllers\User\PropertyController;
 use App\Http\Controllers\User\PaymentPlanController;
+use App\Http\Controllers\User\EmailController;
+use App\Http\Controllers\User\SocietyController;
+use App\Http\Controllers\User\SocietyInventoryController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -74,6 +77,8 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('farmhouse', FarmhouseController::class);
     Route::resource('farmhouse.inventory', FarmhouseInventoryController::class);
     Route::resource('payment_plan', PaymentPlanController::class);
+    Route::resource('society', SocietyController::class);
+    Route::resource('society.inventory', SocietyInventoryController::class);
 
     //=========================//
     //  Building Management    //
@@ -123,6 +128,20 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
     //             //End New Routes
     // //=============//
-    // /* Acccounts */
+    // /* Email Routes */
     // //=============//
+
+    Route::group(['prefix' => 'email','as'=>'email.'], function () {
+        Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
+        Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
+        Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');
+        Route::get('sent', [EmailController::class,'send_email'])->name('send_email');
+        Route::get('detail/{id}', [EmailController::class,'email_detail'])->name('detail');
+        Route::get('draft', [EmailController::class,'draft_email'])->name('draft_email');
+        Route::get('view/{id}', [EmailController::class,'email_view'])->name('view');
+        Route::post('forward/{id}', [EmailController::class,'email_forward'])->name('forward');
+        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('email_destroy');
+        Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
+        Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
+    });
 });

@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Block List')
+@section('title', 'All Society List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -8,42 +8,31 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Block List</h4>
-                                 <a href="{{ route('block.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary" style="margin-left: auto; display: block;">Add New</a>
+                                <h4>{{$project->name}} Inventory List</h4>
+                                <a href="{{ route('society.inventory.create', ['RolePrefix' => RolePrefix(),'society'=>$project->id]) }}" class="btn btn-primary"
+                                   style="margin-left: auto; display: block;">Add New</a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped text-center" id="table-1">
+                                    <table class="table table-striped" id="table-1">
                                         <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Name</th>
-                                            <th>Project Type</th>
+                                            <th class="text-center">#</th>
+                                            <th>Unit No</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($blocks as $data)
+                                        @forelse($society_inventories as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->name }}</td>
-                                                <td><span class="badge
-                                                @if($data->type->name == 'building')
-                                                        badge-blue
-                                                        @elseif($data->type->name == 'society')
-                                                        badge-success
-                                                        @elseif($data->type->name == 'farm_house')
-                                                        badge-danger
-                                                        @else
-                                                        badge-primary
-                                                        @endif
-                                                        ">{{ ucwords($data->type->name) }} </span></td>
+                                                <td>{{ $data->unit_no }}</td>
                                                 <td>
-                                                    <a href="{{ route('block.edit', ['RolePrefix' => RolePrefix(), 'block' => $data->id]) }}"
+                                                    <a href="{{ route('society.inventory.edit', ['RolePrefix' => RolePrefix(),'farmhouse'=>$project->id ,'society' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <button type="button" data-url="{{ route('block.destroy', ['RolePrefix' => RolePrefix(), 'block' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                    <button type="button" data-url="{{ route('society.inventory.destroy',['RolePrefix' => RolePrefix(),'inventory'=>$project->id,'society' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>
@@ -63,4 +52,6 @@
             </div>
         </section>
     </div>
+@endsection
+@section('script')
 @endsection
