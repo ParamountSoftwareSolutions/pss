@@ -81,6 +81,7 @@
                                                 <label>Premium Type</label>
                                                 <select class="form-control" name="premium_id">
                                                     <option value="">Select Type</option>
+                                                    <option value="regular"{{$farmhouse->premium_id == null ? 'selected' : ''}}>Regular</option>
                                                     @foreach($premiums as $data)
                                                         <option value="{{ $data->id }}" {{$farmhouse->premium_id == $data->id ? 'selected' : ''}}>{{ ucwords($data->name) }}</option>
                                                     @endforeach

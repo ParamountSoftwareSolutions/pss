@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'All Building List')
+@section('title', 'Type List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -8,41 +8,31 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Building</h4>
+                                <h4>Features List</h4>
+                                 <a href="{{ route('feature.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary" style="margin-left: auto; display: block;">Add New</a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-striped" id="table-1">
                                         <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th class="text-center">#</th>
                                             <th>Name</th>
+                                            <th>Type</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($buildings as $data)
+                                        @forelse($features as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->project->name }}</td>
+                                                <td>{{ $data->name }}</td>
+                                                <td>{{ $data->key }}</td>
                                                 <td>
-                                                    <a href="{{ route('building.edit', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
-                                                       class="btn btn-primary px-1 py-0" title="Edit">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <a href="{{ route('building.show', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
+                                                    <a href="{{ route('feature.show', ['RolePrefix' => RolePrefix(), 'feature' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
-                                                    <form
-                                                        action="{{ route('building.destroy', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
-                                                        method="post" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" title="Delete" class="btn btn-danger px-1 py-0">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </form>
                                                 </td>
                                             </tr>
                                         @empty

@@ -77,7 +77,9 @@ class FarmhouseInventoryController extends Controller
                 $farmhouse->block_id = $request->block_id;
                 $farmhouse->unit_no = $unit;
                 $farmhouse->size_id = $request->size_id;
-                $farmhouse->premium_id = $request->premium_id;
+                if(isset($request->premium_id) && $request->premium_id !== 'regular'){
+                    $farmhouse->premium_id = $request->premium_id;
+                }
                 $farmhouse->payment_plan_id = $request->payment_plan_id;
                 $farmhouse->save();
             }
@@ -87,7 +89,9 @@ class FarmhouseInventoryController extends Controller
             $farmhouse->block_id = $request->block_id;
             $farmhouse->unit_no = $request->simple_unit_no;
             $farmhouse->size_id = $request->size_id;
-            $farmhouse->premium_id = $request->premium_id;
+            if(isset($request->premium_id) && $request->premium_id !== 'regular'){
+                $farmhouse->premium_id = $request->premium_id;
+            }
             $farmhouse->payment_plan_id = $request->payment_plan_id;
             $farmhouse->save();
         }
@@ -156,7 +160,9 @@ class FarmhouseInventoryController extends Controller
         $farmhouse->unit_no = $request->unit_no;
         $farmhouse->size_id = $request->size_id;
         $farmhouse->status = $request->status;
-        $farmhouse->premium_id = $request->premium_id;
+        if(isset($request->premium_id) && $request->premium_id !== 'regular'){
+            $farmhouse->premium_id = $request->premium_id;
+        }
         $farmhouse->payment_plan_id = $request->payment_plan_id;
         $farmhouse->save();
         if ($request->has('images')) {

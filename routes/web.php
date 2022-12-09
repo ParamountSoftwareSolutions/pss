@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\ClientController;
 use App\Http\Controllers\User\WebHookController;
-
 use App\Http\Controllers\User\BuildingController;
 use App\Http\Controllers\User\BuildingInventoryController;
 use App\Http\Controllers\User\FloorController;
@@ -26,6 +25,8 @@ use App\Http\Controllers\User\FarmhouseController;
 use App\Http\Controllers\User\PropertyController;
 use App\Http\Controllers\User\PaymentPlanController;
 use App\Http\Controllers\User\EmailController;
+use App\Http\Controllers\User\BuildingExtraDetailController;
+use App\Http\Controllers\User\FeatureController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -82,6 +83,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('payment_plan', PaymentPlanController::class);
     Route::resource('society', SocietyController::class);
     Route::resource('society.inventory', SocietyInventoryController::class);
+    Route::resource('feature', FeatureController::class);
 
     //=========================//
     //  Building Management    //
@@ -89,6 +91,8 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('building', BuildingController::class);
     Route::resource('floor', FloorController::class);
     Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
+    Route::get('building_extra_detail', [BuildingExtraDetailController::class,'building_extra_detail'])->name('building_extra_detail');
+    Route::resource('building.extra_detail', BuildingExtraDetailController::class);
     Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
 
     //=========================//
@@ -103,7 +107,6 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('state/{id}', [HomeController::class, 'state']);
     Route::get('city/{id}', [HomeController::class, 'city']);
     //Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
-
 
     //=========================//
     //  Leads Management    //
@@ -152,7 +155,16 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // /* Clients */
     // //=============//
 
-    //             //End New Routes
+    //             //End New Routes    Get Payment Plan
+
+    Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
+
+
+
+
+
+
+
     // //=============//
     // /* Email Routes */
     // //=============//
