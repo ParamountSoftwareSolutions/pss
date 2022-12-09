@@ -84,12 +84,12 @@
                     </div>
                 </li>
                 <li>
-                    <a href="#building" data-toggle="collapse">
+                    <a href="#society" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
                         <span> Society Management </span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="building">
+                    <div class="collapse" id="society">
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>

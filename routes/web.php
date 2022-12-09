@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\SocietyBlockController;
+use App\Http\Controllers\User\SocietyController;
+use App\Http\Controllers\User\SocietyInventoryController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
@@ -21,8 +25,6 @@ use App\Http\Controllers\User\FarmhouseController;
 use App\Http\Controllers\User\PropertyController;
 use App\Http\Controllers\User\PaymentPlanController;
 use App\Http\Controllers\User\EmailController;
-use App\Http\Controllers\User\SocietyController;
-use App\Http\Controllers\User\SocietyInventoryController;
 use App\Http\Controllers\User\BuildingExtraDetailController;
 use App\Http\Controllers\User\FeatureController;
 use App\Models\lead;
@@ -86,22 +88,25 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //=========================//
     //  Building Management    //
     //=========================//
-    Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
     Route::resource('building', BuildingController::class);
     Route::resource('floor', FloorController::class);
     Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
     Route::get('building_extra_detail', [BuildingExtraDetailController::class,'building_extra_detail'])->name('building_extra_detail');
     Route::resource('building.extra_detail', BuildingExtraDetailController::class);
-    /*Route::post('building/banner/remove', 'BuildingController@remove_image_banner');
-    Route::get('building-detail-form', 'BuildingController@detail_form')->name('building.detail_form');
-    Route::get('building_detail/{id}', 'FloorController@index')->name('building_detail.index');
-    Route::get('building/{building_id}/floor/{floor_id}/index', 'FloorDetailController@index')->name('building.inventory.index');
-    Route::get('building/{building_id}/floor/{floor_id}/create', 'FloorDetailController@create')->name('building.inventory.create');
-    Route::post('building/{building_id}/floor/{floor_id}/store', 'FloorDetailController@store')->name('building.inventory.store');
-    Route::get('building/{building_id}/floor/{floor_id}/edit/{id}', 'FloorDetailController@edit')->name('building.inventory.edit');
-    Route::post('building/{building_id}/floor/{floor_id}/update/{id}', 'FloorDetailController@update')->name('building.inventory.update');
-    Route::post('building/{building_id}/floor/{floor_id}/delete/{id}', 'FloorDetailController@destroy')->name('building.inventory.destroy');
-    Route::post('building/{building_id}/floor/{floor_id}/index/filter', 'FloorDetailController@filter')->name('building.inventory.filter');*/
+    Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
+
+    //=========================//
+    //  Society Management    //
+    //=========================//
+    Route::resource('society', SocietyController::class);
+    Route::resource('block', SocietyBlockController::class);
+    Route::resource('society.block.society_inventory', SocietyInventoryController::class);
+
+
+
+    Route::get('state/{id}', [HomeController::class, 'state']);
+    Route::get('city/{id}', [HomeController::class, 'city']);
+    //Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
 
     //=========================//
     //  Leads Management    //

@@ -111,7 +111,7 @@
                                                     <option value="">Select Bed</option>
                                                     @foreach($bed as $data)
                                                         <option value="{{ $data->id }}" @if($inventory->bed_id == $data->id) selected @endif>{{ $data->name }} - {{
-                                                        $data->unit->name
+                                                        $data->unit
                                                         }}</option>
                                                     @endforeach
                                                 </select>
@@ -127,7 +127,7 @@
                                                     <option value="">Select Bath</option>
                                                     @foreach($bath as $data)
                                                         <option value="{{ $data->id }}" @if($inventory->bath_id == $data->id) selected @endif>{{ $data->name }} - {{
-                                                        $data->unit->name }}</option>
+                                                        $data->unit }}</option>
                                                     @endforeach
                                                 </select>
                                                 @error('bath')

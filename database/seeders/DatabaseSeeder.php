@@ -21,15 +21,18 @@ class DatabaseSeeder extends Seeder
             //CitySeeder::class,
             ProjectSeeder::class,
             CategorySeeder::class,
+            BlockSeeder::class,
+            TypeSeeder::class,
             ProjectAssignUserSeeder::class,
             PaymentPlanSeeder::class,
             NocTypeSeeder::class,
-            UnitSeeder::class,
             SizeSeeder::class,
             PremiumSeeder::class,
             BuildingFloorSeeder::class,
             BuildingSeeder::class,
             BuildingDetailSeeder::class,
+            SocietySeeder::class,
+            SocietyInventorySeeder::class,
         ]);
     }
 }

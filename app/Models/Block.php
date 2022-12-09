@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Block extends Model
 {
     use HasFactory;
-    public function type()
+    protected $guarded = [];
+
+    public function project_type()
     {
         return $this->belongsTo(ProjectType::class, 'project_type_id');
     }

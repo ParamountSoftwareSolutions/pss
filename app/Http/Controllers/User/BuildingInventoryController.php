@@ -49,11 +49,11 @@ class BuildingInventoryController extends Controller
         $premium = Premium::whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
-        $bed = Size::whereHas('unit', function ($q) {
-            $q->where('name', 'bed');
+        $bed = Size::where('unit', 'bed')->whereHas('project_type', function ($q) {
+            $q->where('name', 'building');
         })->get();
-        $bath = Size::whereHas('unit', function ($q) {
-            $q->where('name', 'bath');
+        $bath = Size::where('unit', 'bath')->whereHas('project_type', function ($q) {
+            $q->where('name', 'building');
         })->get();
         $nature = Type::whereHas('project_type', function ($q) {
             $q->where('name', 'building');
@@ -208,11 +208,11 @@ class BuildingInventoryController extends Controller
         $premium = Premium::whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
-        $bed = Size::whereHas('unit', function ($q) {
-            $q->where('name', 'bed');
+        $bed = Size::where('unit', 'bed')->whereHas('project_type', function ($q) {
+            $q->where('name', 'building');
         })->get();
-        $bath = Size::whereHas('unit', function ($q) {
-            $q->where('name', 'bath');
+        $bath = Size::where('unit', 'bath')->whereHas('project_type', function ($q) {
+            $q->where('name', 'building');
         })->get();
         $nature = Type::whereHas('project_type', function ($q) {
             $q->where('name', 'building');
@@ -260,13 +260,6 @@ class BuildingInventoryController extends Controller
                         'type' => 'image',
                     ]);
             }
-        } else {
-            BuildingInventoryFile::Create(
-                [
-                    'building_inventory_id' => $inventory->id,
-                    'file' => 'images/building/shop.jpg',
-                    'type' => 'image',
-                ]);
         }
         if ($inventory) {
             return redirect()->route('building.floor.building_inventory.index', ['RolePrefix' => RolePrefix(), 'building' => $building_id, 'floor' => $floor_id])->with
@@ -281,18 +274,16 @@ class BuildingInventoryController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($building_id, $floor_id, $id)
     {
         $building_inventory = BuildingInventory::where(['building-id' => $building_id, 'building_floor_id' => $floor_id, 'id' => $id])->first();
         $building_inventory->delete();
         if ($building_inventory) {
-            return redirect()->route('building.floor.building_inventory.index', ['RolePrefix' => RolePrefix(), 'building' => $building_id, 'floor' => $floor_id])->with
-            ($this->message('Building inventory delete successfully', 'success'));
+            return redirect()->back()->with($this->message('Building inventory delete successfully', 'success'));
         } else {
-            return redirect()->route('building.floor.building_inventory.index', ['RolePrefix' => RolePrefix(), 'building' => $building_id, 'floor' => $floor_id])->with
-            ($this->message('Building inventory delete error', 'error'));
+            return redirect()->back()->with($this->message('Building inventory delete error', 'error'));
         }
 
     }
@@ -300,12 +291,14 @@ class BuildingInventoryController extends Controller
     public function image_remove(Request $request)
     {
         $building_inventory_file = BuildingInventoryFile::where(['id' => $request->id, 'building_inventory_id' => $request->inventory_id])->first();
-
-        $building_inventory_file->delete();
         if ($building_inventory_file !== null) {
-            unlink($building_inventory_file->file);
+            $building_inventory_file->delete();
+            unlink('public'.$building_inventory_file->file);
+            return json_encode('success');
+        } else {
+            return json_encode('error');
         }
-        return json_encode('success');
+
 
     }
 }

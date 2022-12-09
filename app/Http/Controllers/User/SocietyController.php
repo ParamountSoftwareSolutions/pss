@@ -3,23 +3,28 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Block;
+use App\Models\BuildingFloor;
+use App\Models\Category;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\NocType;
+use App\Models\Project;
+use App\Models\Size;
+use App\Models\Society;
+use App\Models\SocietyFile;
+use App\Models\State;
+use App\Models\Unit;
 use App\Http\Middleware\RolePrefix;
 use App\Models\Premium;
 use App\Models\Farmhouse;
-use App\Models\Project;
 use App\Models\ProjectType;
-use App\Models\Size;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SocietyController extends Controller
 {
     private $project_type_id;
-
-    public function __construct()
-    {
-        $id = ProjectType::where('name','society')->first()->id;
-        $this->project_type_id = $id;
-    }
 
     /**
      * Display a listing of the resource.
@@ -28,9 +33,12 @@ class SocietyController extends Controller
      */
     public function index()
     {
-        $project_id = get_all_projects()->pluck('project_id')->toArray();
-        $projects = Project::whereIn('id',$project_id)->where('type_id',$this->project_type_id)->get();
-        return view('user.society.show', compact('projects'));
+        $societies = Society::with('project')->whereHas('project', function ($q) {
+                $q->whereHas('type', function ($q) {
+                    $q->where('name', 'society');
+                });
+            })->latest()->get();
+        return view('user.society.index', compact('societies'));
     }
 
     /**
@@ -40,7 +48,6 @@ class SocietyController extends Controller
      */
     public function create()
     {
-//        dd($id);
         $sizes = Size::get();
         $project_type_id = $this->project_type_id;
         $premiums = Premium::where('project_type_id',$project_type_id)->get();
@@ -51,7 +58,7 @@ class SocietyController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -110,11 +117,12 @@ class SocietyController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function show($id)
     {
-        //
+        $society_block = Society::findOrFail($id);
+        return view('user.society.show', compact('society_block'));
     }
 
     /**
@@ -125,13 +133,24 @@ class SocietyController extends Controller
      */
     public function edit($id)
     {
-        $project = Project::findOrFail($id);
-        $farmhouse = Farmhouse::where('project_id',$id)->first();
-        $sizes = Size::get();
-        $project_type_id = $this->project_type_id;
-        $premiums = Premium::where('project_type_id',$project_type_id)->get();
-        return view('user.farmhouse.edit', compact('project','farmhouse', 'sizes','premiums','project_type_id'));
-
+        $society = Society::whereHas('project', function ($q) {
+                $q->whereHas('type', function ($q) {
+                    $q->where('name', 'society');
+                });
+            })
+            ->findOrFail($id);
+        $category = Category::whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $size = Size::whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->whereIn('unit', ['marla', 'kanal'])->get();
+        $noc = NocType::get();
+        $country = Country::get();
+        $block = Block::whereHas('project_type', function ($q){
+            $q->where('name', 'society');
+        })->get();
+        return view('user.society.edit', compact('society', 'category', 'size', 'noc', 'country', 'block'));
     }
 
     /**
@@ -144,15 +163,61 @@ class SocietyController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
+            'type' => 'required',
+            'noc_type_id' => 'required',
         ]);
-        $project = Project::findOrFail($id);
-        $project->name = $request->name;
-        $project->save();
-        if ($project){
-            return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has updated successfully', 'alert' => 'success']);
+        $society = Society::findOrFail($id);
+        $society->noc_type_id = $request->noc_type_id;
+        $society->developer = $request->developer;
+        $society->type = json_encode($request->type);
+        $society->block = json_encode($request->block);
+        $society->address = $request->address;
+        $society->country_id = $request->country;
+        $society->state_id = $request->state;
+        $society->city_id = $request->city;
+        $society->area = $request->area;
+        $society->created_by = Auth::id();
+        $society->save();
+        if ($request->file('logo')) {
+            $file = $request->file('logo');
+            $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+            $file->move('images/society/logo/', $filename);
+            $logo = asset('images/society/logo/' . $filename);
+            SocietyFile::create([
+                'society_id' => $society->id,
+                'file' => $logo,
+                'type' => 'logo',
+            ]);
+        }
+        if ($request->file('main_image')) {
+            $file = $request->file('main_image');
+            $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+            $file->move('images/society/logo/', $filename);
+            $main_image = asset('images/society/logo/' . $filename);
+            SocietyFile::create([
+                'society_id' => $society->id,
+                'file' => $main_image,
+                'type' => 'main_image',
+            ]);
+        }
+        if ($request->file('images')) {
+            foreach ($request->file('images') as $file) {
+                $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                $file->move('images/society/', $filename);
+                $image = asset('images/society/' . $filename);
+                SocietyFile::create([
+                    'society_id' => $society->id,
+                    'file' => $image,
+                    'type' => 'image',
+                ]);
+            }
+        }
+
+
+        if ($society) {
+            return redirect()->route('society.index', ['RolePrefix' => RolePrefix()])->with($this->message('Building has created SuccessFully', 'success'));
         } else {
-            return redirect()->back()->with(['message' => 'Farmhouse has not updated, something went wrong. Try again', 'alert' => 'error']);
+            return redirect()->back()->with($this->message("Building has not created, something went wrong. Try again", 'error'));
         }
     }
 
@@ -160,16 +225,9 @@ class SocietyController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $project = Project::findOrFail($id);
-        $project->delete();
-        if ($project){
-            return response()->json(['message'=>'Farmhouse has deleted successfully','status'=> 'success']);
-        } else {
-            return response()->json(['message'=>'Farmhouse has not deleted, something went wrong. Try again','status'=> 'error']);
-        }
     }
 }

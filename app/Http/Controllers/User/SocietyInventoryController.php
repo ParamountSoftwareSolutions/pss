@@ -3,38 +3,33 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\RolePrefix;
+use App\Models\Block;
+use App\Models\Category;
+use App\Models\PaymentPlan;
+use App\Models\Premium;
+use App\Models\Size;
 use App\Models\Society;
 use App\Models\SocietyInventory;
-use App\Models\Premium;
-use App\Models\Farmhouse;
-use App\Models\Block;
-use App\Models\Project;
-use App\Models\ProjectType;
-use App\Models\Size;
+use App\Models\SocietyInventoryFile;
+use App\Models\Type;
+use http\Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SocietyInventoryController extends Controller
 {
-    private $project_type_id;
-
-    public function __construct()
-    {
-        $id = ProjectType::where('name','farm_house')->first()->id;
-        $this->project_type_id = $id;
-    }
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function index($id)
+
+    public function index($society_id, $block_id)
     {
-        $project = Project::findOrFail($id);
-        $society = Society::where('project_id',$project->id)->first();
-        $society_inventories = SocietyInventory::where('society_id',$society)->latest('updated_at')->get();
-        return view('user.society.index', compact('project','society','society_inventories'));
+        $society_inventory = SocietyInventory::with('project', 'block', 'category', 'payment_plan', 'nature', 'size', 'premium', 'file')->where(['society_id' =>
+            $society_id, 'block_id' => $block_id])->latest()->get();
+        $block = Block::findOrFail($block_id);
+        return view('user.society_inventory.index', compact('society_inventory', 'society_id', 'block_id', 'block'));
     }
 
     /**
@@ -42,14 +37,30 @@ class SocietyInventoryController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function create($id)
+
+    public function create($society_id, $block_id)
     {
-        $project = Project::findOrFail($id);
-        $sizes = Size::get();
-        $project_type_id = $this->project_type_id;
-        $premiums = Premium::where('project_type_id',$project_type_id)->get();
-        $blocks = Block::where('project_type_id',$project_type_id)->get();
-        return view('user.farmhouse.create', compact('project','sizes','premiums','project_type_id','blocks'));
+        $society = Society::with('project')->findOrFail($society_id);
+        $payment_plan = PaymentPlan::whereHas('type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $category = Category::whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $premium = Premium::whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $bed = Size::where('unit', 'bed')->whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $bath = Size::where('unit', 'bath')->whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $plot_size = Size::whereIn('unit', ['marla', 'kanal'])->get();
+        $nature = Type::whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        return view('user.society_inventory.create', compact('society_id', 'block_id', 'society', 'payment_plan', 'category', 'premium', 'bed', 'bath', 'plot_size', 'nature'));
     }
 
     /**
@@ -58,56 +69,56 @@ class SocietyInventoryController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request,$id)
-    {
-        if ($request->simple_unit_no == null){
-            $request->validate([
-                'bulk_unit_no' => 'required',
-                'start_unit_no' => 'required',
-                'end_unit_no' => 'required',
-            ], [
-                'end_unit_no' => 'Bulk Fields is required'
-            ]);
-        }
 
-        if ($request->simple_unit_no == null && $request->bulk_unit_no !== null){
-            $length = $request->end_unit_no - $request->start_unit_no;
-            for ($i = 0; $length >= $i; $i++){
-                $unit = $request->bulk_unit_no . $request->start_unit_no++;
-                $farmhouse = new Farmhouse();
-                $farmhouse->project_id = $id;
-                $farmhouse->block_id = $request->block_id;
-                $farmhouse->unit_no = $unit;
-                $farmhouse->size_id = $request->size_id;
-                $farmhouse->premium_id = $request->premium_id;
-                $farmhouse->payment_plan_id = $request->payment_plan_id;
-                $farmhouse->save();
+    public function store(Request $request, $society_id, $block_id)
+    {
+        $request->validate([
+            'category_id' => 'required',
+        ]);
+        $request->validate([
+            'bulk_unit_no' => 'required',
+            'start_unit_no' => 'required',
+            'end_unit_no' => 'required',
+        ], [
+            'end_unit_no' => 'Bulk Fields is required'
+        ]);
+        $society = Society::with('project')->findOrFail($society_id);
+
+        try {
+            foreach ($request->bulk_unit_no as $key => $data) {
+                $length = $request->end_unit_no[$key] - $request->start_unit_no[$key];
+                for ($i = 0; $i <= $length; $i++) {
+                    $unit_no = $request->start_unit_no[$key] + $i;
+                    $unit = $request->bulk_unit_no[$key] . $unit_no;
+                    //print_r($unit. "<br>");
+                    $inventory = new SocietyInventory();
+                    $inventory->project_id = $society->project->id;
+                    $inventory->society_id = $society_id;
+                    $inventory->block_id = $block_id;
+                    $inventory->category_id = $request->category_id[$key];
+                    $inventory->unit_id = $unit;
+                    $inventory->size_id = $request->plot_size[$key];
+                    $inventory->payment_plan_id = $request->payment_plan_id[$key];
+                    $inventory->premium_id = $request->premium_id[$key];
+                    $inventory->type_id = $request->nature_id[$key];
+                    $inventory->bed_id = $request->bed[$key];
+                    $inventory->bath_id = $request->bath[$key];
+                    $inventory->created_by = Auth::id();
+                    $inventory->status = 'available';
+                    $inventory->save();
+
+                    SocietyInventoryFile::Create(
+                        [
+                            'society_inventory_id' => $inventory->id,
+                            'file' => 'images/society/plot.jpg',
+                            'type' => 'image',
+                        ]);
+                }
             }
-        }else{
-            $farmhouse = new Farmhouse();
-            $farmhouse->project_id = $id;
-            $farmhouse->block_id = $request->block_id;
-            $farmhouse->unit_no = $request->simple_unit_no;
-            $farmhouse->size_id = $request->size_id;
-            $farmhouse->premium_id = $request->premium_id;
-            $farmhouse->payment_plan_id = $request->payment_plan_id;
-            $farmhouse->save();
-        }
-        if ($request->has('images')) {
-            foreach ($request->file('images') as $file) {
-                $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
-                $file->move('public/images/farmhouse/', $filename);
-                $file = 'images/farmhouse/' . $filename;
-                FarmhouseFile::create([
-                    'farmhouse_id' => $farmhouse->id,
-                    'file' => $file,
-                ]);
-            }
-        }
-        if ($farmhouse) {
-            return redirect()->route('farmhouse.inventory.index', ['RolePrefix' => RolePrefix(),'farmhouse'=>$id])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
-        } else {
-            return redirect()->back()->with(['message' => 'Farmhouse has not created, something went wrong. Try again', 'alert' => 'error']);
+            return redirect()->route('society.block.society_inventory.index', ['RolePrefix' => RolePrefix(), 'society' => $society_id, 'block' => $block_id])->with
+            ($this->message('Society inventory created successfully', 'success'));
+        } catch (Exception $e) {
+            return redirect()->back()->with($this->message($e->getMessage(), 'error'));
         }
     }
 
@@ -128,16 +139,32 @@ class SocietyInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function edit($project_id,$farmhouse_id)
-    {
-        $project = Project::findOrFail($project_id);
-        $farmhouse = Farmhouse::with('files')->where('project_id',$project_id)->findOrFail($farmhouse_id);
-        $sizes = Size::get();
-        $project_type_id = $this->project_type_id;
-        $premiums = Premium::where('project_type_id',$project_type_id)->get();
-        $blocks = Block::where('project_type_id',$project_type_id)->get();
-        return view('user.farmhouse.edit', compact('project','farmhouse', 'sizes','premiums','project_type_id','blocks'));
 
+    public function edit($society_id, $block_id, $id)
+    {
+        $society = Society::with('project')->findOrFail($society_id);
+        $society_inventory = SocietyInventory::findOrFail($id);
+        $payment_plan = PaymentPlan::whereHas('type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $category = Category::whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $premium = Premium::whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $bed = Size::where('unit', 'bed')->whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $bath = Size::where('unit', 'bath')->whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        $plot_size = Size::whereIn('unit', ['marla', 'kanal'])->get();
+        $nature = Type::whereHas('project_type', function ($q) {
+            $q->where('name', 'society');
+        })->get();
+        return view('user.society_inventory.edit', compact('society_id', 'block_id', 'society', 'society_inventory', 'payment_plan', 'category', 'premium', 'bed', 'bath',
+            'plot_size', 'nature'));
     }
 
     /**
@@ -147,35 +174,40 @@ class SocietyInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $project_id,$farmhouse_id)
+    public function update(Request $request, $society_id, $block_id, $id)
     {
         $request->validate([
-            'unit_no' => 'required',
+            'category_id' => 'required',
         ]);
-        $project = Project::findOrFail($project_id);
-        $farmhouse = Farmhouse::findOrFail($farmhouse_id);
-        $farmhouse->block_id = $request->block_id;
-        $farmhouse->unit_no = $request->unit_no;
-        $farmhouse->size_id = $request->size_id;
-        $farmhouse->status = $request->status;
-        $farmhouse->premium_id = $request->premium_id;
-        $farmhouse->payment_plan_id = $request->payment_plan_id;
-        $farmhouse->save();
-        if ($request->has('images')) {
-            foreach ($request->file('images') as $file) {
-                $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
-                $file->move('public/images/farmhouse/', $filename);
-                $file = 'images/farmhouse/' . $filename;
-                FarmhouseFile::create([
-                    'farmhouse_id' => $farmhouse->id,
-                    'file' => $file,
-                ]);
-            }
-        }
-        if ($farmhouse) {
-            return redirect()->route('farmhouse.inventory.index', ['RolePrefix' => RolePrefix(),'farmhouse'=>$project_id])->with(['message' => 'Farmhouse has updated successfully', 'alert' => 'success']);
+        $society = Society::with('project')->findOrFail($society_id);
+
+        $inventory = SocietyInventory::findOrFail($id);
+        $inventory->project_id = $society->project->id;
+        $inventory->society_id = $society_id;
+        $inventory->block_id = $block_id;
+        $inventory->category_id = $request->category_id;
+        $inventory->unit_id = $request->simple_unit;
+        $inventory->size_id = $request->plot_size;
+        $inventory->payment_plan_id = $request->payment_plan_id;
+        $inventory->premium_id = $request->premium_id;
+        $inventory->type_id = $request->nature_id;
+        $inventory->bed_id = $request->bed;
+        $inventory->bath_id = $request->bath;
+        $inventory->created_by = Auth::id();
+        $inventory->status = 'available';
+        $inventory->save();
+
+        SocietyInventoryFile::Create(
+            [
+                'society_inventory_id' => $inventory->id,
+                'file' => 'images/society/plot.jpg',
+                'type' => 'image',
+            ]);
+        if ($inventory) {
+            return redirect()->route('society.block.society_inventory.index', ['RolePrefix' => RolePrefix(), 'society' => $society_id, 'block' => $block_id])->with
+            ($this->message('Society inventory created successfully', 'success'));
         } else {
-            return redirect()->back()->with(['message' => 'Farmhouse has not updated, something went wrong. Try again', 'alert' => 'error']);
+            return redirect()->back()->with($this->message('Society update error', 'error'));
         }
     }
 
@@ -185,15 +217,15 @@ class SocietyInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($farmhouse_id,$project_id)
+
+    public function destroy($society_id, $block_id, $id)
     {
-        $project = Project::findOrFail($project_id);
-        $farmhouse = Farmhouse::findOrFail($farmhouse_id);
-        $farmhouse->delete();
-        if ($farmhouse){
-            return response()->json(['message'=>'Farmhouse Inventory has deleted successfully','status'=> 'success']);
+        $society_inventory = SocietyInventory::where(['society-id' => $society_id, 'block_id' => $block_id, 'id' => $id])->first();
+        $society_inventory->delete();
+        if ($society_inventory) {
+            return redirect()->back()->with($this->message('Building inventory delete successfully', 'success'));
         } else {
-            return response()->json(['message'=>'Farmhouse Inventory has not deleted, something went wrong. Try again','status'=> 'error']);
+            return redirect()->back()->with($this->message('Building inventory delete error', 'error'));
         }
     }
 }

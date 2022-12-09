@@ -9,7 +9,7 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Project List</h4>
-                                @if(count($projects) !== \Illuminate\Support\Facades\Auth::user()->building)
+                                @if(count($projects) < \Illuminate\Support\Facades\Auth::user()->project)
                                     <a href="{{ route('project.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary" style="margin-left: auto; display: block;">Add New</a>
                                 @endif
                             </div>

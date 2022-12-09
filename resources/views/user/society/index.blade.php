@@ -7,34 +7,40 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>{{$project->name}} Inventory List</h4>
-                                <a href="{{ route('society.inventory.create', ['RolePrefix' => RolePrefix(),'society'=>$project->id]) }}" class="btn btn-primary"
-                                   style="margin-left: auto; display: block;">Add New</a>
-                            </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-striped" id="table-1">
                                         <thead>
                                         <tr>
-                                            <th class="text-center">#</th>
-                                            <th>Unit No</th>
+                                            <th>#</th>
+                                            <th>Name</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($society_inventories as $data)
+                                        @forelse($societies as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->unit_no }}</td>
+                                                <td>{{ $data->project->name }}</td>
                                                 <td>
-                                                    <a href="{{ route('society.inventory.edit', ['RolePrefix' => RolePrefix(),'farmhouse'=>$project->id ,'society' => $data->id]) }}"
+                                                    <a href="{{ route('society.edit', ['RolePrefix' => RolePrefix(), 'society' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <button type="button" data-url="{{ route('society.inventory.destroy',['RolePrefix' => RolePrefix(),'inventory'=>$project->id,'society' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
+                                                    <a href="{{ route('society.show', ['RolePrefix' => RolePrefix(), 'society' =>
+                                                    $data->id]) }}"
+                                                       class="btn btn-primary px-1 py-0" title="Edit">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    {{--<form
+                                                        action="{{ route('society.destroy', ['RolePrefix' => RolePrefix(), 'society' => $data->id]) }}"
+                                                        method="post" style="display: inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" title="Delete" class="btn btn-danger px-1 py-0">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </form>--}}
                                                 </td>
                                             </tr>
                                         @empty
@@ -52,6 +58,4 @@
             </div>
         </section>
     </div>
-@endsection
-@section('script')
 @endsection
