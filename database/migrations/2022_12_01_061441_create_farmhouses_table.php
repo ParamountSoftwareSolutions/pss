@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('farmhouses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
+            $table->foreignId('block_id')->unsigned()->nullable()->constrained('blocks')->nullOnDelete();
             $table->string('unit_no')->nullable();
             $table->foreignId('size_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();

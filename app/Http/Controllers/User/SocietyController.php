@@ -15,11 +15,17 @@ use App\Models\Society;
 use App\Models\SocietyFile;
 use App\Models\State;
 use App\Models\Unit;
+use App\Http\Middleware\RolePrefix;
+use App\Models\Premium;
+use App\Models\Farmhouse;
+use App\Models\ProjectType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SocietyController extends Controller
 {
+    private $project_type_id;
+
     /**
      * Display a listing of the resource.
      *
@@ -38,11 +44,14 @@ class SocietyController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function create()
     {
-        //
+        $sizes = Size::get();
+        $project_type_id = $this->project_type_id;
+        $premiums = Premium::where('project_type_id',$project_type_id)->get();
+        return view('user.society.create', compact('sizes','premiums','project_type_id'));
     }
 
     /**
@@ -53,7 +62,55 @@ class SocietyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+        ]);
+        $project = new Project();
+        $project->name = $request->name;
+        $project->type_id = $this->project_type_id;
+        $project->save();
+        if ($request->simple_unit_no == null){
+            $request->validate([
+                'bulk_unit_no' => 'required',
+                'start_unit_no' => 'required',
+                'end_unit_no' => 'required',
+            ], [
+                'end_unit_no' => 'Bulk Fields is required'
+            ]);
+        }
+
+        if ($request->simple_unit_no == null && $request->bulk_unit_no !== null){
+            $length = $request->end_unit_no - $request->start_unit_no;
+            for ($i = 0; $length >= $i; $i++){
+                $unit = $request->bulk_unit_no . $request->start_unit_no++;
+                $farmhouse = new Farmhouse();
+                $farmhouse->name = $request->name;
+                $farmhouse->project_id = $project->id;
+                $farmhouse->unit_no = $unit;
+                $farmhouse->size_id = $request->size_id;
+                $farmhouse->nature = $request->nature;
+                $farmhouse->status = $request->status;
+                $farmhouse->premium_id = $request->premium_id;
+                $farmhouse->payment_plan_id = $request->payment_plan_id;
+                $farmhouse->save();
+            }
+        }else{
+            $farmhouse = new Farmhouse();
+            $farmhouse->name = $request->name;
+            $farmhouse->project_id = $project->id;
+            $farmhouse->unit_no = $request->simple_unit_no;
+            $farmhouse->nature = $request->nature;
+            $farmhouse->size_id = $request->size_id;
+            $farmhouse->status = $request->status;
+            $farmhouse->premium_id = $request->premium_id;
+            $farmhouse->payment_plan_id = $request->payment_plan_id;
+            $farmhouse->save();
+        }
+        if ($farmhouse) {
+            return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
+        } else {
+            return redirect()->back()->with(['message' => 'Farmhouse has not created, something went wrong. Try again', 'alert' => 'error']);
+        }
     }
 
     /**
@@ -172,6 +229,5 @@ class SocietyController extends Controller
      */
     public function destroy($id)
     {
-
     }
 }

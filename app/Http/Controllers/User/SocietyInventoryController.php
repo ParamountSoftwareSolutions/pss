@@ -23,6 +23,7 @@ class SocietyInventoryController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
+
     public function index($society_id, $block_id)
     {
         $society_inventory = SocietyInventory::with('project', 'block', 'category', 'payment_plan', 'nature', 'size', 'premium', 'file')->where(['society_id' =>
@@ -36,6 +37,7 @@ class SocietyInventoryController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
+
     public function create($society_id, $block_id)
     {
         $society = Society::with('project')->findOrFail($society_id);
@@ -67,6 +69,7 @@ class SocietyInventoryController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
+
     public function store(Request $request, $society_id, $block_id)
     {
         $request->validate([
@@ -136,6 +139,7 @@ class SocietyInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
+
     public function edit($society_id, $block_id, $id)
     {
         $society = Society::with('project')->findOrFail($society_id);
@@ -160,7 +164,7 @@ class SocietyInventoryController extends Controller
             $q->where('name', 'society');
         })->get();
         return view('user.society_inventory.edit', compact('society_id', 'block_id', 'society', 'society_inventory', 'payment_plan', 'category', 'premium', 'bed', 'bath',
-        'plot_size', 'nature'));
+            'plot_size', 'nature'));
     }
 
     /**
@@ -213,6 +217,7 @@ class SocietyInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
+
     public function destroy($society_id, $block_id, $id)
     {
         $society_inventory = SocietyInventory::where(['society-id' => $society_id, 'block_id' => $block_id, 'id' => $id])->first();

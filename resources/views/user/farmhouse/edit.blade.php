@@ -6,10 +6,11 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
-                        <form method="post" action="{{ route('farmhouse.update', ['RolePrefix' => RolePrefix(), 'farmhouse' => $farmhouse->id]) }}"
+                        <form method="post" action="{{ route('farmhouse.inventory.update', ['RolePrefix' => RolePrefix(),'farmhouse'=>$project->id, 'inventory' => $farmhouse->id]) }}"
                               enctype="multipart/form-data">
                             <div class="card">
                                 @csrf
+                                @method('put')
                                 <div class="card-header">
                                     <h4>Farmhouse Detail</h4>
                                 </div>
@@ -32,6 +33,18 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Block</label>
+                                            <select class="form-control" name="size_id">
+                                                <option label="" disabled selected>Select Block</option>
+                                                @foreach($blocks as $data)
+                                                    <option value="{{ $data->id }}"{{$farmhouse->block_id == $data->id ? 'selected' : ''}}>{{ $data->name }} Marla</option>
+                                                @endforeach
+                                            </select>
+                                            @error('size_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                         <div class="form-group col-md-4">
                                             <label>Plot/Unit No <sup style="color: red">*</sup></label>
                                             <input type="text" class="form-control" name="unit_no" required
@@ -72,7 +85,7 @@
                                                         <option value="{{ $data->id }}" {{$farmhouse->premium_id == $data->id ? 'selected' : ''}}>{{ ucwords($data->name) }}</option>
                                                     @endforeach
                                                 </select>
-                                                @error('nature')
+                                                @error('premium_id')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                                 @enderror
                                             </div>

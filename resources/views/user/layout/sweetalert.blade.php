@@ -90,6 +90,7 @@
             icon: 'error',
             title: msg,
         });
+        return;
     }
     function successMsg(msg){
         Toast.fire({

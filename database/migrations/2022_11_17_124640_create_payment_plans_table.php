@@ -26,11 +26,16 @@ class CreatePaymentPlansTable extends Migration
             $table->integer('balloting_price')->nullable();
             $table->integer('possession_price')->nullable();
             $table->integer('total_price')->nullable();
-            $table->integer('rent_price')->nullable();
             $table->integer('confirmation_amount')->nullable();
             $table->integer('number_of_payment')->nullable();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->integer('commission')->nullable();
+            $table->integer('after_commission_price')->nullable();
+            $table->enum('down_payment_select',['100%','50%','less_50'])->nullable();
+            $table->integer('down_payment')->nullable();
+            $table->integer('discount')->nullable();
+            $table->integer('rent_price')->nullable();
+            $table->integer('rent_installment')->nullable();
             $table->timestamps();
         });
     }

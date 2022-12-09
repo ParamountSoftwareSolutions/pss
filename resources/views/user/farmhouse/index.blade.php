@@ -8,8 +8,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Farmhouse Inventory List</h4>
-                                <a href="{{ route('farmhouse.inventory.create', ['RolePrefix' => RolePrefix(),'farmhouse'=>$id]) }}" class="btn btn-primary"
+                                <h4>{{$project->name}} Inventory List</h4>
+                                <a href="{{ route('farmhouse.inventory.create', ['RolePrefix' => RolePrefix(),'farmhouse'=>$project->id]) }}" class="btn btn-primary"
                                    style="margin-left: auto; display: block;">Add New</a>
                             </div>
                             <div class="card-body">
@@ -28,11 +28,11 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->unit_no }}</td>
                                                 <td>
-                                                    <a href="{{ route('farmhouse.inventory.edit', ['RolePrefix' => RolePrefix(),'farmhouse'=>$id ,'inventory' => $data->id]) }}"
+                                                    <a href="{{ route('farmhouse.inventory.edit', ['RolePrefix' => RolePrefix(),'farmhouse'=>$project->id ,'inventory' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <button type="button" data-url="{{ route('farmhouse.inventory.destroy',['RolePrefix' => RolePrefix(),'inventory'=>$id,'farmhouse' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                    <button type="button" data-url="{{ route('farmhouse.inventory.destroy',['RolePrefix' => RolePrefix(),'inventory'=>$project->id,'farmhouse' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>
