@@ -62,7 +62,7 @@
                                                         @endif @endif>{{ $data->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('type')
+                                            @error('block')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -77,7 +77,7 @@
                                                         @endif>{{ $data->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('type')
+                                            @error('noc_type_id')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>

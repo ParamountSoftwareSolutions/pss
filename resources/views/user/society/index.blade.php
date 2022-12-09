@@ -27,11 +27,13 @@
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
+                                                    @if($data->block !== null)
                                                     <a href="{{ route('society.show', ['RolePrefix' => RolePrefix(), 'society' =>
                                                     $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
+                                                    @endif
                                                     {{--<form
                                                         action="{{ route('society.destroy', ['RolePrefix' => RolePrefix(), 'society' => $data->id]) }}"
                                                         method="post" style="display: inline-block;">
