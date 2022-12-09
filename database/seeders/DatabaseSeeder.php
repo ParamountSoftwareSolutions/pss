@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             PremiumSeeder::class,
             BuildingFloorSeeder::class,
             BuildingSeeder::class,
+            BuildingDetailSeeder::class,
         ]);
     }
 }

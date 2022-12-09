@@ -149,4 +149,8 @@ class BuildingController extends Controller
     {
         //
     }
+
+    public function asd(){
+        return view('user.building_detail.edit');
+    }
 }

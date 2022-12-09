@@ -89,17 +89,6 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        {{--<div class="form-group col-md-4">
-                                            <label>Status</label>
-                                            <select class="form-control" name="status">
-                                                <option value="available">Available</option>
-                                                <option value="sold">Sold</option>
-                                                <option value="hold">Hold</option>
-                                            </select>
-                                            @error('status')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>--}}
                                         <div class="form-group col-md-4">
                                             <div class="form-group">
                                                 <label>Type</label>

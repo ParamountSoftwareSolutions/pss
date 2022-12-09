@@ -26,23 +26,17 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->project->name }}</td>
                                                 <td>
-                                                    <a href="{{ route('building.edit', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
-                                                       class="btn btn-primary px-1 py-0" title="Edit">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <a href="{{ route('building.show', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
-                                                       class="btn btn-primary px-1 py-0" title="Edit">
-                                                        <i class="fa fa-eye"></i>
-                                                    </a>
-                                                    <form
-                                                        action="{{ route('building.destroy', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
-                                                        method="post" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" title="Delete" class="btn btn-danger px-1 py-0">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                    @if(\App\Models\BuildingDetail::where('building_id', $data->id)->first() == null)
+                                                        <a href="{{ route('building.extra_detail.create',['RolePrefix' => RolePrefix(),'building' => $data->id]) }}"
+                                                           class="btn btn-primary px-1 py-0" title="Create And Update Details">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ route('building.extra_detail.edit', ['RolePrefix' => RolePrefix(), 'extra_detail' => $data->building_detail->id,'building' => $data->id]) }}"
+                                                           class="btn btn-primary px-1 py-0" title="Edit">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @empty

@@ -23,10 +23,10 @@ class CreateBuildingDetailsTable extends Migration
             $table->string('price')->nullable();
             $table->text('description')->nullable();
             $table->text('plot_feature')->nullable();
-            $table->text('business_feature')->nullable();
+            $table->text('communication_feature')->nullable();
             $table->text('community_feature')->nullable();
-            $table->text('healthcare_feature')->nullable();
-            $table->text('other_facilities')->nullable();
+            $table->text('health_feature')->nullable();
+            $table->text('other_feature')->nullable();
             $table->text('property_type')->nullable();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

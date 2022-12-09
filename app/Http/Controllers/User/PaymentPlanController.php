@@ -189,7 +189,7 @@ class PaymentPlanController extends Controller
         if($premium_id !== 'regular'){
             $payment_plan = PaymentPlan::where(['project_type_id'=>$project_type_id,'premium_id'=>$premium_id])->get();
         }else{
-            $payment_plan = PaymentPlan::where(['project_type_id'=>$project_type_id,'premium_id'=>$premium_id])->get();
+            $payment_plan = PaymentPlan::where('project_type_id',$project_type_id)->where('premium_id',null)->get();
         }
         return response()->json($payment_plan);
     }

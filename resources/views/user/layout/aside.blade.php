@@ -77,6 +77,8 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">All Building</a>
+                                <a href="{{route('building_extra_detail', ['RolePrefix' => RolePrefix()])}}">Building Extra Detail</a>
+{{--                                <a href="{{route('feature.index', ['RolePrefix' => RolePrefix()])}}">Building Extra Features</a>--}}
                             </li>
                         </ul>
                     </div>

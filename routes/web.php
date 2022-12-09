@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\ClientController;
 use App\Http\Controllers\User\WebHookController;
-
 use App\Http\Controllers\User\BuildingController;
 use App\Http\Controllers\User\BuildingInventoryController;
 use App\Http\Controllers\User\FloorController;
@@ -24,6 +23,8 @@ use App\Http\Controllers\User\PaymentPlanController;
 use App\Http\Controllers\User\EmailController;
 use App\Http\Controllers\User\SocietyController;
 use App\Http\Controllers\User\SocietyInventoryController;
+use App\Http\Controllers\User\BuildingExtraDetailController;
+use App\Http\Controllers\User\FeatureController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -80,6 +81,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('payment_plan', PaymentPlanController::class);
     Route::resource('society', SocietyController::class);
     Route::resource('society.inventory', SocietyInventoryController::class);
+    Route::resource('feature', FeatureController::class);
 
     //=========================//
     //  Building Management    //
@@ -88,6 +90,8 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('building', BuildingController::class);
     Route::resource('floor', FloorController::class);
     Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
+    Route::get('building_extra_detail', [BuildingExtraDetailController::class,'building_extra_detail'])->name('building_extra_detail');
+    Route::resource('building.extra_detail', BuildingExtraDetailController::class);
     /*Route::post('building/banner/remove', 'BuildingController@remove_image_banner');
     Route::get('building-detail-form', 'BuildingController@detail_form')->name('building.detail_form');
     Route::get('building_detail/{id}', 'FloorController@index')->name('building_detail.index');
@@ -146,7 +150,16 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // /* Clients */
     // //=============//
 
-    //             //End New Routes
+    //             //End New Routes    Get Payment Plan
+
+    Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
+
+
+
+
+
+
+
     // //=============//
     // /* Email Routes */
     // //=============//
