@@ -103,4 +103,11 @@ if (!function_exists('get_all_projects')) {
     }
 }
 
+if (!function_exists('block')) {
+    function block($id)
+    {
+        return \App\Models\Block::find($id)->name;
+    }
+}
+
 

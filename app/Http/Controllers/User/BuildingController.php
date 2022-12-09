@@ -7,6 +7,7 @@ use App\Models\Building;
 use App\Models\BuildingFile;
 use App\Models\BuildingFloor;
 use App\Models\BuildingInventory;
+use App\Models\Category;
 use App\Models\Project;
 use App\Models\Size;
 use App\Models\Unit;
@@ -70,9 +71,12 @@ class BuildingController extends Controller
     {
         $building = Building::with('project', 'building_file')->findOrFail($id);
         $floor = BuildingFloor::get();
+        $category = Category::whereHas('project_type', function ($q){
+            $q->where('name', 'building');
+        })->get();
         $unit = Unit::where('name', 'bed')->get();
         $size = Size::where('project_type_id', project_type('building'))->whereIn('unit_id', $unit->pluck('id')->toArray())->get();
-        return view('user.building.edit', compact('floor', 'building', 'size'));
+        return view('user.building.edit', compact('floor', 'building', 'size', 'category'));
     }
 
     /**

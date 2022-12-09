@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'All Society List')
+@section('title', 'Block List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -18,29 +18,16 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($societies as $data)
+                                        @forelse(json_decode($society_block->block) as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->project->name }}</td>
+                                                <td>{{ block((int) $data) }}</td>
                                                 <td>
-                                                    <a href="{{ route('society.edit', ['RolePrefix' => RolePrefix(), 'society' => $data->id]) }}"
-                                                       class="btn btn-primary px-1 py-0" title="Edit">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <a href="{{ route('society.show', ['RolePrefix' => RolePrefix(), 'society' =>
-                                                    $data->id]) }}"
+                                                    <a href="{{ route('society.block.society_inventory.index', ['RolePrefix' => RolePrefix(), 'society' =>
+                                                    $society_block->id, 'block' => (int) $data]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
-                                                    {{--<form
-                                                        action="{{ route('society.destroy', ['RolePrefix' => RolePrefix(), 'society' => $data->id]) }}"
-                                                        method="post" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" title="Delete" class="btn btn-danger px-1 py-0">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </form>--}}
                                                 </td>
                                             </tr>
                                         @empty

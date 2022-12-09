@@ -52,6 +52,7 @@ class PermissionSeeder extends Seeder
             'email' => 'society@admin.com',
             'phone_number' => '093489380093',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role2);
 
@@ -61,6 +62,7 @@ class PermissionSeeder extends Seeder
             'email' => 'x@society.com',
             'phone_number' => '09348938029384091',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role3);
 
@@ -70,6 +72,7 @@ class PermissionSeeder extends Seeder
             'email' => 'manger1@society.com',
             'phone_number' => '09348938029384092',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role3);
 
@@ -79,6 +82,7 @@ class PermissionSeeder extends Seeder
             'email' => 'agent@agent.com',
             'phone_number' => '09348938029384093',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role4);
 
@@ -88,6 +92,7 @@ class PermissionSeeder extends Seeder
             'email' => 'test@gmail.com',
             'phone_number' => '093489380293840912',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role7);
 
@@ -97,6 +102,7 @@ class PermissionSeeder extends Seeder
             'email' => 'test1@gmail.com',
             'phone_number' => '09348938029384094',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role7);
 
@@ -106,6 +112,7 @@ class PermissionSeeder extends Seeder
             'email' => 'test2@gmail.com',
             'phone_number' => '09348938029384095',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role7);
 
@@ -115,6 +122,7 @@ class PermissionSeeder extends Seeder
             'email' => 'guest@gmail.com',
             'phone_number' => '09348938029384096',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role6);
 
@@ -124,6 +132,7 @@ class PermissionSeeder extends Seeder
             'email' => 'property_admin@gmail.com',
             'phone_number' => '09348938029384097',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role8);
 
@@ -133,6 +142,7 @@ class PermissionSeeder extends Seeder
             'email' => 'property_manager@gmail.com',
             'phone_number' => '093489380293840911',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role9);
 
@@ -142,6 +152,7 @@ class PermissionSeeder extends Seeder
             'email' => 'sale_manager@gmail.com',
             'phone_number' => '0934893802938409112',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role11);
 
@@ -151,6 +162,7 @@ class PermissionSeeder extends Seeder
             'email' => 'sale_person@gmail.com',
             'phone_number' => '09348902938409112',
             'password' => Hash::make(12345678),
+            'project' => 10,
         ]);
         $user->assignRole($role12);
     }

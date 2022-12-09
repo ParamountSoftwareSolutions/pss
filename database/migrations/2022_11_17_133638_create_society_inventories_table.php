@@ -15,13 +15,17 @@ class CreateSocietyInventoriesTable extends Migration
     {
         Schema::create('society_inventories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
             $table->foreignId('society_id')->unsigned()->nullable()->constrained('societies')->nullOnDelete();
+            $table->foreignId('block_id')->unsigned()->nullable()->constrained('blocks')->nullOnDelete();
             $table->foreignId('category_id')->unsigned()->nullable()->constrained('categories')->nullOnDelete();
+            $table->string('unit_id');
             $table->foreignId('payment_plan_id')->unsigned()->nullable()->constrained('payment_plans')->nullOnDelete();
-            //$table->foreignId('type_id')->unsigned()->nullable()->constrained('types')->nullOnDelete();
+            $table->foreignId('type_id')->unsigned()->nullable()->constrained('types')->nullOnDelete();
             $table->foreignId('size_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
+            $table->foreignId('bed_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
+            $table->foreignId('bath_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
-            $table->integer('quantity')->nullable();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->string('status');
             $table->timestamps();

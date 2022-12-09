@@ -15,6 +15,9 @@ class CreateSocietyInventoryFilesTable extends Migration
     {
         Schema::create('society_inventory_files', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('society_inventory_id')->unsigned()->nullable()->constrained('society_inventories')->nullOnDelete();
+            $table->text('file');
+            $table->string('type');
             $table->timestamps();
         });
     }

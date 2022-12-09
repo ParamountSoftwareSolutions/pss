@@ -45,15 +45,15 @@ class CategorySeeder extends Seeder
             ],
             [
                 'project_type_id' => 2,
-                'name' => 'Villa',
+                'name' => 'Files',
             ],
             [
                 'project_type_id' => 2,
-                'name' => 'Apartment',
+                'name' => 'villas',
             ],
             [
                 'project_type_id' => 2,
-                'name' => 'Commercial',
+                'name' => 'homes',
             ],
         ]);
     }
