@@ -26,8 +26,6 @@ use App\Http\Controllers\User\FarmhouseController;
 use App\Http\Controllers\User\PropertyController;
 use App\Http\Controllers\User\PaymentPlanController;
 use App\Http\Controllers\User\EmailController;
-use App\Http\Controllers\User\SocietyController;
-use App\Http\Controllers\User\SocietyInventoryController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
