@@ -83,7 +83,15 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('payment_plan', PaymentPlanController::class);
     Route::resource('society', SocietyController::class);
     Route::resource('society.inventory', SocietyInventoryController::class);
-    Route::resource('feature', FeatureController::class);
+
+    Route::group(['prefix' => 'building/feature', 'as' => 'feature.'], function () {
+        Route::get('/{key}', [FeatureController::class,'index'])->name('index');
+        Route::get('{key}/create', [FeatureController::class,'create'])->name('create');
+        Route::post('{key}/store', [FeatureController::class,'store'])->name('store');
+        Route::get('{key}/edit/{id}', [FeatureController::class,'edit'])->name('edit');
+        Route::put('{key}/update/{id}', [FeatureController::class,'update'])->name('update');
+        Route::delete('{key}/destroy/{id}', [FeatureController::class,'destroy'])->name('destroy');
+    });
 
     //=========================//
     //  Building Management    //

@@ -78,7 +78,22 @@
                             <li>
                                 <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">All Building</a>
                                 <a href="{{route('building_extra_detail', ['RolePrefix' => RolePrefix()])}}">Building Extra Detail</a>
-{{--                                <a href="{{route('feature.index', ['RolePrefix' => RolePrefix()])}}">Building Extra Features</a>--}}
+                                <a href="#building_feature" data-toggle="collapse">
+                                    <i data-feather="shopping-cart"></i>
+                                    <span> Building Features </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse" id="building_feature">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'plot'])}}">Plot Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'communication'])}}">Communication Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'community'])}}">Community Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'health'])}}">Health Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'other'])}}">Other Features</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                         </ul>
                     </div>

@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Add Type')
+@section('title', 'Add Feature')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -16,14 +16,14 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="post" action="{{ route('type.store', ['RolePrefix' => RolePrefix()]) }}">
+                            <form method="post" action="{{ route('feature.store', ['RolePrefix' => RolePrefix(),'key'=>$key]) }}">
                                 @csrf
                                 <div class="card-header">
-                                    <h4>Add Type</h4>
+                                    <h4>Add Feature</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="form-group col-md-4">
+                                        {{--<div class="form-group col-md-4">
                                             <label>Building Type</label>
                                             <select class="form-control" name="type_id">
                                                 <option label="" disabled selected>Select Building Type</option>
@@ -34,9 +34,9 @@
                                             @error('type_id')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
-                                        </div>
+                                        </div>--}}
                                         <div class="form-group col-md-4">
-                                            <label>Type Name</label>
+                                            <label>Name</label>
                                             <input type="text" class="form-control" required="" name="name">
                                             @error('name')
                                             <div class="text-danger mt-2">{{ $message }}</div>

@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'Edit Type')
+@section('title', 'Edit Feature')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -16,15 +16,15 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form method="post" action="{{ route('type.update', ['RolePrefix' => RolePrefix(), 'type' => $type->id]) }}">
+                            <form method="post" action="{{ route('feature.update', ['RolePrefix' => RolePrefix(), 'key' => $key,'id'=>$feature->id]) }}">
                                 @csrf
                                 @method('put')
                                 <div class="card-header">
-                                    <h4>Edit Type</h4>
+                                    <h4>Edit Feature</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="form-group col-md-4">
+                                        {{--<div class="form-group col-md-4">
                                             <label>Building Type</label>
                                             <select class="form-control" name="type_id">
                                                 <option label="" disabled selected>Select Building Type</option>
@@ -36,10 +36,10 @@
                                             @error('type_id')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
-                                        </div>
+                                        </div>--}}
                                         <div class="form-group col-md-4">
                                             <label>Type Name</label>
-                                            <input type="text" class="form-control" required="" name="name" value="{{ $type->name }}">
+                                            <input type="text" class="form-control" required="" name="name" value="{{ $feature->name }}">
                                             @error('name')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
