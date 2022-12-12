@@ -72,10 +72,7 @@ class ClientController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
             })->get();
-            echo '<pre>';
-            print_r($sale_persons);
-            echo '<pre>';
-            die();
+
         $country = Country::get();
         $client_count = $lead->count();
         return view('user.client.index', get_defined_vars());
@@ -131,8 +128,11 @@ class ClientController extends Controller
     {
         if ($request->old_client_id) {
             $client = Client::where('id', $request->old_client_id)->first();
-            $project_type_id = Project::where('id', $client->project_id)->first()->type_id;
-           
+            if (!empty($client->project_id)) {
+                $project_type_id = Project::where('id', $client->project_id)->first()->type_id;
+            } else {
+                $project_type_id = Null;
+            }
             $client_data = [
                 'project_id' => $client->project_id,
                 'project_type_id' => $project_type_id,
@@ -187,14 +187,18 @@ class ClientController extends Controller
             // $lead_id = lead::create($data)->id;
 
             // $lead_id = 1;
-            $project_type_id = Project::where('id', json_decode($request->building_id)->id)->first()->type_id;
-
+            if (!empty(json_decode($request->building_id)->id)) {
+                $project_type_id = Project::where('id', json_decode($request->building_id)->id)->first()->type_id;
+            } else {
+                $project_type_id = Null;
+            }
+           
             $client_data = [
                 'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
                 'project_type_id' => $project_type_id,
                 'inventory_id' => "",
                 'customer_id' => Null,
-                'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : Null,
+                'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : auth()->user()->id,
 
                 'name' => $request->name_new,
                 'email' => $request->email_new,
