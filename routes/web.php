@@ -1,8 +1,5 @@
 <?php
 
-use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\ClientController;
 use App\Http\Controllers\User\WebHookController;
 

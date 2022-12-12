@@ -72,6 +72,10 @@ class ClientController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
             })->get();
+            echo '<pre>';
+            print_r($sale_persons);
+            echo '<pre>';
+            die();
         $country = Country::get();
         $client_count = $lead->count();
         return view('user.client.index', get_defined_vars());
@@ -93,6 +97,7 @@ class ClientController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
             })->get();
+        $old_clients = Client::all();
         return view('user.client.create', get_defined_vars());
     }
 
@@ -124,59 +129,99 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $data = [
-            'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
-            'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : Null,
-            'created_by' => auth()->user()->id,
-            'name' => $request->name_new,
-            'email' => $request->email_new,
-            'password' => $request->password_new,
-            'number' => $request->phone_number_new,
-            'cnic' => $request->cnic_new,
-            'father_name' => $request->father_name_new,
-            'country_id' => $request->country_id_new,
-            'state_id' => $request->state_id_new,
-            'city_id' => $request->city_id_new,
-            'status' => 'mature',
-            'type' => 'lead',
-        ];
-        $lead_id = lead::create($data)->id;
+        if ($request->old_client_id) {
+            $client = Client::where('id', $request->old_client_id)->first();
+            $project_type_id = Project::where('id', $client->project_id)->first()->type_id;
+           
+            $client_data = [
+                'project_id' => $client->project_id,
+                'project_type_id' => $project_type_id,
+                'inventory_id' => "",
+                'customer_id' => Null,
+                'user_id' => auth()->user()->id,
 
-        // $lead_id = 1;
-        $project_type_id = Project::where('id', json_decode($request->building_id)->id)->first()->type_id;
+                'name' => $client->name,
+                'email' => $client->email,
+                'password' => $client->password,
+                'number' => $client->number,
+                'alt_phone' => $client->alt_phone,
+                'dob' => $client->dob,
+                'address' => $client->address,
+                'cnic' => $client->cnic,
+                'father_name' => $client->father_name,
+                'country_id' => $client->country_id,
+                'state_id' => $client->state_id,
+                'city_id' => $client->city_id,
 
-        $client_data = [
-            'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
-            'project_type_id' => $project_type_id,
-            'inventory_id' => "",
-            'customer_id' => $lead_id,
-            'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : Null,
-
-            'name' => $request->name_new,
-            'email' => $request->email_new,
-            'password' => $request->password_new,
-            'number' => $request->phone_number_new,
-            'alt_phone' => $request->alt_phone,
-            'dob' => $request->dob,
-            'address' => $request->address,
-            'cnic' => $request->cnic_new,
-            'father_name' => $request->father_name_new,
-            'country_id' => $request->country_id_new,
-            'state_id' => $request->state_id_new,
-            'city_id' => $request->city_id_new,
-
-            'registration_number' => rand(100, 100000),
-            'hidden_file_number' => "",
-            'down_payment' => $request->down_payment,
-            'comment' => $request->comment,
-            'created_by' => auth()->user()->id,
-            'status' => 'mature',
-        ];
-        $response = Client::create($client_data);
-        if ($response) {
-            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
+                'registration_number' => rand(100, 100000),
+                'hidden_file_number' => "",
+                'down_payment' => $client->down_payment,
+                'comment' => $client->comment,
+                'created_by' => auth()->user()->id,
+                'status' => 'mature',
+            ];
+            $response = Client::create($client_data);
+            if ($response) {
+                return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
+            } else {
+                return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+            }
         } else {
-            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+
+            // $data = [
+            //     'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
+            //     'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : Null,
+            //     'created_by' => auth()->user()->id,
+            //     'name' => $request->name_new,
+            //     'email' => $request->email_new,
+            //     'password' => $request->password_new,
+            //     'number' => $request->phone_number_new,
+            //     'cnic' => $request->cnic_new,
+            //     'father_name' => $request->father_name_new,
+            //     'country_id' => $request->country_id_new,
+            //     'state_id' => $request->state_id_new,
+            //     'city_id' => $request->city_id_new,
+            //     'status' => 'mature',
+            //     'type' => 'lead',
+            // ];
+            // $lead_id = lead::create($data)->id;
+
+            // $lead_id = 1;
+            $project_type_id = Project::where('id', json_decode($request->building_id)->id)->first()->type_id;
+
+            $client_data = [
+                'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
+                'project_type_id' => $project_type_id,
+                'inventory_id' => "",
+                'customer_id' => Null,
+                'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : Null,
+
+                'name' => $request->name_new,
+                'email' => $request->email_new,
+                'password' => $request->password_new,
+                'number' => $request->phone_number_new,
+                'alt_phone' => $request->alt_phone,
+                'dob' => $request->dob,
+                'address' => $request->address,
+                'cnic' => $request->cnic_new,
+                'father_name' => $request->father_name_new,
+                'country_id' => $request->country_id_new,
+                'state_id' => $request->state_id_new,
+                'city_id' => $request->city_id_new,
+
+                'registration_number' => rand(100, 100000),
+                'hidden_file_number' => "",
+                'down_payment' => $request->down_payment,
+                'comment' => $request->comment,
+                'created_by' => auth()->user()->id,
+                'status' => 'mature',
+            ];
+            $response = Client::create($client_data);
+            if ($response) {
+                return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
+            } else {
+                return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+            }
         }
     }
     /**

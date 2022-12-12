@@ -24,6 +24,23 @@ class CreateClientsTable extends Migration
             $table->string('registration_number')->nullable();
             $table->string('hidden_file_number')->nullable();
             $table->integer('down_payment')->nullable();
+
+
+            $table->string('name')->nullable();
+            $table->string('father_name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('password')->nullable();
+            $table->string('number')->nullable();
+            $table->string('alt_phone')->nullable();
+            $table->string('dob')->nullable();
+            $table->string('address')->nullable();
+            $table->string('cnic')->nullable();
+            $table->integer('country_id')->nullable();
+            $table->integer('state_id')->nullable();
+            $table->integer('city_id')->nullable();
+            
+            
+            
             $table->string('source')->nullable();
             $table->enum('priority', ['very_hot', 'hot', 'moderate', 'cold'])->nullable();
             $table->string('comment')->nullable();
