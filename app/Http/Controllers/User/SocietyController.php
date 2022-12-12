@@ -163,8 +163,7 @@ class SocietyController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'type' => 'required',
-            'noc_type_id' => 'required',
+            'block' => 'required',
         ]);
         $society = Society::findOrFail($id);
         $society->noc_type_id = $request->noc_type_id;
