@@ -39,7 +39,7 @@ class LeadController extends Controller
         $users = get_user_by_projects();
         $lead = get_leads_from_user($users);
         /**
-         * /////////////////////////////////////////////Filters
+         * /////////////////////////////////////////////Filters/////////////////////////////////
          */
         //Search By Project
         if ($request->project) {
@@ -232,10 +232,10 @@ class LeadController extends Controller
      */
     public function store(LeadStoreRequest $request)
     {
-        $rpoject_id_val = (!empty(json_decode($request->building_id)->id))?json_decode($request->building_id)->id:"";
+        $rpoject_id_val = (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null;
         $data = [
             'project_id' => $rpoject_id_val,
-            'user_id' => $request->sale_person_id,
+            'user_id' => ($request->sale_person_id) ? $request->sale_person_id : auth()->user()->id,
             'created_by' => auth()->user()->id,
             'name' => $request->name,
             'email' => $request->email,
@@ -253,7 +253,7 @@ class LeadController extends Controller
             'status' => 'new',
             'type' => 'lead',
         ];
-   
+
         $response = lead::create($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');

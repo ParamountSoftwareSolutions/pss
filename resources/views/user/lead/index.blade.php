@@ -68,7 +68,7 @@
                                 <option value="" disabled selected style="color:rgb(75, 106, 108)">Search By Projects</option>
                                 @if (!empty($building))
                                 @foreach ($building as $data_building)
-                                <option value="{{ ($data_building->id !== null) ? $data_building->id :"" }}">{{ ($data_building['projects']['name']!== null) ? $data_building['projects']['name'] :"" }}</option>
+                                <option value="{{ ($data_building->id !== null) ? $data_building->id :"" }}">{{ ($data_building['name']!== null) ? $data_building['name'] :"" }}</option>
                                 @endforeach
                                 @endif
                             </select>
