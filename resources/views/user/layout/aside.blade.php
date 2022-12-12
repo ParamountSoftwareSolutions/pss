@@ -180,25 +180,59 @@
                 </li>
 
                 <li>
-                    <a href="#sidebarEcommerce" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Leads </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="sidebarEcommerce">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('leads.create', ['RolePrefix' => RolePrefix()])}}">Add Lead</a>
-                            </li>
-                            <li>
-                                <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">All Lead</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+            <a href="#sidebarEcommerce" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> Leads </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="sidebarEcommerce">
+                <ul class="nav-second-level">
+                    <li>
+                        <a href="{{route('leads.create', ['RolePrefix' => RolePrefix()])}}">Add Lead</a>
+                    </li>
+                    <li>
+                        <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">All Lead</a>
+                    </li>
+                    <li>
+                        <a href="{{route('leads.mature', ['RolePrefix' => RolePrefix()])}}">Matured</a>
+                    </li>
+                    <li>
+                        <a href="{{route('leads.closed', ['RolePrefix' => RolePrefix()])}}">Closed</a>
+                    </li>
+                    <li>
+                        <a href="{{route('webhook.index', ['RolePrefix' => RolePrefix()])}}">Facebook leads</a>
+                    </li>
+                    <li>
+                        <a href="{{route('lead.employee', ['RolePrefix' => RolePrefix()])}}">Employee Reports</a>
+                    </li>
+                    <li>
+                        <a href="{{route('lead.refer', ['RolePrefix' => RolePrefix()])}}">Refer Leads</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li>
+            <a href="#clients_bar" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> Clients </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="clients_bar">
+                <ul class="nav-second-level">
+                    <li>
+                        <a href="{{route('clients.create', ['RolePrefix' => RolePrefix()])}}">Add Client</a>
+                    </li>
+                    <li>
+                        <a href="{{route('clients.index', ['RolePrefix' => RolePrefix()])}}">All Clients</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
             </ul>
         </div>
         </li>
+
+      
         </ul>
     </div>
     <!-- End Sidebar -->

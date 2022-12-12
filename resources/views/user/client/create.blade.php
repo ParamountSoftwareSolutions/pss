@@ -224,10 +224,10 @@
                                         <label>Client</label>
                                         <select class="form-control" name="client_id">
                                             <option label="" disabled selected>Select Client</option>
-                                            @if(!empty($client))
-                                            @forelse($client as $data)
-                                            <option value="{{ $data->id }}">Name: {{ $data->username }} &nbsp;&nbsp;&nbsp;&nbsp;
-                                                Phone: {{$data->phone_number}}</option>
+                                            @if(!empty($old_clients))
+                                            @forelse($old_clients as $data)
+                                            <option value="{{ $data->id }}">Name: {{ $data->name }} &nbsp;&nbsp;&nbsp;&nbsp;
+                                                Phone: {{$data->number}}</option>
                                             @empty
                                             <option value="">Client Empty</option>
                                             @endforelse
@@ -239,11 +239,16 @@
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" name="old_client_id">
                             <div class="card-footer text-right">
                                 <button class="btn btn-primary" type="submit">Submit</button>
                             </div>
                         </div>
                     </form>
+                    <!-- <form method="POST" action="{{ route('clients.store', ['RolePrefix' => RolePrefix()]) }}">
+                        @csrf
+                        <input type="hidden" name="old_client_id">
+                    </from> -->
                 </div>
             </div>
         </div>
@@ -251,6 +256,12 @@
 </div>
 @endsection
 @section('script')
+<script>
+    $('select[name="client_id"]').on('change', function() {
+        var id = $(this).val();
+        $('[name=old_client_id]').val(id);
+    });
+</script>
 <script>
     $(document).ready(function() {
 
@@ -316,6 +327,7 @@
             $('input[name="father_name_new"]').removeAttr("required");
             $('input[name="cnic_new"]').removeAttr("required");
             $('input[name="email_new"]').removeAttr("required");
+            $('input[name="password_new"]').removeAttr("required");
             $('input[name="phone_number_new"]').removeAttr("required");
             $('input[name="address_new"]').removeAttr("required");
             $('input[name="dob_new"]').removeAttr("required");

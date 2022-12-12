@@ -232,27 +232,7 @@
                                 </div>
                             </div>
                             {{-- Old Client Form --}}
-                            <!-- <div class="card-body old-client-form">
-                                <div class="row">
-                                    <div class="form-group col-md-4">
-                                        <label>Client</label>
-                                        <select class="form-control" name="client_id">
-                                            <option label="" disabled selected>Select Client</option>
-                                            @if(!empty($clients))
-                                            @forelse($clients as $client_data)
-                                            <option value="{{ $client_data->id }}">Name: {{ $client_data->customer->name }} &nbsp;&nbsp;&nbsp;&nbsp;
-                                                Phone: {{ $client_data->customer->number }}</option>
-                                            @empty
-                                            <option value="">Client Empty</option>
-                                            @endforelse
-                                            @endif
-                                        </select>
-                                        @error('client_id')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div> -->
+                          
                             <div class="card-footer text-right">
                                 <button class="btn btn-primary" type="submit">Submit</button>
                             </div>
