@@ -155,9 +155,6 @@
                     <div class="collapse" id="farmhouse">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{route('farmhouse.create', ['RolePrefix' => RolePrefix()])}}">Add Farmhouse</a>
-                            </li>
-                            <li>
                                 <a href="{{route('farmhouse.index', ['RolePrefix' => RolePrefix()])}}">All Farmhouse</a>
                             </li>
                         </ul>
