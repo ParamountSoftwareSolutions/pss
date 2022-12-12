@@ -18,7 +18,7 @@ class BuildingSeeder extends Seeder
             [
                 'project_id' => 1,
                 'floor_list' => '["1","2","6"]',
-                'type' => '["apartment","shop","studio"]',
+                'type' => '["1","2","3"]',
                 'apartment_size' => "['1', '2', '3', '4', '5']",
                 'total_area' => '120 sq',
                 'created_by' => 10,
@@ -26,7 +26,7 @@ class BuildingSeeder extends Seeder
             [
                 'project_id' => 2,
                 'floor_list' => '["1", "3", "5"]',
-                'type' => '["apartment","shop","studio"]',
+                'type' => '["1","2","3"]',
                 'apartment_size' => "['1', '2', '3', '4', '5']",
                 'total_area' => '120 sq',
                 'created_by' => 10,
@@ -34,7 +34,7 @@ class BuildingSeeder extends Seeder
             [
                 'project_id' => 3,
                 'floor_list' => '["2","3","4","5"]',
-                'type' => '["apartment","shop","studio"]',
+                'type' => '["1","2","3"]',
                 'apartment_size' => "['1', '2', '3', '4', '5']",
                 'total_area' => '120 sq',
                 'created_by' => 10,

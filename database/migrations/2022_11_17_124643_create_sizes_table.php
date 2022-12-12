@@ -17,8 +17,8 @@ class CreateSizesTable extends Migration
             $table->id();
             /*3, 5, 7, 10 (Unit [Marla, Kinal, Bed, Bath])*/
             $table->foreignId('project_type_id')->unsigned()->nullable()->constrained('project_types')->nullOnDelete();
-            $table->foreignId('unit_id')->unsigned()->nullable()->constrained('units')->nullOnDelete();
             $table->string('name');
+            $table->string('unit')->nullable();
             $table->timestamps();
         });
     }

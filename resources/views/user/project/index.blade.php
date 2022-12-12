@@ -9,8 +9,9 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Project List</h4>
-                                <a href="{{ route('project.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary"
-                                   style="margin-left: auto; display: block;">Add New</a>
+                                @if(count($projects) < \Illuminate\Support\Facades\Auth::user()->project)
+                                    <a href="{{ route('project.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary" style="margin-left: auto; display: block;">Add New</a>
+                                @endif
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -44,7 +45,8 @@
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <button type="button" data-url="{{ route('project.destroy',['RolePrefix' => RolePrefix(), 'project' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                    <button type="button" data-url="{{ route('project.destroy',['RolePrefix' => RolePrefix(), 'project' => $data->id]) }}"
+                                                            data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>

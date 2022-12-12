@@ -17,28 +17,28 @@ class SizeSeeder extends Seeder
         Size::insert([
             [
                 'project_type_id' => 1,
-                'unit_id' => 1,
                 'name' => 3,
+                'unit' => 'bed',
             ],
             [
                 'project_type_id' => 1,
-                'unit_id' => 2,
                 'name' => 3,
+                'unit' => 'bath'
             ],
             [
                 'project_type_id' => 2,
-                'unit_id' => 3,
                 'name' => 10,
+                'unit' => 'marla',
             ],
             [
                 'project_type_id' => 2,
-                'unit_id' => 3,
                 'name' => 5,
+                'unit' => 'marla'
             ],
             [
                 'project_type_id' => 2,
-                'unit_id' => 3,
                 'name' => 3,
+                'unit' => 'kanal'
             ],
         ]);
     }

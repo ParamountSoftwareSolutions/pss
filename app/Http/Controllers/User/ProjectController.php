@@ -33,8 +33,9 @@ class ProjectController extends Controller
      */
     public function create()
     {
+        $project = Project::get();
         $project_type = ProjectType::latest()->get();
-        return view('user.project.create', compact('project_type'));
+        return view('user.project.create', compact('project_type', 'project'));
     }
 
     /**
@@ -49,27 +50,33 @@ class ProjectController extends Controller
             'name' => 'required',
             'type_id' => 'required',
         ]);
-        $project = new Project();
-        $project->name = $request->name;
-        $project->type_id = $request->type_id;
-        $project->save();
 
-        $project_assign_user = new ProjectAssignUser();
-        $project_assign_user->project_id = $project->id;
-        $project_assign_user->user_id = Auth::user()->id;
-        $project_assign_user->save();
-
-        $type = ProjectType::findOrFail($request->type_id)->name;
-
-        if ($type == 'society'){
-            Society::create(['project_id' => $project->id]);
-        } elseif($type == 'building'){
-            Building::create(['project_id' => $project->id]);
-        }
-        if ($project){
-            return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has created successfully', 'alert' => 'success']);
+        $project_limit = Project::get();
+        if (Auth::user()->project == count($project_limit)) {
+            return redirect()->back()->with($this->message('Project Limit Complete. Please Contact Super Admin', 'warning'));
         } else {
-            return redirect()->back()->with(['message' => 'Project has not created, something went wrong. Try again', 'alert' => 'error']);
+            $project = new Project();
+            $project->name = $request->name;
+            $project->type_id = $request->type_id;
+            $project->save();
+
+            $project_assign_user = new ProjectAssignUser();
+            $project_assign_user->project_id = $project->id;
+            $project_assign_user->user_id = Auth::user()->id;
+            $project_assign_user->save();
+
+            $type = ProjectType::findOrFail($request->type_id)->name;
+
+            if ($type == 'society') {
+                Society::create(['project_id' => $project->id]);
+            } elseif ($type == 'building') {
+                Building::create(['project_id' => $project->id]);
+            }
+            if ($project) {
+                return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has created successfully', 'alert' => 'success']);
+            } else {
+                return redirect()->back()->with(['message' => 'Project create delete', 'alert' => 'success']);
+            }
         }
     }
 
@@ -115,7 +122,7 @@ class ProjectController extends Controller
         $project->name = $request->name;
         $project->type_id = $request->type_id;
         $project->save();
-        if ($project){
+        if ($project) {
             return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has updated successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Project has not updated, something went wrong. Try again', 'alert' => 'error']);
@@ -132,10 +139,10 @@ class ProjectController extends Controller
     {
         $project = Project::findOrFail($id);
         $project->delete();
-        if ($project){
-            return response()->json(['message'=>'Project has deleted successfully','status'=> 'success']);
+        if ($project) {
+            return response()->json(['message' => 'Project has deleted successfully', 'status' => 'success']);
         } else {
-            return response()->json(['message'=>'Project has not deleted, something went wrong. Try again','status'=> 'error']);
+            return response()->json(['message' => 'Project has not deleted, something went wrong. Try again', 'status' => 'error']);
         }
     }
 }

@@ -76,10 +76,38 @@
                     <div class="collapse" id="building">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{route('building.create', ['RolePrefix' => RolePrefix()])}}">Add Building</a>
-                            </li>
-                            <li>
                                 <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">All Building</a>
+                                <a href="{{route('building_extra_detail', ['RolePrefix' => RolePrefix()])}}">Building Extra Detail</a>
+                                <a href="#building_feature" data-toggle="collapse">
+                                    <i data-feather="shopping-cart"></i>
+                                    <span> Building Features </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse" id="building_feature">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'plot'])}}">Plot Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'communication'])}}">Communication Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'community'])}}">Community Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'health'])}}">Health Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'other'])}}">Other Features</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#society" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Society Management </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="society">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>
                             </li>
                         </ul>
                     </div>
@@ -97,6 +125,23 @@
                             </li>
                             <li>
                                 <a href="{{route('property.index', ['RolePrefix' => RolePrefix()])}}">All Property</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#society" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Society </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="society">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('society.create', ['RolePrefix' => RolePrefix()])}}">Add Society</a>
+                            </li>
+                            <li>
+                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>
                             </li>
                         </ul>
                     </div>
@@ -130,15 +175,14 @@
                             <li><a href="{{route('block.index', ['RolePrefix' => RolePrefix()])}}">Block</a></li>
                             <li><a href="{{route('unit.index', ['RolePrefix' => RolePrefix()])}}">Unit</a></li>
                             <li><a href="{{route('size.index', ['RolePrefix' => RolePrefix()])}}">Size</a></li>
-                            {{--<li><a href="{{route('type.index', ['RolePrefix' => RolePrefix()])}}">Type</a>
-                </li>--}}
-                <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>
-                <li><a href="{{route('payment_plan.index', ['RolePrefix' => RolePrefix()])}}">Payment Plan</a></li>
-            </ul>
-        </div>
-        </li>
+                            <li><a href="{{route('type.index', ['RolePrefix' => RolePrefix()])}}">Type</a></li>
+                            <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>
+                            <li><a href="{{route('payment_plan.index', ['RolePrefix' => RolePrefix()])}}">Payment Plan</a></li>
+                        </ul>
+                    </div>
+                </li>
 
-        <li>
+                <li>
             <a href="#sidebarEcommerce" data-toggle="collapse">
                 <i data-feather="shopping-cart"></i>
                 <span> Leads </span>
@@ -187,23 +231,14 @@
                 </ul>
             </div>
         </li>
+            </ul>
+        </div>
+        </li>
+
+      
         </ul>
     </div>
     <!-- End Sidebar -->
     <div class="clear-fix"></div>
 </div>
 <!-- Sidebar -left -->
-
-
-
-</ul>
-</div>
-<!-- End Sidebar -->
-<div class="clear-fix"></div>
-</div>
-<!-- Sidebar -left -->
-
-</div>
-<!-- Left Sidebar End -->
-</div>
-<!-- Left Sidebar End -->

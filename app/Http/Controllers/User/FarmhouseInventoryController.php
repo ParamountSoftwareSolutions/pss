@@ -7,6 +7,7 @@ use App\Http\Middleware\RolePrefix;
 use App\Models\FarmhouseFile;
 use App\Models\Premium;
 use App\Models\Farmhouse;
+use App\Models\Block;
 use App\Models\Project;
 use App\Models\ProjectType;
 use App\Models\Size;
@@ -29,8 +30,9 @@ class FarmhouseInventoryController extends Controller
      */
     public function index($id)
     {
-        $farmhouses = Farmhouse::where('project_id',$id)->get();
-        return view('user.farmhouse.index', compact('farmhouses','id'));
+        $project = Project::findOrFail($id);
+        $farmhouses = Farmhouse::where('project_id',$id)->latest('updated_at')->get();
+        return view('user.farmhouse.index', compact('farmhouses','project'));
     }
 
     /**
@@ -44,7 +46,8 @@ class FarmhouseInventoryController extends Controller
         $sizes = Size::get();
         $project_type_id = $this->project_type_id;
         $premiums = Premium::where('project_type_id',$project_type_id)->get();
-        return view('user.farmhouse.create', compact('project','sizes','premiums','project_type_id'));
+        $blocks = Block::where('project_type_id',$project_type_id)->get();
+        return view('user.farmhouse.create', compact('project','sizes','premiums','project_type_id','blocks'));
     }
 
     /**
@@ -71,25 +74,31 @@ class FarmhouseInventoryController extends Controller
                 $unit = $request->bulk_unit_no . $request->start_unit_no++;
                 $farmhouse = new Farmhouse();
                 $farmhouse->project_id = $id;
+                $farmhouse->block_id = $request->block_id;
                 $farmhouse->unit_no = $unit;
                 $farmhouse->size_id = $request->size_id;
-                $farmhouse->premium_id = $request->premium_id;
+                if(isset($request->premium_id) && $request->premium_id !== 'regular'){
+                    $farmhouse->premium_id = $request->premium_id;
+                }
                 $farmhouse->payment_plan_id = $request->payment_plan_id;
                 $farmhouse->save();
             }
         }else{
             $farmhouse = new Farmhouse();
             $farmhouse->project_id = $id;
+            $farmhouse->block_id = $request->block_id;
             $farmhouse->unit_no = $request->simple_unit_no;
             $farmhouse->size_id = $request->size_id;
-            $farmhouse->premium_id = $request->premium_id;
+            if(isset($request->premium_id) && $request->premium_id !== 'regular'){
+                $farmhouse->premium_id = $request->premium_id;
+            }
             $farmhouse->payment_plan_id = $request->payment_plan_id;
             $farmhouse->save();
         }
         if ($request->has('images')) {
             foreach ($request->file('images') as $file) {
                 $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
-                $file->move('images/farmhouse/', $filename);
+                $file->move('public/images/farmhouse/', $filename);
                 $file = 'images/farmhouse/' . $filename;
                 FarmhouseFile::create([
                     'farmhouse_id' => $farmhouse->id,
@@ -98,7 +107,7 @@ class FarmhouseInventoryController extends Controller
             }
         }
         if ($farmhouse) {
-            return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
+            return redirect()->route('farmhouse.inventory.index', ['RolePrefix' => RolePrefix(),'farmhouse'=>$id])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Farmhouse has not created, something went wrong. Try again', 'alert' => 'error']);
         }
@@ -128,7 +137,8 @@ class FarmhouseInventoryController extends Controller
         $sizes = Size::get();
         $project_type_id = $this->project_type_id;
         $premiums = Premium::where('project_type_id',$project_type_id)->get();
-        return view('user.farmhouse.edit', compact('project','farmhouse', 'sizes','premiums','project_type_id'));
+        $blocks = Block::where('project_type_id',$project_type_id)->get();
+        return view('user.farmhouse.edit', compact('project','farmhouse', 'sizes','premiums','project_type_id','blocks'));
 
     }
 
@@ -139,16 +149,35 @@ class FarmhouseInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $project_id,$farmhouse_id)
     {
         $request->validate([
-            'name' => 'required',
+            'unit_no' => 'required',
         ]);
-        $project = Project::findOrFail($id);
-        $project->name = $request->name;
-        $project->save();
-        if ($project){
-            return redirect()->route('farmhouse.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Farmhouse has updated successfully', 'alert' => 'success']);
+        $project = Project::findOrFail($project_id);
+        $farmhouse = Farmhouse::findOrFail($farmhouse_id);
+        $farmhouse->block_id = $request->block_id;
+        $farmhouse->unit_no = $request->unit_no;
+        $farmhouse->size_id = $request->size_id;
+        $farmhouse->status = $request->status;
+        if(isset($request->premium_id) && $request->premium_id !== 'regular'){
+            $farmhouse->premium_id = $request->premium_id;
+        }
+        $farmhouse->payment_plan_id = $request->payment_plan_id;
+        $farmhouse->save();
+        if ($request->has('images')) {
+            foreach ($request->file('images') as $file) {
+                $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                $file->move('public/images/farmhouse/', $filename);
+                $file = 'images/farmhouse/' . $filename;
+                FarmhouseFile::create([
+                    'farmhouse_id' => $farmhouse->id,
+                    'file' => $file,
+                ]);
+            }
+        }
+        if ($farmhouse) {
+            return redirect()->route('farmhouse.inventory.index', ['RolePrefix' => RolePrefix(),'farmhouse'=>$project_id])->with(['message' => 'Farmhouse has updated successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Farmhouse has not updated, something went wrong. Try again', 'alert' => 'error']);
         }
@@ -160,14 +189,15 @@ class FarmhouseInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy($farmhouse_id,$project_id)
     {
-        $project = Project::findOrFail($id);
-        $project->delete();
-        if ($project){
-            return response()->json(['message'=>'Farmhouse has deleted successfully','status'=> 'success']);
+        $project = Project::findOrFail($project_id);
+        $farmhouse = Farmhouse::findOrFail($farmhouse_id);
+        $farmhouse->delete();
+        if ($farmhouse){
+            return response()->json(['message'=>'Farmhouse Inventory has deleted successfully','status'=> 'success']);
         } else {
-            return response()->json(['message'=>'Farmhouse has not deleted, something went wrong. Try again','status'=> 'error']);
+            return response()->json(['message'=>'Farmhouse Inventory has not deleted, something went wrong. Try again','status'=> 'error']);
         }
     }
 }

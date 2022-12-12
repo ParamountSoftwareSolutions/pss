@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUnitsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateUnitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('units', function (Blueprint $table) {
+        Schema::create('features', function (Blueprint $table) {
             $table->id();
-            /*Marla, Kinal, Acer, Bed, Bath*/
             $table->string('name');
+            $table->foreignId('project_type_id')->unsigned()->nullable()->constrained('project_types')->onDelete('set null');
+            $table->enum('key',['plot','communication','community','health','other']);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateUnitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('units');
+        Schema::dropIfExists('features');
     }
-}
+};

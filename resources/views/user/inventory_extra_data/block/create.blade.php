@@ -30,6 +30,18 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Project Type</label>
+                                            <select class="form-control" name="type_id">
+                                                <option label="" disabled selected>Select Project Type</option>
+                                                @foreach($project_type as $data)
+                                                    <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">

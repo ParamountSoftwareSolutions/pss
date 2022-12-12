@@ -13,11 +13,12 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table table-striped text-center" id="table-1">
                                         <thead>
                                         <tr>
-                                            <th class="text-center">#</th>
+                                            <th>#</th>
                                             <th>Name</th>
+                                            <th>Project Type</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
@@ -26,6 +27,17 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->name }}</td>
+                                                <td><span class="badge
+                                                @if($data->type->name == 'building')
+                                                        badge-blue
+                                                        @elseif($data->type->name == 'society')
+                                                        badge-success
+                                                        @elseif($data->type->name == 'farm_house')
+                                                        badge-danger
+                                                        @else
+                                                        badge-primary
+                                                        @endif
+                                                        ">{{ ucwords($data->type->name) }} </span></td>
                                                 <td>
                                                     <a href="{{ route('block.edit', ['RolePrefix' => RolePrefix(), 'block' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">

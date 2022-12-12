@@ -18,8 +18,7 @@
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label>Building Name</label>
-                                            <input type="text" class="form-control" name="name"
-                                                   value="{{ old('name', $building->project->name) }}">
+                                            <input type="text" class="form-control" value="{{ $building->project->name }}" disabled>
                                             @error('name')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
@@ -35,7 +34,7 @@
                                                 <option label="" disabled>Select All Building Floors</option>
                                                 @foreach($floor as $data)
                                                     <option value="{{ $data->id }}"
-                                                            @if (in_array($data->id, $floor_check)) selected @endif>{{ $data->name }}</option>
+                                                            @if($floor_check !== null) @if (in_array($data->id, $floor_check)) selected @endif @endif>{{ $data->name }}</option>
                                                 @endforeach
                                             </select>
                                             @error('floor_list')
@@ -46,24 +45,10 @@
                                             <label>Apartment Size</label>
                                             <select class="form-control select2" multiple="" name="apartment_size[]">
                                                 <option label="" disabled>Select Bed</option>
-                                                <option value="1"
-                                                        @if (in_array("1", $apartment_size_check)) selected @endif>1 Bed
-                                                </option>
-                                                <option value="2"
-                                                        @if (in_array("2", $apartment_size_check)) selected @endif>2 Bed
-                                                </option>
-                                                <option value="3"
-                                                        @if (in_array("3", $apartment_size_check)) selected @endif>3 Bed
-                                                </option>
-                                                <option value="4"
-                                                        @if (in_array("4", $apartment_size_check)) selected @endif>4 Bed
-                                                </option>
-                                                <option value="5"
-                                                        @if (in_array("5", $apartment_size_check)) selected @endif>5 Bed
-                                                </option>
-                                                <option value="6"
-                                                        @if (in_array("6", $apartment_size_check)) selected @endif>6 Bed
-                                                </option>
+                                                @foreach($size as $data)
+                                                    <option value="{{ $data->id }}" @if ($apartment_size_check !== null) @if (in_array($data->id, $apartment_size_check)) selected
+                                                        @endif @endif>{{ $data->name }} - {{ $data->unit->name }}</option>
+                                                @endforeach
                                             </select>
                                             @error('apartment_size')
                                             <div class="text-danger mt-2">{{ $message }}</div>
@@ -73,38 +58,14 @@
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label>Building Types</label>
-                                            <select class="form-control select2" multiple="" name="type[]">
+                                            <select class="form-control select2" multiple="" name="type[]" required>
                                                 <option label="" disabled>Select Building Types</option>
-                                                <option value="apartment"
-                                                        @if (in_array("apartment", $type_check)) selected @endif>
-                                                    Apartment
-                                                </option>
-                                                <option value="shop"
-                                                        @if (in_array("shop", $type_check)) selected @endif>Shop
-                                                </option>
-                                                <option value="office"
-                                                        @if (in_array("office", $type_check)) selected @endif>Office
-                                                </option>
-                                                <option value="flats"
-                                                        @if (in_array("flats", $type_check)) selected @endif>Flats
-                                                </option>
-                                                <option value="studio"
-                                                        @if (in_array("studio", $type_check)) selected @endif>Studio
-                                                </option>
-                                                <option value="penthouse"
-                                                        @if (in_array("penthouse", $type_check)) selected @endif>Pent
-                                                    House
-                                                </option>
+                                                @foreach($category as $data)
+                                                    <option value="{{ $data->id }}" @if ($type_check !== null) @if (in_array($data->id, $type_check)) selected
+                                                        @endif @endif>{{ $data->name }}</option>
+                                                @endforeach
                                             </select>
                                             @error('type')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label>Developer Name</label>
-                                            <input type="text" class="form-control" name="developer_name"
-                                                   value="{{ old('developer_name', $building->developer_name) }}">
-                                            @error('developer_name')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -145,6 +106,7 @@
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <div class="card-footer text-right">
                                     <button class="btn btn-primary" type="submit">Submit</button>

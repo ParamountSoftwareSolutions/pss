@@ -31,6 +31,18 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Block</label>
+                                            <select class="form-control" name="size_id">
+                                                <option label="" disabled selected>Select Block</option>
+                                                @foreach($blocks as $data)
+                                                    <option value="{{ $data->id }}">{{ $data->name }} Marla</option>
+                                                @endforeach
+                                            </select>
+                                            @error('size_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                         <div class="form-group col-md-4 simple">
                                             <label class="d-flex align-items-center">
                                                 <label>Plot/Unit No <sup style="color: red">*</sup></label>
@@ -78,21 +90,11 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>Status</label>
-                                            <select class="form-control" name="status">
-                                                <option value="available">Available</option>
-                                                <option value="sold">Sold</option>
-                                                <option value="hold">Hold</option>
-                                            </select>
-                                            @error('status')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
                                             <div class="form-group">
-                                                <label>Premium Type</label>
+                                                <label>Type</label>
                                                 <select class="form-control" name="premium_id">
                                                     <option value="">Select Type</option>
+                                                    <option value="regular">Regular</option>
                                                     @foreach($premiums as $data)
                                                         <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
                                                     @endforeach

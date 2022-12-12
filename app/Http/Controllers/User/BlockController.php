@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Block;
+use App\Models\ProjectType;
 use Illuminate\Http\Request;
 
 class BlockController extends Controller
@@ -16,15 +17,18 @@ class BlockController extends Controller
 
     public function create()
     {
-        return view('user.inventory_extra_data.block.create');
+        $project_type = ProjectType::latest()->get();
+        return view('user.inventory_extra_data.block.create',compact('project_type'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required',
+            'type_id' => 'required',
         ]);
         $block = new Block();
+        $block->project_type_id = $request->type_id;
         $block->name = $request->name;
         $block->save();
         if ($block) {
@@ -48,15 +52,18 @@ class BlockController extends Controller
     public function edit($id)
     {
         $block = Block::findOrFail($id);
-        return view('user.inventory_extra_data.block.edit', compact('block'));
+        $project_type = ProjectType::latest()->get();
+        return view('user.inventory_extra_data.block.edit', compact('block','project_type'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required',
+            'type_id' => 'required',
         ]);
         $block = Block::findOrFail($id);
+        $block->project_type_id = $request->type_id;
         $block->name = $request->name;
         $block->save();        if ($block){
             return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Block has updated successfully', 'alert' => 'success']);
@@ -69,7 +76,6 @@ class BlockController extends Controller
     {
         $block = Block::findOrFail($id);
         $block->delete();
-
         if ($block){
             return response()->json(['message'=>'Block has deleted successfully','status'=> 'success']);
         } else {

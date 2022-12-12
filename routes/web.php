@@ -1,25 +1,32 @@
 <?php
 
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\SocietyBlockController;
+use App\Http\Controllers\User\SocietyController;
+use App\Http\Controllers\User\SocietyInventoryController;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\ClientController;
 use App\Http\Controllers\User\WebHookController;
-
 use App\Http\Controllers\User\BuildingController;
 use App\Http\Controllers\User\BuildingInventoryController;
+use App\Http\Controllers\User\FloorController;
 use App\Http\Controllers\User\PremiumController;
 use App\Http\Controllers\User\BlockController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\ProjectController;
 use App\Http\Controllers\User\SizeController;
 use App\Http\Controllers\User\UnitController;
-use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\FarmhouseInventoryController;
 use App\Http\Controllers\User\LeadController;
 use App\Http\Controllers\User\TypeController;
 use App\Http\Controllers\User\FarmhouseController;
 use App\Http\Controllers\User\PropertyController;
 use App\Http\Controllers\User\PaymentPlanController;
+use App\Http\Controllers\User\EmailController;
+use App\Http\Controllers\User\BuildingExtraDetailController;
+use App\Http\Controllers\User\FeatureController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -74,22 +81,40 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('farmhouse', FarmhouseController::class);
     Route::resource('farmhouse.inventory', FarmhouseInventoryController::class);
     Route::resource('payment_plan', PaymentPlanController::class);
+    Route::resource('society', SocietyController::class);
+    Route::resource('society.inventory', SocietyInventoryController::class);
+
+    Route::group(['prefix' => 'building/feature', 'as' => 'feature.'], function () {
+        Route::get('/{key}', [FeatureController::class,'index'])->name('index');
+        Route::get('{key}/create', [FeatureController::class,'create'])->name('create');
+        Route::post('{key}/store', [FeatureController::class,'store'])->name('store');
+        Route::get('{key}/edit/{id}', [FeatureController::class,'edit'])->name('edit');
+        Route::put('{key}/update/{id}', [FeatureController::class,'update'])->name('update');
+        Route::delete('{key}/destroy/{id}', [FeatureController::class,'destroy'])->name('destroy');
+    });
 
     //=========================//
     //  Building Management    //
     //=========================//
     Route::resource('building', BuildingController::class);
-    Route::resource('building.building_inventory', BuildingInventoryController::class);
-    /*Route::post('building/banner/remove', 'BuildingController@remove_image_banner');
-    Route::get('building-detail-form', 'BuildingController@detail_form')->name('building.detail_form');
-    Route::get('building_detail/{id}', 'FloorController@index')->name('building_detail.index');
-    Route::get('building/{building_id}/floor/{floor_id}/index', 'FloorDetailController@index')->name('building.inventory.index');
-    Route::get('building/{building_id}/floor/{floor_id}/create', 'FloorDetailController@create')->name('building.inventory.create');
-    Route::post('building/{building_id}/floor/{floor_id}/store', 'FloorDetailController@store')->name('building.inventory.store');
-    Route::get('building/{building_id}/floor/{floor_id}/edit/{id}', 'FloorDetailController@edit')->name('building.inventory.edit');
-    Route::post('building/{building_id}/floor/{floor_id}/update/{id}', 'FloorDetailController@update')->name('building.inventory.update');
-    Route::post('building/{building_id}/floor/{floor_id}/delete/{id}', 'FloorDetailController@destroy')->name('building.inventory.destroy');
-    Route::post('building/{building_id}/floor/{floor_id}/index/filter', 'FloorDetailController@filter')->name('building.inventory.filter');*/
+    Route::resource('floor', FloorController::class);
+    Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
+    Route::get('building_extra_detail', [BuildingExtraDetailController::class,'building_extra_detail'])->name('building_extra_detail');
+    Route::resource('building.extra_detail', BuildingExtraDetailController::class);
+    Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
+
+    //=========================//
+    //  Society Management    //
+    //=========================//
+    Route::resource('society', SocietyController::class);
+    Route::resource('block', SocietyBlockController::class);
+    Route::resource('society.block.society_inventory', SocietyInventoryController::class);
+
+
+
+    Route::get('state/{id}', [HomeController::class, 'state']);
+    Route::get('city/{id}', [HomeController::class, 'city']);
+    //Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
 
     //=========================//
     //  Leads Management    //
@@ -138,8 +163,31 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // /* Clients */
     // //=============//
 
-    //             //End New Routes
+    //             //End New Routes    Get Payment Plan
+
+    Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
+
+
+
+
+
+
+
     // //=============//
-    // /* Acccounts */
+    // /* Email Routes */
     // //=============//
+
+    Route::group(['prefix' => 'email','as'=>'email.'], function () {
+        Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
+        Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
+        Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');
+        Route::get('sent', [EmailController::class,'send_email'])->name('send_email');
+        Route::get('detail/{id}', [EmailController::class,'email_detail'])->name('detail');
+        Route::get('draft', [EmailController::class,'draft_email'])->name('draft_email');
+        Route::get('view/{id}', [EmailController::class,'email_view'])->name('view');
+        Route::post('forward/{id}', [EmailController::class,'email_forward'])->name('forward');
+        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('email_destroy');
+        Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
+        Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
+    });
 });
