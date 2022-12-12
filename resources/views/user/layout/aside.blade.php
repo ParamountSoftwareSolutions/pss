@@ -178,6 +178,18 @@
                         </ul>
                     </div>
                 </li>
+                <li>
+                    <a href="#task-target" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Task Targets </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="task-target">
+                        <ul class="nav-second-level">
+                            <li><a href="{{route('target.index', ['RolePrefix' => RolePrefix()])}}">My Targets</a></li>
+                        </ul>
+                    </div>
+                </li>
 
                 <li>
             <a href="#sidebarEcommerce" data-toggle="collapse">
@@ -232,7 +244,7 @@
         </div>
         </li>
 
-      
+
         </ul>
     </div>
     <!-- End Sidebar -->

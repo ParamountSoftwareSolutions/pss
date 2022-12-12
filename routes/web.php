@@ -27,6 +27,7 @@ use App\Http\Controllers\User\PaymentPlanController;
 use App\Http\Controllers\User\EmailController;
 use App\Http\Controllers\User\BuildingExtraDetailController;
 use App\Http\Controllers\User\FeatureController;
+use App\Http\Controllers\User\TargetController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -84,6 +85,9 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('society', SocietyController::class);
     Route::resource('society.inventory', SocietyInventoryController::class);
 
+    //=========================//
+    //  Building Features      //
+    //=========================//
     Route::group(['prefix' => 'building/feature', 'as' => 'feature.'], function () {
         Route::get('/{key}', [FeatureController::class,'index'])->name('index');
         Route::get('{key}/create', [FeatureController::class,'create'])->name('create');
@@ -169,6 +173,22 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
 
 
+
+    //====================//
+    // Task Targets Route //
+    //====================//
+
+    Route::group(['prefix' => 'targets', 'as' => 'target.'], function () {
+        Route::get('/', [TargetController::class,'my_targets'])->name('index');
+//        Route::get('staff-targets', 'TargetController@staff_targets')->name('staff_targets');
+//        Route::get('assign-target', 'TargetController@assign_target')->name('assign_target');
+//        Route::post('store', 'TargetController@store')->name('store');
+//        Route::get('get-role-list/{role}', 'TargetController@get_role_list')->name('get_role_list');
+//        Route::get('edit-task/{id}', 'TargetController@edit_task')->name('edit_task');
+//        Route::post('update-task/{id}', 'TargetController@update_task')->name('update_task');
+//        Route::get('task-reports', 'TargetController@task_reports')->name('task_reports');
+//        Route::get('task/get-report/{id}', 'TargetController@get_report')->name('get_report');
+    });
 
 
 

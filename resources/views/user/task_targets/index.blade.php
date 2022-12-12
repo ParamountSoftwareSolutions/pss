@@ -1,4 +1,4 @@
-@extends((new App\Helpers\Helpers)->user_login_route()['file'].'.layout.app')
+@extends('user.layout.app')
 @section('title', 'All Users List')
 @section('content')
     <div class="main-content">
@@ -9,9 +9,9 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Targets</h4>
-                                @if(Helpers::isEmployee())
-                                    <a href="{{ route('property.assign_target', ['panel' => Helpers::user_login_route()['panel']]) }}" class="btn btn-info">Assign Target</a>
-                                @endif
+{{--                                @if(Helpers::isEmployee())--}}
+{{--                                    <a href="{{ route('property.assign_target', ['panel' => Helpers::user_login_route()['panel']]) }}" class="btn btn-info">Assign Target</a>--}}
+{{--                                @endif--}}
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
