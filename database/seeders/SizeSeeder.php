@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Size;
+use App\Models\Unit;
 use Illuminate\Database\Seeder;
 
 class SizeSeeder extends Seeder
@@ -14,31 +15,45 @@ class SizeSeeder extends Seeder
      */
     public function run()
     {
+        Unit::insert([
+            [
+                'name' => 'bed',
+            ],
+            [
+                'name' => 'bath',
+            ],
+            [
+                'name' => 'marla',
+            ],
+            [
+                'name' => 'kenal',
+            ],
+        ]);
         Size::insert([
             [
                 'project_type_id' => 1,
                 'name' => 3,
-                'unit' => 'bed',
+                'unit_id' => 1,
             ],
             [
                 'project_type_id' => 1,
                 'name' => 3,
-                'unit' => 'bath'
+                'unit_id' => 2
             ],
             [
                 'project_type_id' => 2,
                 'name' => 10,
-                'unit' => 'marla',
+                'unit_id' => 3,
             ],
             [
                 'project_type_id' => 2,
                 'name' => 5,
-                'unit' => 'marla'
+                'unit_id' => 3
             ],
             [
                 'project_type_id' => 2,
                 'name' => 3,
-                'unit' => 'kanal'
+                'unit_id' => 4
             ],
         ]);
     }

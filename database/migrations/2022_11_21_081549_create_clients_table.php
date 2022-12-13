@@ -15,6 +15,7 @@ class CreateClientsTable extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
+            $table->integer('project_id')->nullable();
             $table->integer('project_type_id')->nullable();
             $table->integer('inventory_id')->nullable();
             $table->foreignId('customer_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
@@ -22,8 +23,6 @@ class CreateClientsTable extends Migration
             $table->string('registration_number')->nullable();
             $table->string('hidden_file_number')->nullable();
             $table->integer('down_payment')->nullable();
-
-
             $table->string('name')->nullable();
             $table->string('father_name')->nullable();
             $table->string('email')->nullable();
@@ -36,14 +35,11 @@ class CreateClientsTable extends Migration
             $table->integer('country_id')->nullable();
             $table->integer('state_id')->nullable();
             $table->integer('city_id')->nullable();
-            
-            
-            
             $table->string('source')->nullable();
             $table->enum('priority', ['very_hot', 'hot', 'moderate', 'cold'])->nullable();
             $table->string('comment')->nullable();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
-            $table->string('status');
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

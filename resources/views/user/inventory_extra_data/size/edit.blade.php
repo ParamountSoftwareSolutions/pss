@@ -46,7 +46,7 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Unit Type</label>
-                                            <select class="form-control" name="type_id" required>
+                                            <select class="form-control" name="unit_id" required>
                                                 <option label="" disabled>Select Unit Type</option>
                                                 @foreach($unit as $data)
                                                     <option value="{{ $data->id }}" @if($size->unit_id == $data->id) selected @endif>{{ ucwords($data->name)
