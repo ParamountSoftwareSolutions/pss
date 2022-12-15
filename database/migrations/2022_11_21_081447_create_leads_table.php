@@ -14,8 +14,9 @@ class CreateLeadsTable extends Migration
     public function up()
     {
         Schema::create('leads', function (Blueprint $table) {
+           // Schema::dropIfExists('leads');
             $table->id();
-            $table->integer('project_id')->nullable();
+            $table->integer('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
             $table->foreignId('user_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->string('name');
@@ -48,6 +49,6 @@ class CreateLeadsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('leads');
+        Schema::drop('leads');
     }
 }
