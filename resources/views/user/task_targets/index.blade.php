@@ -9,9 +9,7 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Targets</h4>
-{{--                                @if(Helpers::isEmployee())--}}
-{{--                                    <a href="{{ route('property.assign_target', ['panel' => Helpers::user_login_route()['panel']]) }}" class="btn btn-info">Assign Target</a>--}}
-{{--                                @endif--}}
+                                    <a href="{{ route('target.assign_target', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-info">Assign Target</a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -45,7 +43,7 @@
                                                 <td>{{$target->target}}</td>
                                                 <td>{{$target->achieved}}</td>
                                                 <td>{{$percentage}} %</td>
-                                                <td>{{$target->user->username ?? ''}}</td>
+                                                <td>{{$target->user->name ?? ''}}</td>
                                             </tr>
                                         @empty
                                             <tr>

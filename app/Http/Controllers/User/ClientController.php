@@ -27,7 +27,7 @@ use Spatie\Permission\Models\Role;
 use App\Models\BuildingEmployee;
 use App\Models\Client;
 use App\Models\ClientHistory;
-use App\Models\lead;
+use App\Models\Lead;
 use App\Models\Project;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -67,7 +67,6 @@ class ClientController extends Controller
         if ($request->statusFilter) {
             $lead->where('status', $request->statusFilter);
         }
-
         $clients = $lead->get();
         $sale_persons = User::whereIn('id', $users)
             ->whereHas('roles', function ($q) {
@@ -127,6 +126,9 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
+        $request->inventory_id = 1;
+        $request->project_id = 7;
+        $request->project_type_id = 3;
         if ($request->old_client_id) {
             $client = Client::where('id', $request->old_client_id)->first();
             if (!empty($client->project_id)) {
@@ -135,9 +137,9 @@ class ClientController extends Controller
                 $project_type_id = Null;
             }
             $client_data = [
-                'project_id' => $client->project_id,
-                'project_type_id' => $project_type_id,
-                'inventory_id' => "",
+                'project_id' => $request->project_id,
+                'project_type_id' => $request->project_type_id,
+                'inventory_id' => $request->inventory_id,
                 'customer_id' => Null,
                 'user_id' => auth()->user()->id,
 
@@ -161,39 +163,12 @@ class ClientController extends Controller
                 'created_by' => auth()->user()->id,
                 'status' => 'mature',
             ];
-            $response = Client::create($client_data);
-            if ($response) {
-                return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
-            } else {
-                return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
-            }
         } else {
-
-            // $data = [
-            //     'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
-            //     'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : Null,
-            //     'created_by' => auth()->user()->id,
-            //     'name' => $request->name_new,
-            //     'email' => $request->email_new,
-            //     'password' => $request->password_new,
-            //     'number' => $request->phone_number_new,
-            //     'cnic' => $request->cnic_new,
-            //     'father_name' => $request->father_name_new,
-            //     'country_id' => $request->country_id_new,
-            //     'state_id' => $request->state_id_new,
-            //     'city_id' => $request->city_id_new,
-            //     'status' => 'mature',
-            //     'type' => 'lead',
-            // ];
-            // $lead_id = lead::create($data)->id;
-
-            // $lead_id = 1;
             if (!empty(json_decode($request->building_id)->id)) {
                 $project_type_id = Project::where('id', json_decode($request->building_id)->id)->first()->type_id;
             } else {
                 $project_type_id = Null;
             }
-
             $client_data = [
                 'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
                 'project_type_id' => $project_type_id,
@@ -221,12 +196,20 @@ class ClientController extends Controller
                 'created_by' => auth()->user()->id,
                 'status' => 'mature',
             ];
-            $response = Client::create($client_data);
-            if ($response) {
-                return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
-            } else {
-                return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+        }
+        $client = Client::create($client_data);
+        if ($client) {
+            task_count_increment('client');
+            $inventory = get_inventory($client->project_type_id,$client->inventory_id);
+            $installment = installment($inventory->payment_plan_id);
+            if ($installment['total_price'] == $installment['payment_plan']->total_price) {
+                $inventory->status = 'sold';
+                $inventory->save();
+                create_installment_plan($client->id,$installment,$request->down_payment);
             }
+            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
+        } else {
+            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
         }
     }
     /**
@@ -237,13 +220,9 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-        $client = Client::with('installment')->findOrFail($id);
+        $client = Client::findOrFail($id);
         $client_installment = ClientInstallment::where('client_id',$id)->orderBy('due_date','ASC')->get();
-        if ($client->inventory_id == null) {
-            return redirect()->route('property_manager.sale.client.index', Helpers::user_login_route())->with($this->message('Please select first property!', 'error'));
-        } else {
-            return view('user.client.show', compact('client','client_installment'));
-        }
+        return view('user.client.show', get_defined_vars());
     }
 
     /**
@@ -395,7 +374,7 @@ class ClientController extends Controller
             } else {
                 $arr = $sale_id_arr;
             }
-            $response = lead::whereIn('id', $arr)
+            $response = Lead::whereIn('id', $arr)
                 ->update([
                     'user_id' => $request->sale_person_id,
                 ]);
@@ -424,16 +403,17 @@ class ClientController extends Controller
         $clients = Client::with('customer')->get();
         return view('user.client.active', get_defined_vars());
     }
-    public function installment(Request $request,$client_id,$id)
+    public function installment(Request $request,$client_id, $id)
     {
-        $request->validate([
-            'payment_method' => 'required',
-            'status' => 'required'
-        ]);
-        $installment = ClientInstallment::where('client_id',$client_id)->findOrFail($id);
+        $client = Client::findOrFail($client_id);
+        $installment = ClientInstallment::findOrFail($id);
         $installment->payment_method = $request->payment_method;
         $installment->status = $request->status;
         $installment->save();
-        return redirect()->route('clients.show', [RolePrefix(),$client_id])->with('error', 'Please select first any lead');
+        if ($installment) {
+            return redirect()->back()->with($this->message('Installment has updated successfully', 'success'));
+        } else {
+            return redirect()->back()->with($this->message('Installment Update Error', 'danger'));
+        }
     }
 }

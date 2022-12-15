@@ -198,19 +198,4 @@ class PaymentPlanController extends Controller
         }
         return response()->json($payment_plan);
     }
-    public function client_installment()
-    {
-//        $type_id = $request->project_type_id;
-//        $inventory_id = $request->inventory_id;
-//        $inventory = get_inventory($type_id,$inventory_id);
-        $inventory = get_inventory(3,1);
-        $installment = installment($inventory->payment_plan_id);
-        if ($installment['total_price'] == $installment['payment_plan']->total_price) {
-            $inventory->status = 'sold';
-            $inventory->save();
-//            create_installment_plan(1,$installment,$request);
-            $installment_plan = create_installment_plan(1,$installment,1050000);
-            dd($installment_plan);
-        }
-    }
 }

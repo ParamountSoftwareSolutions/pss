@@ -19,7 +19,7 @@ class Client extends Model
     }
     public function customer()
     {
-        return $this->belongsTo(lead::class,'customer_id');
+        return $this->belongsTo(Lead::class,'customer_id');
     }
     public function user()
     {
@@ -47,5 +47,17 @@ class Client extends Model
     public function installment()
     {
         return $this->hasMany(ClientInstallment::class, 'client_id');
+    }
+    public function farmhouse_inventory()
+    {
+        return $this->belongsTo(Farmhouse::class, 'inventory_id');
+    }
+    public function building_inventory()
+    {
+        return $this->belongsTo(BuildingInventory::class, 'inventory_id');
+    }
+    public function society_inventory()
+    {
+        return $this->belongsTo(SocietyInventory::class, 'inventory_id');
     }
 }

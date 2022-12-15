@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LeadStoreRequest;
 use App\Models\Country;
-use App\Models\lead;
+use App\Models\Lead;
 use App\Models\LeadHistory;
 use App\Models\Project_assign_user;
 use App\Models\ProjectAssignUser;
@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Symfony\Component\HttpKernel\HttpCache\Ssi;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Size;
@@ -254,7 +255,8 @@ class LeadController extends Controller
             'type' => 'lead',
         ];
 
-        $response = lead::create($data);
+        $response = Lead::create($data);
+        task_count_increment('lead');
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
         } else {
@@ -333,7 +335,7 @@ class LeadController extends Controller
             'status' => 'new',
             'type' => 'lead',
         ];
-        $response = lead::where('id', $lead->id)->update($data);
+        $response = Lead::where('id', $lead->id)->update($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Update Successfully');
         } else {
@@ -357,7 +359,7 @@ class LeadController extends Controller
         $data = [
             'priority' => $priority,
         ];
-        $response = lead::where('id', $id)->update($data);
+        $response = Lead::where('id', $id)->update($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Priority Has Update Successfully');
         } else {
@@ -366,8 +368,8 @@ class LeadController extends Controller
     }
     public function changeStatus(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
+            'id' => 'required',
             'date' => 'required',
             'comment' => 'required'
         ]);
@@ -377,7 +379,7 @@ class LeadController extends Controller
         $lead_data = [
             'status' => $request->status,
         ];
-        lead::where('id', $request->id)->update($lead_data);
+        Lead::where('id', $request->id)->update($lead_data);
         $lead_histories_data = [
             'lead_id' => $request->id,
             'status' => $request->status,
@@ -391,6 +393,18 @@ class LeadController extends Controller
         ];
 
         $response = LeadHistory::create($lead_histories_data);
+        switch($request->status){
+            case 'arrange_meeting' : $type = 'meeting';
+                break;
+            case 'follow_up' : $type = 'call';
+                break;
+            case 'mature' : $type = 'conversion';
+                break;
+            default: $type = null;
+        }
+        if($type){
+            task_count_increment($type);
+        }
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Status has updated successfully');
         } else {
@@ -412,7 +426,7 @@ class LeadController extends Controller
             } else {
                 $arr = $sale_id_arr;
             }
-            $response = lead::whereIn('id', $arr)
+            $response = Lead::whereIn('id', $arr)
                 ->update([
                     'user_id' => $request->sale_person_id,
                 ]);
@@ -550,7 +564,7 @@ class LeadController extends Controller
                 $premium_list = json_decode($project->premium_id)->get();
                 $premium = premium::whereIn('id', $premium_list);
                 break;
-                // case "4": 
+                // case "4":
 
                 //     break;
             default:
@@ -594,4 +608,76 @@ class LeadController extends Controller
             return redirect()->back()->with('error', 'SomeThing Went Wrong');
         }
     }
+    public function bulk_import_view()
+    {
+        return view('user.lead.bulk_import');
+    }
+    public function bulk_import(Request $request)
+    {
+        try {
+            $collections = (new FastExcel)->import($request->file('leads_file'));
+        } catch (\Exception $exception) {
+            return back()->with($this->message('You have uploaded a wrong format file, please upload the right file.', 'error'));
+        }
+
+        foreach ($collections as $key => $collection) {
+            if ($collection['name'] === "") {
+                return back()->with($this->message('Please fill row:' . ($key + 2) . ' field: name', 'error'));
+            }
+            if ($collection['number'] === "") {
+                return back()->with($this->message('Please fill row:' . ($key + 2) . ' field: number!', 'error'));
+            }
+        }
+
+        foreach ($collections as $key => $collection) {
+            if ($collection['id'] == "") {
+                $lead = Lead::where('number', $collection['number'])->first();
+                if ($lead) {
+                    $lead->name = $collection['name'];
+                    $lead->user_id = $collection['sale_person_id'];
+                    $lead->source = $collection['source'];
+                    $lead->save();
+                } else {
+                    $lead = new Lead;
+                    $lead->name = $collection['name'];
+                    $lead->number = $collection['number'];
+                    $lead->user_id = $collection['sale_person_id'];
+                    $lead->source = $collection['source'];
+                    $lead->save();
+                }
+            } else {
+                $lead = Lead::where('id', $collection['id'])->first();
+                if(!$lead) {
+                    return back()->with($this->message("Lead id '".$collection['id']."' does not exist!", "error"));
+                }
+                $number_lead = Lead::where('number',$collection['number'])->first();
+                if($number_lead) {
+                    return back()->with($this->message("Phone number '".$collection['number']."' already exist!", "error"));
+                }
+                $lead->name = $collection['name'];
+                $lead->number = $collection['number'];
+                $lead->user_id = $collection['sale_person_id'];
+                $lead->source = $collection['source'];
+                $lead->save();
+            }
+        }
+        return back()->with($this->message('Leads imported successfully!', 'success'));
+    }
+    public function bulk_export()
+    {
+        $users = get_user_by_projects();
+        $lead = get_leads_from_user($users)->get();
+        $storage = [];
+        foreach ($lead as $item) {
+            $storage[] = [
+                'id' => $item['id'],
+                'name' => $item['name'],
+                'number' => $item['number'],
+                'sale_person_id' => $item['user_id'],
+                'source' => $item['source'],
+            ];
+        }
+        return (new FastExcel($storage))->download('/public/panel/assets/lead.xlsx');
+    }
+
 }

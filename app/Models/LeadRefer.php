@@ -7,13 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class LeadRefer extends Model
 {
-    
+
     use HasFactory;
     protected $table = 'lead_refer';
 
     public function lead()
     {
-        return $this->belongsTo(lead::class,'lead_id');
+        return $this->belongsTo(Lead::class,'lead_id');
     }
     public function to_user()
     {

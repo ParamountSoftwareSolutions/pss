@@ -206,6 +206,9 @@
                                 <a href="{{route('clients.edit', ['RolePrefix' => RolePrefix(),$data->id])}}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
                                     <i class="fa fa-edit"></i>
                                 </a>
+                                <a href="{{route('clients.show', ['RolePrefix' => RolePrefix(),$data->id])}}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
+                                    <i class="fa fa-eye"></i>
+                                </a>
                                 <button type="button" title="Delete" data-url="" data-token="{!! csrf_token() !!}" class="btn btn-danger btn-sm px-1 py-0 deleteBtn">
                                     <i class="fa fa-trash"></i>
                                 </button>
@@ -420,7 +423,7 @@
         }
 
 
-        //Change Status 
+        //Change Status
         $("body").on("click", ".change_status", function() {
             $('.start_time').hide();
             $('.end_time').hide();
@@ -486,7 +489,7 @@
         // });
     });
 
-    //Change Status 
+    //Change Status
 </script>
 <script>
     function getComboA(selectObject) {
