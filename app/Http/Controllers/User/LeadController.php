@@ -35,6 +35,7 @@ class LeadController extends Controller
      */
     public function index(Request $request)
     {
+  
         $building = get_all_projects();
         $users = get_user_by_projects();
         $lead = get_leads_from_user($users);
@@ -254,7 +255,7 @@ class LeadController extends Controller
             'type' => 'lead',
         ];
 
-        $response = lead::create($data);
+        $response = Lead::create($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
         } else {
@@ -333,7 +334,7 @@ class LeadController extends Controller
             'status' => 'new',
             'type' => 'lead',
         ];
-        $response = lead::where('id', $lead->id)->update($data);
+        $response = Lead::where('id', $lead->id)->update($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Update Successfully');
         } else {
@@ -357,7 +358,7 @@ class LeadController extends Controller
         $data = [
             'priority' => $priority,
         ];
-        $response = lead::where('id', $id)->update($data);
+        $response = Lead::where('id', $id)->update($data);
         if ($response) {
             return redirect()->route('leads.index', ['RolePrefix' => RolePrefix()])->with('success', 'Priority Has Update Successfully');
         } else {
@@ -377,7 +378,7 @@ class LeadController extends Controller
         $lead_data = [
             'status' => $request->status,
         ];
-        lead::where('id', $request->id)->update($lead_data);
+        Lead::where('id', $request->id)->update($lead_data);
         $lead_histories_data = [
             'lead_id' => $request->id,
             'status' => $request->status,
@@ -412,7 +413,7 @@ class LeadController extends Controller
             } else {
                 $arr = $sale_id_arr;
             }
-            $response = lead::whereIn('id', $arr)
+            $response = Lead::whereIn('id', $arr)
                 ->update([
                     'user_id' => $request->sale_person_id,
                 ]);
