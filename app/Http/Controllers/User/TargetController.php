@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Helpers\Helpers;
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\RolePrefix;
 use App\Models\Target;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,13 +21,13 @@ class TargetController extends Controller
 
     public function staff_targets()
     {
-        $targets = TaskTarget::where('user_id',Auth::user()->id)->get();
-        return view('property.task_targets.staff',compact('targets'));
+        $targets = Target::with('assign')->where('user_id',Auth::user()->id)->where('assign_to','!=',Auth::user()->id)->get();
+        return view('user.task_targets.staff',compact('targets'));
     }
 
     public function assign_target()
     {
-        return view('property.task_targets.create');
+        return view('user.task_targets.create');
     }
 
     public function store(Request $request)
@@ -35,97 +36,91 @@ class TargetController extends Controller
             'assign_to' => 'required',
             'type' => 'required',
             'target' => 'required',
-            'date' => 'required',
+            'from' => 'required',
+            'to' => 'required',
         ]);
-
-        $date = explode(" - ",$request->date);
-        $from = $date[0];
-        $to = $date[1];
-
+        if($request->from > $request->to) {
+            return redirect()->back()->with($this->message('Date from must be less than Date to', 'error'));
+        }
         $assign_to = $request->assign_to;
-        $assign_to_list = Helpers::check_target_assign($assign_to);
+        $assign_to_list = check_target_assign($assign_to);
         if(is_array($assign_to_list)){
             foreach ($assign_to_list as $assign_to_id){
-                $target = new TaskTarget();
+                $target = new Target();
                 $target->user_id = Auth::user()->id;
                 $target->assign_to = $assign_to_id;
                 $target->type = $request->type;
                 $target->target = $request->target;
-                $target->from = $from;
-                $target->to = $to;
+                $target->from = $request->from;
+                $target->to = $request->to;
                 $target->save();
                 $target_arr[] = $target;
             }
-            $url = 'property.staff_targets';
-            if(Helpers::isEmployee()){
-                $url = 'property.my_targets';
-            }
-            return redirect()->route($url,Helpers::user_login_route())->with($this->message('Target Assign Successfully', 'success'));
+            return redirect()->route('target.index',RolePrefix())->with($this->message('Target Assign Successfully', 'success'));
         }else{
             return redirect()->back()->with($this->message('Target Assign Error', 'error'));
         }
     }
-    public function edit_task($panel,$id)
+    public function edit_task($id)
     {
-        $target = TaskTarget::findOrFail($id);
-        return view('property.task_targets.edit',compact('target'));
+        $target = Target::findOrFail($id);
+        return view('user.task_targets.edit',compact('target'));
     }
-    public function update_task(Request $request,$panel,$id)
+    public function update_task(Request $request,$id)
     {
         $request->validate([
             'type' => 'required',
             'target' => 'required',
-            'date' => 'required',
+            'from' => 'required',
+            'to' => 'required',
         ]);
-        $date = explode(" - ",$request->date);
-        $from = $date[0];
-        $to = $date[1];
-
-        $target = TaskTarget::findOrFail($id);
+        if($request->from > $request->to) {
+            return redirect()->back()->with($this->message('Date from must be less than Date to', 'error'));
+        }
+        $target = Target::findOrFail($id);
         $target->type = $request->type;
         $target->target = $request->target;
-        $target->from = $from;
-        $target->to = $to;
+        $target->from = $request->from;
+        $target->to = $request->to;
         $target->save();
         if($target){
-            return redirect()->route('property.staff_targets',Helpers::user_login_route())->with($this->message('Target Updated Successfully', 'success'));
+            return redirect()->route('target.index',RolePrefix())->with($this->message('Target Updated Successfully', 'success'));
         }else{
             return redirect()->back()->with($this->message('Target Updated Error', 'error'));
         }
     }
-    public function get_role_list($panel,$role)
+    public function get_role_list($role)
     {
-        $buildings = Helpers::building_detail()->pluck('id')->toArray();
-        $users = BuildingAssignUser::whereIn('building_id',$buildings)->pluck('user_id')->toArray();
-        $manager = User::select('id','username')->whereIn('id',$users)->with('roles')
+        $users = get_user_by_projects();
+        $manager = User::select('id','name')->whereIn('id',$users)->with('roles')
             ->whereHas('roles', function ($q) use ($role) {
                 $q->Where('name', $role);
             })
             ->get();
         return response()->json($manager);
     }
-    public function task_reports($panel)
+    public function task_reports()
     {
         $date = Carbon::now()->format('Y-m-d');
-        $target_failed = TaskTarget::where('to','<',$date)->get();
+        $target_failed = Target::where('to','<',$date)->get();
         if($target_failed->count()){
             foreach($target_failed as $target){
                 $target->status = 'failed';
                 $target->save();
             }
         }
-        $targets = TaskTarget::where('user_id',Auth::user()->id)->groupBy('assign_to')->get();
-        return view('property.task_targets.reports',compact('targets'));
+        $targets = Target::where('user_id',Auth::user()->id)->groupBy('assign_to')->get();
+        return view('user.task_targets.reports',compact('targets'));
     }
-    public function get_report($panel,$id)
+    public function get_report($id)
     {
         $user = User::findOrFail($id);
-        $data['name'] = $user->username;
+        $data['name'] = $user->name;
 
-        $overdue = TaskTarget::where(['assign_to'=>$id,'user_id'=>Auth::user()->id,'status'=>'failed'])->get();
+        $overdue = Target::where(['assign_to'=>$id,'user_id'=>Auth::user()->id,'status'=>'failed'])->get();
         $data['overdue'] = $overdue->count();
 
-        $targets = TaskTarget::where(['assign_to'=>$id,'user_id'=>Auth::user()->id])->whereDate('from',Carbon::now())->get();
+        $targets = Target::where(['assign_to'=>$id,'user_id'=>Auth::user()->id])->whereDate('from',Carbon::now())->get();
         $data['total_tasks'] = $targets->count();
 
         $achieved = $targets->where('status','success');

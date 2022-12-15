@@ -187,6 +187,8 @@
                     <div class="collapse" id="task-target">
                         <ul class="nav-second-level">
                             <li><a href="{{route('target.index', ['RolePrefix' => RolePrefix()])}}">My Targets</a></li>
+                            <li><a href="{{route('target.staff_targets', ['RolePrefix' => RolePrefix()])}}">Staff Targets</a></li>
+                            <li><a href="{{route('target.task_reports', ['RolePrefix' => RolePrefix()])}}">Reports</a></li>
                         </ul>
                     </div>
                 </li>
@@ -219,6 +221,12 @@
                     </li>
                     <li>
                         <a href="{{route('lead.refer', ['RolePrefix' => RolePrefix()])}}">Refer Leads</a>
+                    </li>
+                    <li>
+                        <a href="{{route('lead.bulk_import.view', ['RolePrefix' => RolePrefix()])}}">Bulk Import</a>
+                    </li>
+                    <li>
+                        <a href="{{route('lead.bulk_export', ['RolePrefix' => RolePrefix()])}}">Bulk Export</a>
                     </li>
                 </ul>
             </div>

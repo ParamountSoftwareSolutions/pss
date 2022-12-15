@@ -13,7 +13,13 @@
                                         <img src="{{ asset('public/panel/assets/img/logo.png') }}" alt="" width="200px" class="logo">
                                         <span class="title">Invoice</span>
                                     </h2>
-                                    <div class="invoice-number">Plot Number: #{{ isset($client->inventory->unit_no) ? $client->inventory->unit_no : '' }}</div>
+                                    @if($client->project_type_id == 1)
+                                    <div class="invoice-number">Plot Number: #{{ isset($client->building_inventory->unit_no) ? $client->building_inventory->unit_no : '' }}</div>
+                                    @elseif($client->project_type_id == 2)
+                                        <div class="invoice-number">Plot Number: #{{ isset($client->society_inventory->unit_no) ? $client->society_inventory->unit_no : '' }}</div>
+                                    @elseif($client->project_type_id == 3)
+                                        <div class="invoice-number">Plot Number: #{{ isset($client->farmhouse_inventory->unit_no) ? $client->farmhouse_inventory->unit_no : '' }}</div>
+                                    @endif
                                     <div class="text-md-right">
                                         <button class="btn btn-warning btn-icon icon-left print"><i class="fas fa-print"></i> Print</button>
                                     </div>

@@ -15,12 +15,14 @@ class CreateTargetsTable extends Migration
     {
         Schema::create('targets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unsigned()->constrained('users')->onDelete(null);
-            $table->foreignId('assign_to')->unsigned()->constrained('users')->onDelete(null);
-            $table->enum('type', ['client','lead','call','meeting','conversion']);
-            $table->integer('target');
-            $table->date('from');
-            $table->date('to');
+            $table->foreignId('user_id')->nullable()->unsigned()->constrained('users')->onDelete('set null');
+            $table->foreignId('assign_to')->nullable()->unsigned()->constrained('users')->onDelete('set null');
+            $table->enum('type', ['client','lead','call','meeting','conversion'])->nullable();
+            $table->integer('target')->nullable();
+            $table->date('from')->nullable();
+            $table->date('to')->nullable();
+            $table->integer('achieved')->default(0);
+            $table->enum('status',['success', 'pending', 'failed'])->nullable();
             $table->timestamps();
         });
     }

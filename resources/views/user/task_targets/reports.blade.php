@@ -1,4 +1,4 @@
-@extends((new App\Helpers\Helpers)->user_login_route()['file'].'.layout.app')
+@extends('user.layout.app')
 @section('title', 'All Users List')
 @section('content')
 
@@ -25,7 +25,7 @@
                                         @forelse($targets as $target)
                                             <tr>
                                                 <td>{{$loop->iteration}}</td>
-                                                <td>{{$target->assign->username ?? ''}}</td>
+                                                <td>{{$target->assign->name ?? ''}}</td>
                                                 <td>
                                                     <button class="btn btn-primary btn-sm px-1 py-0 report_modal" data-id="{{$target->assign_to}}" title="View">
                                                         <i class="fa fa-eye"></i>
@@ -124,7 +124,7 @@
                 // showLoader();
                 let id = $(this).data('id');
                 $.ajax({
-                    url: "{{ url(Helpers::user_login_route()['panel'].'/task/get-report') }}/" + id,
+                    url: "{{ url(RolePrefix().'/targets/task/get-report') }}/" + id,
                     type: "GET",
                     success: function(data) {
                         let task = data.achieved+'/'+data.total_tasks;

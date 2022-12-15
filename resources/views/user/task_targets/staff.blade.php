@@ -1,4 +1,4 @@
-@extends((new App\Helpers\Helpers)->user_login_route()['file'].'.layout.app')
+@extends('user.layout.app')
 @section('title', 'All Users List')
 @section('content')
     <div class="main-content">
@@ -9,7 +9,7 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4>Targets</h4>
-                                <a href="{{ route('property.assign_target', ['panel' => Helpers::user_login_route()['panel']]) }}" class="btn btn-info">Assign Target</a>
+                                <a href="{{ route('target.assign_target', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-info">Assign Target</a>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -44,9 +44,9 @@
                                                 <td>{{$target->target}}</td>
                                                 <td>{{$target->achieved}}</td>
                                                 <td>{{$percentage}} %</td>
-                                                <td>{{$target->assign->username ?? ''}}</td>
+                                                <td>{{$target->assign->name ?? ''}}</td>
                                                 <td>
-                                                    <a href="{{ route('property.edit_task',['panel' => Helpers::user_login_route()['panel'], 'id' => $target->id]) }}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
+                                                    <a href="{{ route('target.edit_task',['RolePrefix' => RolePrefix(),'id' => $target->id]) }}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                 </td>

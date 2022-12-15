@@ -1,4 +1,4 @@
-@extends((new App\Helpers\Helpers)->user_login_route()['file'].'.layout.app')
+@extends('user.layout.app')
 @section('title', 'Add Lead')
 @section('content')
     <div class="main-content">
@@ -6,7 +6,7 @@
             <div class="section-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
-                        <form method="post" action="{{ route('property.store', ['panel' => Helpers::user_login_route()['panel']]) }}">
+                        <form method="post" action="{{ route('target.store', ['RolePrefix' => RolePrefix()]) }}">
                             <div class="card">
                                 @csrf
                                 <div class="card-header">
@@ -16,25 +16,22 @@
                                     <div class="row">
                                         <div class="form-group col-md-12">
                                             <div class="inbox-header text-right">
-                                                @if(Helpers::isPropertyAdmin())
+                                                @if(Auth::user()->roles[0]->name == 'property_admin')
                                                     <button type="button" class="btn btn-primary assign" data-value="self">Self</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="all_property_manager">All Property Manager</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="all_sale_manager">All Sale Manager</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="all_sales_person">All Sales Person</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="individual">Individual</button>
-                                                @endif
-                                                @if(Helpers::isPropertyManager())
+                                                @elseif(Auth::user()->roles[0]->name == 'property_manager')
                                                     <button type="button" class="btn btn-primary assign" data-value="self">Self</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="all_sale_manager">All Sale Manager</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="all_sales_person">All Sales Person</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="individual">Individual</button>
-                                                @endif
-                                                @if(Helpers::isSaleManager())
+                                                @elseif(Auth::user()->roles[0]->name == 'sale_manager')
                                                     <button type="button" class="btn btn-primary assign" data-value="self">Self</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="all_sales_person">All Sales Person</button>
                                                     <button type="button" class="btn btn-primary assign" data-value="individual">Individual</button>
-                                                @endif
-                                                @if(Helpers::isEmployee())
+                                                @elseif(Auth::user()->roles[0]->name == 'sale_person')
                                                     <button type="button" class="btn btn-primary assign" data-value="self">Self</button>
                                                 @endif
                                             </div>
@@ -43,7 +40,7 @@
                                             <div class="form-group">
                                                 <label>Select Role <small style="color: red">*</small></label>
                                                 <select class="form-control" name="role" reqiured></select>
-                                                @error('building_id')
+                                                @error('role')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -54,7 +51,7 @@
                                                 <select class="form-control" name="assign_to" reqiured>
                                                     <option value=""> -- Select User -- </option>
                                                 </select>
-                                                @error('building_id')
+                                                @error('assign_to')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -79,7 +76,7 @@
                                                     <option value="meeting" {{old('type') == 'meeting' ? 'selected' : ''}}>Meetings</option>
                                                     <option value="conversion" {{old('type') == 'conversion' ? 'selected' : ''}}>Conversion</option>
                                                 </select>
-                                                @error('building_id')
+                                                @error('type')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -88,12 +85,32 @@
                                             <div class="form-group">
                                                 <label>Target <small style="color: red">*</small></label>
                                                 <input type="number" class="form-control" name="target" value="{{old('target')}}" reqiured>
-                                                @error('building_id')
+                                                @error('target')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Date From <small style="color: red">*</small></label>
+                                                <input type="date" class="form-control" name="from" value="{{old('from')}}" reqiured>
+                                                @error('from')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
                                         <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Date To <small style="color: red">*</small></label>
+                                                <input type="date" class="form-control" name="to" value="{{old('to')}}" reqiured>
+                                                @error('to')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        {{--<div class="form-group col-md-4">
                                             <div class="form-group">
                                                 <label>Date Range Picker</label>
                                                 <div class="input-group">
@@ -105,7 +122,7 @@
                                                     <input type="text" name="date" class="form-control daterange-cus">
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>--}}
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
@@ -169,7 +186,7 @@
                 var role = $(this).val();
                 if (role) {
                     $.ajax({
-                        url: "{{ url(Helpers::user_login_route()['panel'].'/get-role-list') }}/" + role,
+                        url: "{{ url(RolePrefix().'/targets/get-role-list') }}/" + role,
                         type: "GET",
                         dataType: "json",
                         success: function (data) {
@@ -181,7 +198,7 @@
                                 $.each(data, function (key, value) {
                                     let oldFloorId = '{{ old('assign_to') }}';
                                     let selected = (value.id == oldFloorId) ? "selected" : "";
-                                    $('select[name="assign_to"]').append('<option '+selected+' value="' + value.id + '">' + value.username + '</option>');
+                                    $('select[name="assign_to"]').append('<option '+selected+' value="' + value.id + '">' + value.name + '</option>');
                                 });
                             }
                             $('.assign_to').show();
@@ -191,11 +208,10 @@
                     $('.assign_to').hide();
                 }
             });
-            $('.daterange-cus').daterangepicker({
-                locale: { format: 'YYYY-MM-DD' },
-                drops: 'down',
-                opens: 'right'
-            });
+            $('input[name="from"]').on('change', function () {
+                var date_from = $(this).val();
+                $('input[name="to"]').attr('min',date_from);
+            })
         });
     </script>
 @endsection

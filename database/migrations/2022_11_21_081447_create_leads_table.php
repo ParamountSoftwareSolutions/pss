@@ -37,7 +37,7 @@ class CreateLeadsTable extends Migration
             $table->foreignId('state_id')->unsigned()->nullable()->constrained('states')->nullOnDelete();
             $table->foreignId('city_id')->unsigned()->nullable()->constrained('cities')->nullOnDelete();
             $table->enum('priority', ['very_hot', 'hot', 'moderate', 'cold'])->nullable();
-            $table->string('status');
+            $table->string('status')->default('new');
             $table->timestamps();
         });
     }

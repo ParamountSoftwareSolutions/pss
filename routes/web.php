@@ -141,6 +141,9 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::post('lead-assign', [LeadController::class, 'lead_assign'])->name('leads.assign');
     Route::get('lead/employee', [LeadController::class, 'employees'])->name('lead.employee');
     Route::post('lead/employee/report', [LeadController::class, 'employees_report'])->name('lead.employee_report');
+    Route::get('lead/bulk/import/view', [LeadController::class, 'bulk_import_view'])->name('lead.bulk_import.view');
+    Route::post('lead/bulk/import', [LeadController::class, 'bulk_import'])->name('lead.bulk_import');
+    Route::get('lead/bulk/export', [LeadController::class, 'bulk_export'])->name('lead.bulk_export');
 
     Route::get('state/{country_id}',  [UserController::class, 'state'])->name('state');
     Route::get('city/{state_id}',  [UserController::class, 'city'])->name('city');
@@ -172,7 +175,6 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //             //End New Routes    Get Payment Plan
 
     Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
-    Route::get('client-installment', [PaymentPlanController::class, 'client_installment']);
 
 
 
@@ -183,14 +185,14 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
     Route::group(['prefix' => 'targets', 'as' => 'target.'], function () {
         Route::get('/', [TargetController::class,'my_targets'])->name('index');
-//        Route::get('staff-targets', 'TargetController@staff_targets')->name('staff_targets');
-//        Route::get('assign-target', 'TargetController@assign_target')->name('assign_target');
-//        Route::post('store', 'TargetController@store')->name('store');
-//        Route::get('get-role-list/{role}', 'TargetController@get_role_list')->name('get_role_list');
-//        Route::get('edit-task/{id}', 'TargetController@edit_task')->name('edit_task');
-//        Route::post('update-task/{id}', 'TargetController@update_task')->name('update_task');
-//        Route::get('task-reports', 'TargetController@task_reports')->name('task_reports');
-//        Route::get('task/get-report/{id}', 'TargetController@get_report')->name('get_report');
+        Route::get('staff-targets', [TargetController::class,'staff_targets'])->name('staff_targets');
+        Route::get('assign-target', [TargetController::class,'assign_target'])->name('assign_target');
+        Route::post('store', [TargetController::class,'store'])->name('store');
+        Route::get('get-role-list/{role}', [TargetController::class,'get_role_list'])->name('get_role_list');
+        Route::get('edit-task/{id}', [TargetController::class,'edit_task'])->name('edit_task');
+        Route::post('update-task/{id}', [TargetController::class,'update_task'])->name('update_task');
+        Route::get('task-reports', [TargetController::class,'task_reports'])->name('task_reports');
+        Route::get('task/get-report/{id}', [TargetController::class,'get_report'])->name('get_report');
     });
 
 
