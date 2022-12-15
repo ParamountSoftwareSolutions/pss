@@ -118,6 +118,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
     Route::get('state/{id}', [HomeController::class, 'state']);
     Route::get('city/{id}', [HomeController::class, 'city']);
+    Route::get('get-premium/{type}', [PremiumController::class, 'get_premium']);
     //Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
 
     //=========================//
@@ -163,6 +164,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::post('client/change_status', [ClientController::class, 'changestatus'])->name('client.change_status');
     Route::get('client/comments/{id}', [ClientController::class, 'comments'])->name('client.comments');
     Route::get('client/active/{id}', [ClientController::class, 'active'])->name('clients.active');
+    Route::post('client/{client_id}/installment/{id}', [ClientController::class, 'installment'])->name('clients.installment');
     // //=============//
     // /* Clients */
     // //=============//
@@ -170,6 +172,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //             //End New Routes    Get Payment Plan
 
     Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
+    Route::get('client-installment', [PaymentPlanController::class, 'client_installment']);
 
 
 

@@ -28,8 +28,7 @@ class FarmhouseController extends Controller
      */
     public function index()
     {
-        $project_id = get_all_projects()->pluck('id')->toArray();
-        $projects = Project::whereIn('id',$project_id)->where('type_id',$this->project_type_id)->get();
+        $projects = get_all_projects('farm_house');
         return view('user.farmhouse.show', compact('projects'));
     }
 

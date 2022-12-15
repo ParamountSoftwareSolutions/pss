@@ -36,7 +36,7 @@ class SizeController extends Controller
         $size->unit_id = $request->unit_id;
         $size->save();
         if ($size) {
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has created successfully', 'alert' => 'success']);
+            return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has created successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Size has not created, something went wrong. Try again', 'alert' => 'error']);
         }
@@ -66,13 +66,15 @@ class SizeController extends Controller
         $request->validate([
             'type_id' => 'required',
             'name' => 'required',
+            'unit_id' => 'required',
         ]);
         $size = Size::findOrFail($id);
         $size->project_type_id = $request->type_id;
         $size->name = $request->name;
+        $size->unit_id = $request->unit_id;
         $size->save();
         if ($size){
-            return redirect()->route('block.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has updated successfully', 'alert' => 'success']);
+            return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has updated successfully', 'alert' => 'success']);
         } else {
             return redirect()->back()->with(['message' => 'Size has not updated, something went wrong. Try again', 'alert' => 'error']);
         }

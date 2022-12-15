@@ -42,7 +42,7 @@ class ProjectAssignUserSeeder extends Seeder
             ],
             [
                 'project_id' => 7,
-                'user_id' => 10,
+                'user_id' => 9,
             ],
             [
                 'project_id' => 8,

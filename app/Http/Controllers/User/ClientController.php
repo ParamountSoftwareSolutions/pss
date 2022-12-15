@@ -14,6 +14,7 @@ use App\Models\BuildingSale;
 use App\Models\BuildingSaleHistory;
 use App\Models\BuildingSaleInstallment;
 use App\Models\City;
+use App\Models\ClientInstallment;
 use App\Models\Country;
 use App\Models\FloorDetail;
 use App\Models\State;
@@ -192,7 +193,7 @@ class ClientController extends Controller
             } else {
                 $project_type_id = Null;
             }
-           
+
             $client_data = [
                 'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
                 'project_type_id' => $project_type_id,
@@ -234,13 +235,14 @@ class ClientController extends Controller
      * @param int $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function show($panel, $id)
+    public function show($id)
     {
-        $building_sale = BuildingSale::with('customer')->where('id', $id)->first();
-        if ($building_sale->floor_detail_id == null) {
+        $client = Client::with('installment')->findOrFail($id);
+        $client_installment = ClientInstallment::where('client_id',$id)->orderBy('due_date','ASC')->get();
+        if ($client->inventory_id == null) {
             return redirect()->route('property_manager.sale.client.index', Helpers::user_login_route())->with($this->message('Please select first property!', 'error'));
         } else {
-            return view('property_manager.sale.client.show', compact('building_sale'));
+            return view('user.client.show', compact('client','client_installment'));
         }
     }
 
@@ -421,5 +423,17 @@ class ClientController extends Controller
 
         $clients = Client::with('customer')->get();
         return view('user.client.active', get_defined_vars());
+    }
+    public function installment(Request $request,$client_id,$id)
+    {
+        $request->validate([
+            'payment_method' => 'required',
+            'status' => 'required'
+        ]);
+        $installment = ClientInstallment::where('client_id',$client_id)->findOrFail($id);
+        $installment->payment_method = $request->payment_method;
+        $installment->status = $request->status;
+        $installment->save();
+        return redirect()->route('clients.show', [RolePrefix(),$client_id])->with('error', 'Please select first any lead');
     }
 }

@@ -4,9 +4,14 @@ namespace App\Http\Controllers\User;
 
 use App\Helpers\Helpers;
 use App\Http\Controllers\Controller;
+use App\Models\BuildingInventory;
+use App\Models\Farmhouse;
 use App\Models\PaymentPlan;
 use App\Models\Premium;
 use App\Models\ProjectType;
+use App\Models\Property;
+use App\Models\SocietyInventory;
+use http\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -192,5 +197,20 @@ class PaymentPlanController extends Controller
             $payment_plan = PaymentPlan::where('project_type_id',$project_type_id)->where('premium_id',null)->get();
         }
         return response()->json($payment_plan);
+    }
+    public function client_installment()
+    {
+//        $type_id = $request->project_type_id;
+//        $inventory_id = $request->inventory_id;
+//        $inventory = get_inventory($type_id,$inventory_id);
+        $inventory = get_inventory(3,1);
+        $installment = installment($inventory->payment_plan_id);
+        if ($installment['total_price'] == $installment['payment_plan']->total_price) {
+            $inventory->status = 'sold';
+            $inventory->save();
+//            create_installment_plan(1,$installment,$request);
+            $installment_plan = create_installment_plan(1,$installment,1050000);
+            dd($installment_plan);
+        }
     }
 }
