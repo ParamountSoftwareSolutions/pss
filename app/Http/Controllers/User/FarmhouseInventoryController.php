@@ -4,6 +4,10 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\RolePrefix;
+use App\Models\Building;
+use App\Models\BuildingInventory;
+use App\Models\BuildingInventoryFile;
+use App\Models\Category;
 use App\Models\FarmhouseFile;
 use App\Models\Premium;
 use App\Models\Farmhouse;
@@ -11,7 +15,9 @@ use App\Models\Block;
 use App\Models\Project;
 use App\Models\ProjectType;
 use App\Models\Size;
+use http\Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FarmhouseInventoryController extends Controller
 {
@@ -58,7 +64,13 @@ class FarmhouseInventoryController extends Controller
      */
     public function store(Request $request,$id)
     {
-        if ($request->simple_unit_no == null){
+        $project = Project::findOrFail($id);
+        $request->validate([
+            'payment_plan_id' => 'required',
+        ]);
+        if ($request->simple_unit_no) {
+            $length = 0;
+        }else {
             $request->validate([
                 'bulk_unit_no' => 'required',
                 'start_unit_no' => 'required',
@@ -66,49 +78,42 @@ class FarmhouseInventoryController extends Controller
             ], [
                 'end_unit_no' => 'Bulk Fields is required'
             ]);
-        }
-
-        if ($request->simple_unit_no == null && $request->bulk_unit_no !== null){
             $length = $request->end_unit_no - $request->start_unit_no;
-            for ($i = 0; $length >= $i; $i++){
-                $unit = $request->bulk_unit_no . $request->start_unit_no++;
+        }
+        $premium = null;
+        if ($request->premium_id !== 'regular') {
+            $premium = $request->premium_id;
+        }
+        try {
+            for ($i = 0; $length >= $i; $i++) {
+                $unit = $request->simple_unit_no;
+                if (!$unit) {
+                    $unit_no = $request->start_unit_no + $i;
+                    $unit = $request->bulk_unit_no . ' ' . $unit_no;
+                }
                 $farmhouse = new Farmhouse();
                 $farmhouse->project_id = $id;
                 $farmhouse->block_id = $request->block_id;
                 $farmhouse->unit_no = $unit;
                 $farmhouse->size_id = $request->size_id;
-                if(isset($request->premium_id) && $request->premium_id !== 'regular'){
-                    $farmhouse->premium_id = $request->premium_id;
-                }
+                $farmhouse->premium_id = $premium;
                 $farmhouse->payment_plan_id = $request->payment_plan_id;
                 $farmhouse->save();
+                if ($request->has('images')) {
+                    foreach ($request->file('images') as $file) {
+                        $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                        $file->move('public/images/farmhouse/', $filename);
+                        $file = 'images/farmhouse/' . $filename;
+                        FarmhouseFile::create([
+                            'farmhouse_id' => $farmhouse->id,
+                            'file' => $file,
+                        ]);
+                    }
+                }
             }
-        }else{
-            $farmhouse = new Farmhouse();
-            $farmhouse->project_id = $id;
-            $farmhouse->block_id = $request->block_id;
-            $farmhouse->unit_no = $request->simple_unit_no;
-            $farmhouse->size_id = $request->size_id;
-            if(isset($request->premium_id) && $request->premium_id !== 'regular'){
-                $farmhouse->premium_id = $request->premium_id;
-            }
-            $farmhouse->payment_plan_id = $request->payment_plan_id;
-            $farmhouse->save();
-        }
-        if ($request->has('images')) {
-            foreach ($request->file('images') as $file) {
-                $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
-                $file->move('public/images/farmhouse/', $filename);
-                $file = 'images/farmhouse/' . $filename;
-                FarmhouseFile::create([
-                    'farmhouse_id' => $farmhouse->id,
-                    'file' => $file,
-                ]);
-            }
-        }
-        if ($farmhouse) {
             return redirect()->route('farmhouse.inventory.index', ['RolePrefix' => RolePrefix(),'farmhouse'=>$id])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
-        } else {
+        }catch (Exception $e) {
+            return redirect()->back()->with($this->message($e->getMessage(), 'error'));
             return redirect()->back()->with(['message' => 'Farmhouse has not created, something went wrong. Try again', 'alert' => 'error']);
         }
     }

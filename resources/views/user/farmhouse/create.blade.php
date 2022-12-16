@@ -203,7 +203,8 @@
                         } else {
                             $('select[name="payment_plan_id"]').append('<option value="">Please  Select</option>');
                             $.each(data, function (key, value) {
-                                $('select[name="payment_plan_id"]').append('<option value="' + value.id + '">' + value.name + '</option>');
+                                var price = value.after_commission_price ? value.after_commission_price : value.total_price;
+                                $('select[name="payment_plan_id"]').append('<option value="' + value.id + '">' + value.name +'('+ price +')'+ '</option>');
                             });
                         }
                     },

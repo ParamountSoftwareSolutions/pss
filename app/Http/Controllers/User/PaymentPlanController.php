@@ -164,6 +164,10 @@ class PaymentPlanController extends Controller
             $payment_plan->premium_id = $request->premium_id;
             $payment_plan->commission = $request->commission;
             $payment_plan->after_commission_price = $request->after_commission_price;
+        }else{
+            $payment_plan->premium_id = null;
+            $payment_plan->commission = null;
+            $payment_plan->after_commission_price = null;
         }
         $payment_plan->save();
         if($payment_plan){

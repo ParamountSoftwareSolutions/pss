@@ -46,14 +46,14 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Unit Type</label>
-                                            <select class="form-control" name="unit_id" required>
+                                            <select class="form-control" name="unit" required>
                                                 <option label="" disabled>Select Unit Type</option>
-                                                @foreach($unit as $data)
-                                                    <option value="{{ $data->id }}" @if($size->unit_id == $data->id) selected @endif>{{ ucwords($data->name)
-                                                    }}</option>
-                                                @endforeach
+                                                <option value="bed" @if($size->unit == 'bed') selected @endif >Bed</option>
+                                                <option value="bath" @if($size->unit == 'bath') selected @endif >Bath</option>
+                                                <option value="marla" @if($size->unit == 'marla') selected @endif >Marla</option>
+                                                <option value="kenal" @if($size->unit == 'kenal') selected @endif >Kenal</option>
                                             </select>
-                                            @error('type_id')
+                                            @error('unit')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>

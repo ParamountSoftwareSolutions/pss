@@ -42,7 +42,7 @@
                                                 <td>{{ $data->payment_plan->name }}</td>
                                                 <td>{{ $data->nature->name }}</td>
                                                 <td>{{ $data->size->name }} {{ $data->size->unit }}</td>
-                                                <td>{{ $data->premium->name }}</td>
+                                                <td>{{ $data->premium->name ?? 'Regular' }}</td>
                                                 <td><span class="badge badge-success">{{ $data->status }}</span></td>
                                                 <td>
                                                     <a href="{{ route('society.block.society_inventory.edit', ['RolePrefix' => RolePrefix(), 'society' =>
@@ -51,16 +51,10 @@
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <form
-                                                        action="{{ route('society.block.society_inventory.destroy', ['RolePrefix' => RolePrefix(), 'society' => $data->society_id, 'block' =>
-                                                    $data->block_id, $data->id]) }}"
-                                                        method="post" style="display: inline-block;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" title="Delete" class="btn btn-danger px-1 py-0">
-                                                            <i class="fa fa-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                    <button data-url="{{ route('society.block.society_inventory.destroy', ['RolePrefix' => RolePrefix(), 'society' => $data->society_id, 'block' =>
+                                                        $data->block_id, $data->id]) }}" data-token="{{csrf_token()}}" type="button" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         @empty

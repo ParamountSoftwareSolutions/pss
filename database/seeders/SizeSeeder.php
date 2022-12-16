@@ -33,27 +33,27 @@ class SizeSeeder extends Seeder
             [
                 'project_type_id' => 1,
                 'name' => 3,
-                'unit_id' => 1,
+                'unit' => 'bed',
             ],
             [
                 'project_type_id' => 1,
                 'name' => 3,
-                'unit_id' => 2
+                'unit' => 'bath'
             ],
             [
                 'project_type_id' => 2,
                 'name' => 10,
-                'unit_id' => 3,
+                'unit' => 'marla',
             ],
             [
                 'project_type_id' => 2,
                 'name' => 5,
-                'unit_id' => 3
+                'unit' => 'marla'
             ],
             [
                 'project_type_id' => 2,
                 'name' => 3,
-                'unit_id' => 4
+                'unit' => 'kenal'
             ],
         ]);
     }

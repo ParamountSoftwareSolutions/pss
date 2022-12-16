@@ -84,37 +84,6 @@
                                                 </div>
                                             </div>
                                             <div class="form-group col-md-4">
-                                                <label>Premium Location</label>
-                                                <select class="form-control" name="premium_id">
-                                                    <option value="">Select Types</option>
-                                                    @foreach($premium as $data)
-                                                        <option value="{{ $data->id }}" @if($society_inventory->premium_id == $data->id) selected @endif>{{ $data->name
-                                                        }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('premium_id')
-                                                <div class="text-danger mt-2">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="form-group col-md-4">
-                                                <label class="d-block">Select Payment Plan<small style="color: red">*</small></label>
-                                                <div class="input-group mb-3">
-                                                    <select name="payment_plan_id" class="form-control" required>
-                                                        <option value="">Select Payment Plan</option>
-                                                        @foreach($payment_plan as $data)
-                                                            <option value="{{$data->id}}" @if($society_inventory->payment_plan_id == $data->id) selected
-                                                                @endif>{{$data->name.' ('.$data->total_price.')' }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                @error('payment_plan_id')
-                                                <div class="text-danger mt-2">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-4">
                                                 <div class="form-group">
                                                     <label>Bed</label>
                                                     <select class="form-control" name="bed">
@@ -143,6 +112,31 @@
                                                     <div class="text-danger mt-2">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label>Premium Location</label>
+                                                <select class="form-control" name="premium_id">
+                                                    <option value="">Select Types</option>
+                                                    <option value="regular"{{$society_inventory->premium_id == null ? 'selected' : ''}}>Regular</option>
+                                                    @foreach($premium as $data)
+                                                        <option value="{{ $data->id }}" @if($society_inventory->premium_id == $data->id) selected @endif>{{ $data->name
+                                                        }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('premium_id')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label class="d-block">Select Payment Plan<small style="color: red">*</small></label>
+                                                <div class="input-group mb-3">
+                                                    <select name="payment_plan_id" class="form-control" required>
+                                                        <option value="">Select Payment Plan</option>
+                                                    </select>
+                                                </div>
+                                                @error('payment_plan_id')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
@@ -200,12 +194,35 @@
         });
     </script>
     <script>
-        $(' button[name="addnew"]').on('click', function () {
-            $('.card-body').children('.field').clone().appendTo('.brother');
+        $(document).ready(function () {
+            var premium_id = $('select[name="premium_id"]').val();
+            getPaymentPlan(premium_id);
+            $('select[name="premium_id"]').change(function () {
+                var premium_id = $(this).val();
+                getPaymentPlan(premium_id);
+                return;
+            })
         });
-        $(' button[name="removenew"]').on('click', function () {
-            $('.field:last-child').remove();
-        });
+        function getPaymentPlan(premium_id) {
+            $.ajax({
+                url: "{{ url(RolePrefix().'/get-payment-plan') }}/" + premium_id + "/" + 2,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $('select[name="payment_plan_id"]').empty();
+                    if (data.length === 0) {
+                        $('select[name="payment_plan_id"]').append('<option value="">N/A</option>');
+                    } else {
+                        $('select[name="payment_plan_id"]').append('<option value="">Please  Select</option>');
+                        $.each(data, function (key, value) {
+                            let oldlId = '{{ $society_inventory->payment_plan_id }}';
+                            let selected = value.id == oldlId ? "selected" : "";
+                            var price = value.after_commission_price ? value.after_commission_price : value.total_price;
+                            $('select[name="payment_plan_id"]').append('<option value="' + value.id + '"'+selected+'>' + value.name +'('+ price +')'+ '</option>');
+                        });
+                    }
+                },
+            });
+        }
     </script>
-
 @endsection

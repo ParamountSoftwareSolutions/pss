@@ -19,8 +19,7 @@ class SizeController extends Controller
     public function create()
     {
         $project_type = ProjectType::latest()->get();
-        $unit = Unit::latest()->get();
-        return view('user.inventory_extra_data.size.create', compact('project_type', 'unit'));
+        return view('user.inventory_extra_data.size.create', compact('project_type'));
     }
 
     public function store(Request $request)
@@ -28,12 +27,12 @@ class SizeController extends Controller
         $request->validate([
             'type_id' => 'required',
             'name' => 'required',
-            'unit_id' => 'required',
+            'unit' => 'required',
         ]);
         $size = new Size();
         $size->project_type_id = $request->type_id;
         $size->name = $request->name;
-        $size->unit_id = $request->unit_id;
+        $size->unit = $request->unit;
         $size->save();
         if ($size) {
             return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has created successfully', 'alert' => 'success']);
@@ -57,8 +56,7 @@ class SizeController extends Controller
     {
         $size = Size::findOrFail($id);
         $project_type = ProjectType::latest()->get();
-        $unit = Unit::latest()->get();
-        return view('user.inventory_extra_data.size.edit', compact('size', 'project_type', 'unit'));
+        return view('user.inventory_extra_data.size.edit', compact('size', 'project_type'));
     }
 
     public function update(Request $request, $id)
@@ -66,12 +64,12 @@ class SizeController extends Controller
         $request->validate([
             'type_id' => 'required',
             'name' => 'required',
-            'unit_id' => 'required',
+            'unit' => 'required',
         ]);
         $size = Size::findOrFail($id);
         $size->project_type_id = $request->type_id;
         $size->name = $request->name;
-        $size->unit_id = $request->unit_id;
+        $size->unit = $request->unit;
         $size->save();
         if ($size){
             return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has updated successfully', 'alert' => 'success']);
