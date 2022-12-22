@@ -26,6 +26,7 @@
                                         </thead>
                                         <tbody>
                                         @forelse($sizes as $data)
+                                       
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->name }}</td>

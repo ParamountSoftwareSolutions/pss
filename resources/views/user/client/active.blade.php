@@ -12,11 +12,10 @@
                 <div>{{ $error }}</div>
                 @endforeach
                 <div class="col-12 col-md-12 col-lg-12">
-                    <form method="POST" action="{{ route('clients.update', ['RolePrefix' => RolePrefix(),$client->id]) }}">
-
+                    <form method="POST" action="{{ route('clients.active', ['RolePrefix' => RolePrefix(), $client->id]) }}" novalidate>
                         @csrf
-                        @method('PUT')
-                        <!-- <div class="card">
+                        <!-- @method('PUT') -->
+                        <div class="card">
                             <div class="card-header">
                                 <h4>Basic Information</h4>
                             </div>
@@ -26,8 +25,7 @@
                                         <div class="form-group">
                                             <label>Project List <small style="color: red">*</small></label>
                                             <select class="form-control" id="selectProject" onchange="{project(); submitForm()}" name="building_id">
-                                                <option value="" disabled>Select Project ...
-                                                </option>
+                                                <option value="" selected disabled>Select Project ...</option>
                                                 @if (!empty($projects))
                                                 @foreach ($projects as $data)
                                                 <option value="{{ $data }}">{{ $data->name }}</option>
@@ -38,50 +36,40 @@
                                     </div>
                                 </div>
                                 <div class="row" id="projectDetails">
-                                    <div class="form-group col-md-4" id="size">
-                                        <div class="form-group">
-                                            <label>Size</label>
-                                            <select class="form-control" name="size" id="selectSize" required>
-                                                <option label="" disabled selected>Select Size ...</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4" id="premium">
-                                        <div class="form-group">
-                                            <label>Premium</label>
-                                            <select class="form-control" name="premium" id="selectPremium" required>
-                                                <option label="" disabled selected>Select Premium ...</option>
-                                            </select>
-                                        </div>
-                                    </div>
+
+                                    <!-- Building -->
                                     <div class="form-group col-md-4" id="buildingfloor">
                                         <div class="form-group">
                                             <label>Building Floor</label>
                                             <select class="form-control" name="buildingFloor" id="selectBuildingFloor" required>
-                                                <option label="" disabled selected>Select Building Floor ...
+                                                <option label="" selected>Select Building Floor ...
                                                 </option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-4" id="quantity">
+                                    <div class="form-group col-md-4" id="selectBuildingFloorInventoryHide">
                                         <div class="form-group">
-                                            <label>Quatity</label>
-                                            <select class="form-control" name="quantity" id="selectQuantity" required>
-                                                <option label="" disabled selected>Select Quantity ...</option>
+                                            <label>Building Floor Invetory</label>
+                                            <select class="form-control" name="inventory_id" id="selectBuildingFloorInventory" required>
+                                                <option label="" selected>Select Building Floor Invetory ... </option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-4" id="type">
+                                    <!-- Building -->
+                                    <!-- Society -->
+                                    <div class="form-group col-md-4" id="premiumSocity">
                                         <div class="form-group">
-                                            <label>Type</label>
-                                            <select class="form-control" name="type" id="selectType" required>
-                                                <option label="" disabled selected>Select Type ...</option>
+                                            <label>Society</label>
+                                            <select class="form-control" name="inventory_id" id="selectPremiumScocity" required>
+                                                <option label="" disabled selected>Select Society Inventory ...</option>
                                             </select>
                                         </div>
                                     </div>
+                                    <!-- Society -->
+
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
 
                         <div class="card">
                             <div class="card-header">
@@ -150,7 +138,7 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Sales Person</label>
-                                        <select class="form-control" name="sale_person_id">
+                                        <select class="form-control" name="sale_person_id" required>
                                             @if(!empty($client->user_id ))
                                             <option value="{{$client->user_id }}" selected>{{$client->sale_person->name }}</option>
                                             @endif
@@ -232,27 +220,7 @@
                                 </div>
                             </div>
                             {{-- Old Client Form --}}
-                            <!-- <div class="card-body old-client-form">
-                                <div class="row">
-                                    <div class="form-group col-md-4">
-                                        <label>Client</label>
-                                        <select class="form-control" name="client_id">
-                                            <option label="" disabled selected>Select Client</option>
-                                            @if(!empty($clients))
-                                            @forelse($clients as $client_data)
-                                            <option value="{{ $client_data->id }}">Name: {{ $client_data->customer->name }} &nbsp;&nbsp;&nbsp;&nbsp;
-                                                Phone: {{ $client_data->customer->number }}</option>
-                                            @empty
-                                            <option value="">Client Empty</option>
-                                            @endforelse
-                                            @endif
-                                        </select>
-                                        @error('client_id')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div> -->
+
                             <div class="card-footer text-right">
                                 <button class="btn btn-primary" type="submit">Submit</button>
                             </div>
@@ -318,6 +286,69 @@
                 alert('danger');
             }
         });
+
+        // Bulding Invertory
+        $('select[name="buildingFloor"]').on('change', function() {
+            var id = $(this).val();
+            if (id) {
+                $.ajax({
+                    url: "{{ url(RolePrefix().'/building_inventory') }}/" + id,
+                    type: "GET",
+                    // dataType: "json",
+                    success: function(response) {
+                        var data = JSON.parse(response);
+                        console.log(data);
+                        $.each(data, function(i, item) {
+                            $('#selectBuildingFloorInventory').append($('<option>', {
+                                value: item.id,
+                                text: item.id
+                            }));
+                        });
+                        // data.forEach(element => {
+                        //     var options = document.createElement('option');
+                        //     options.text = element.id;
+                        //     options.value = element.id;
+                        //     const select = document.getElementById('selectBuildingFloorInventory');
+                        //     select.appendChild(options);
+                        // });
+                    },
+                });
+            } else {
+                alert('Building Floor Data Found');
+            }
+        });
+        // Bulding Invertory
+        $('select[name="societyBlock"]').on('change', function() {
+            var id = $(this).val();
+            if (id) {
+                $.ajax({
+                    url: "{{ url(RolePrefix().'/societyBlock_inventory') }}/" + id,
+                    type: "GET",
+                    // dataType: "json",
+                    success: function(response) {
+                        var data = JSON.parse(response);
+                        console.log(data);
+                        $.each(data, function(i, item) {
+                            $('#selectsocietyBlockInventory').append($('<option>', {
+                                value: item.id,
+                                text: item.id
+                            }));
+                        });
+                        // data.forEach(element => {
+                        //     var options = document.createElement('option');
+                        //     options.text = element.id;
+                        //     options.value = element.id;
+                        //     const select = document.getElementById('selectBuildingFloorInventory');
+                        //     select.appendChild(options);
+                        // });
+                    },
+                });
+            } else {
+                alert('Building Floor Data Found');
+            }
+        });
+
+
         //Old Client
         $(".old-client-form").hide();
         // Show hidden paragraphs
@@ -341,16 +372,12 @@
         });
     });
 </script>
-<script>
-</script>
 
 <!-- Basic Information -->
 <script>
-    document.getElementById("size").style.display = "none";
-    document.getElementById("quantity").style.display = "none";
     document.getElementById("buildingfloor").style.display = "none";
-    document.getElementById("premium").style.display = "none";
-    document.getElementById("type").style.display = "none";
+    document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
+    document.getElementById("premiumSocity").style.display = "none";
 
     function submitForm() {
         // var project = document.getElementById("selectProject").value;
@@ -368,60 +395,47 @@
             cache: false,
             success: function(response) {
                 var data = JSON.parse(response);
+                console.log(data);
                 var size = data[0];
                 var floor = data[1];
                 var type = data[2];
                 var premium = data[3];
-                console.log(size);
+                var block = data[4];
+                // console.log(block);
                 $('#selectSize').empty();
-                $('#selectBuildingFloor').empty();
+                $('#selectBuildingFloor :first-child').nextAll().remove();
+
+                // emptyOp.nextAll().remove();
+                $('#selectBuildingFloorInventory').empty();
                 $('#selectType').empty();
                 $('#selectPremium').empty();
-                if (project.id == 1) {
-                    size.forEach(element => {
-                        var option = document.createElement('option');
-                        option.text = element.name;
-                        option.value = element.id;
-                        document.getElementById("selectSize").append(option);
-                    });
+                if (project.type_id == 1) {
                     floor.forEach(element => {
                         var option = document.createElement('option');
                         option.text = element.name;
                         option.value = element.id;
                         document.getElementById("selectBuildingFloor").append(option);
                     });
-                    type.forEach(element => {
+                } else if (project.type_id == 2) {
+                    block.forEach(element => {
                         var option = document.createElement('option');
-                        option.text = element;
-                        option.value = element;
-                        document.getElementById("selectType").append(option);
-                    });
-                } else if (project.id == 2) {
-                    size.forEach(element => {
-                        var option = document.createElement('option');
-                        option.text = element.name;
+                        option.text = element.id;
                         option.value = element.id;
-                        document.getElementById("selectSize").append(option);
+                        document.getElementById("selectPremiumScocity").append(option);
                     });
-                    premium.forEach(element => {
-                        var option = document.createElement('option');
-                        option.text = element.name;
-                        option.value = element.id;
-                        document.getElementById("selectPremium").append(option);
-                    });
-                } else if (project.id == 3) {
-                    size.forEach(element => {
-                        var option = document.createElement('option');
-                        option.text = element.name;
-                        option.value = element.id;
-                        document.getElementById("selectSize").append(option);
-                    });
-                    premium.forEach(element => {
-                        var option = document.createElement('option');
-                        option.text = element.name;
-                        option.value = element.id;
-                        document.getElementById("selectPremium").append(option);
-                    });
+                } else if (project.type_id == 3) {
+                    // block.forEach(element => {
+                        // var option = document.createElement('option');
+                        // option.text = block.id;
+                        // option.value = element.id;
+                        // document.getElementById("selectSize").append(option);
+                    // });
+                    // premium.forEach(element => {
+                    //     var option = document.createElement('option');
+                    //     option.text = element.name;
+                    //     option.value = element.id;
+                    //     document.getElementById("selectPremium").append(option);
+                    // });
                 }
             }
         });
@@ -432,34 +446,30 @@
         project = JSON.parse(project);
         switch (project.type_id) {
             case 1:
-                document.getElementById("size").style.display = "block";
-                document.getElementById("quantity").style.display = "none";
+                document.getElementById("premiumSocity").style.display = "none";
                 document.getElementById("buildingfloor").style.display = "block";
-                document.getElementById("premium").style.display = "none";
-                document.getElementById("type").style.display = "block";
+                document.getElementById("selectBuildingFloorInventoryHide").style.display = "block";
+
                 break;
             case 2:
-                document.getElementById("size").style.display = "block";
-                document.getElementById("quantity").style.display = "block";
+                document.getElementById("premiumSocity").style.display = "block";
                 document.getElementById("buildingfloor").style.display = "none";
-                document.getElementById("premium").style.display = "block";
-                document.getElementById("type").style.display = "none";
+                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
                 break;
             case 3:
-                document.getElementById("size").style.display = "block";
-                document.getElementById("quantity").style.display = "none";
+                document.getElementById("premiumSocity").style.display = "none";
                 document.getElementById("buildingfloor").style.display = "none";
-                document.getElementById("premium").style.display = "block";
-                document.getElementById("type").style.display = "none";
+                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
                 break;
             case 4:
-                document.getElementById("size").style.display = "block";
-                document.getElementById("quantity").style.display = "none";
+                document.getElementById("premiumSocity").style.display = "none";
                 document.getElementById("buildingfloor").style.display = "none";
-                document.getElementById("premium").style.display = "none";
-                document.getElementById("type").style.display = "none";
+                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
                 break;
         }
     }
+</script>
+<script>
+
 </script>
 @endsection

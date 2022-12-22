@@ -25,7 +25,6 @@
                                     <option value="{{ $data }}">{{ $data->name }}</option>
                                     @endforeach
                                     @endif
-
                                 </select>
                                 @error('project_id')
                                 <div class="text-danger mt-2">{{ $message }}</div>
@@ -271,19 +270,20 @@
             cache: false,
             success: function(response) {
                 var data = JSON.parse(response);
+                console.log(data);
                 var size = data[0];
                 var floor = data[1];
                 var type = data[2];
                 var premium = data[3];
-                console.log(size);
+                
                 $('#selectSize').empty();
                 $('#selectBuildingFloor').empty();
                 $('#selectType').empty();
                 $('#selectPremium').empty();
-                if (project.id == 1) {
+                if (project.type_id == 1) {
                     size.forEach(element => {
                         var option = document.createElement('option');
-                        option.text = element.name;
+                        option.text = element.name + " " + element.unit;
                         option.value = element.id;
                         document.getElementById("selectSize").append(option);
                     });
@@ -295,14 +295,14 @@
                     });
                     type.forEach(element => {
                         var option = document.createElement('option');
-                        option.text = element;
+                        option.text = element.name;
                         option.value = element;
                         document.getElementById("selectType").append(option);
                     });
-                } else if (project.id == 2) {
+                } else if (project.type_id == 2) {
                     size.forEach(element => {
                         var option = document.createElement('option');
-                        option.text = element.name;
+                        option.text = element.name + " " + element.unit;
                         option.value = element.id;
                         document.getElementById("selectSize").append(option);
                     });
@@ -312,10 +312,10 @@
                         option.value = element.id;
                         document.getElementById("selectPremium").append(option);
                     });
-                } else if (project.id == 3) {
+                } else if (project.type_id == 3) {
                     size.forEach(element => {
                         var option = document.createElement('option');
-                        option.text = element.name;
+                        option.text = element.name + " " + element.unit;
                         option.value = element.id;
                         document.getElementById("selectSize").append(option);
                     });

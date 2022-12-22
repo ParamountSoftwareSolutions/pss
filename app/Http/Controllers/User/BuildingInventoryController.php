@@ -51,10 +51,10 @@ class BuildingInventoryController extends Controller
         $premium = Premium::whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
-        $bed = Size::where('unit', 'bed')->whereHas('project_type', function ($q) {
+        $bed = Size::where('unit_id', 'bed')->whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
-        $bath = Size::where('unit', 'bath')->whereHas('project_type', function ($q) {
+        $bath = Size::where('unit_id', 'bath')->whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
         $nature = Type::whereHas('project_type', function ($q) {
@@ -200,10 +200,10 @@ class BuildingInventoryController extends Controller
         $premium = Premium::whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
-        $bed = Size::where('unit', 'bed')->whereHas('project_type', function ($q) {
+        $bed = Size::where('unit_id', 'bed')->whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
-        $bath = Size::where('unit', 'bath')->whereHas('project_type', function ($q) {
+        $bath = Size::where('unit_id', 'bath')->whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
         $nature = Type::whereHas('project_type', function ($q) {

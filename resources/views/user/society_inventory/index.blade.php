@@ -42,7 +42,7 @@
                                                 <td>{{ $data->payment_plan->name }}</td>
                                                 <td>{{ $data->nature->name }}</td>
                                                 <td>{{ $data->size->name }} {{ $data->size->unit }}</td>
-                                                <td>{{ $data->premium->name ?? 'Regular' }}</td>
+                                                <td>{{ $data->premium->name ?? "Regular" }}</td>
                                                 <td><span class="badge badge-success">{{ $data->status }}</span></td>
                                                 <td>
                                                     <a href="{{ route('society.block.society_inventory.edit', ['RolePrefix' => RolePrefix(), 'society' =>

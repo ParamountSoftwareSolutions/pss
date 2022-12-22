@@ -6,7 +6,7 @@
         <div class="section-body">
             <div class="row">
                 <div class="col-12 col-md-12 col-lg-12">
-                    <form method="POST" action="{{ route('leads.store', ['RolePrefix' => RolePrefix()]) }}">
+                    <form method="POST" action="{{ route('leads.store', ['RolePrefix' => RolePrefix()]) }}" novalidate>
                         @csrf
                         <div class="card">
                             <div class="card-header">
@@ -18,7 +18,7 @@
                                         <div class="form-group">
                                             <label>Project List <small style="color: red">*</small></label>
                                             <select class="form-control" id="selectProject" onchange="{project(); submitForm()}" name="building_id">
-                                                <option value="" disabled>Select Project ...
+                                                <option value="" >Select Project ...
                                                 </option>
                                                 @if (!empty($projects))
                                                 @foreach ($projects as $data)
@@ -60,6 +60,11 @@
                                             <label>Quatity</label>
                                             <select class="form-control" name="quantity" id="selectQuantity" required>
                                                 <option label="" disabled selected>Select Quantity ...</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
                                             </select>
                                         </div>
                                     </div>
@@ -245,7 +250,6 @@
     function submitForm() {
         // var project = document.getElementById("selectProject").value;
         var project = document.getElementById("selectProject").value;
-
         project = JSON.parse(project);
         $.ajax({
             url: "{{ route('lead.getInventory', ['RolePrefix' => RolePrefix()]) }}",
@@ -258,19 +262,19 @@
             cache: false,
             success: function(response) {
                 var data = JSON.parse(response);
+                
                 var size = data[0];
                 var floor = data[1];
                 var type = data[2];
                 var premium = data[3];
-                console.log(size);
                 $('#selectSize').empty();
                 $('#selectBuildingFloor').empty();
                 $('#selectType').empty();
                 $('#selectPremium').empty();
-                if (project.id == 1) {
+                if (project.type_id == 1) {
                     size.forEach(element => {
                         var option = document.createElement('option');
-                        option.text = element.name;
+                        option.text = element.name + " " + element.unit;
                         option.value = element.id;
                         document.getElementById("selectSize").append(option);
                     });
@@ -282,14 +286,15 @@
                     });
                     type.forEach(element => {
                         var option = document.createElement('option');
-                        option.text = element;
-                        option.value = element;
+                        option.text = element.name;
+                        option.value = element.id;
                         document.getElementById("selectType").append(option);
                     });
-                } else if (project.id == 2) {
+                } else if (project.type_id == 2) {
                     size.forEach(element => {
+                      console.log(element.name);
                         var option = document.createElement('option');
-                        option.text = element.name;
+                        option.text = element.name + " " + element.unit;
                         option.value = element.id;
                         document.getElementById("selectSize").append(option);
                     });
@@ -299,10 +304,10 @@
                         option.value = element.id;
                         document.getElementById("selectPremium").append(option);
                     });
-                } else if (project.id == 3) {
+                } else if (project.type_id == 3) {
                     size.forEach(element => {
                         var option = document.createElement('option');
-                        option.text = element.name;
+                        option.text = element.name + " " + element.unit;
                         option.value = element.id;
                         document.getElementById("selectSize").append(option);
                     });

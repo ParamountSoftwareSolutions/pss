@@ -65,7 +65,7 @@ if (!function_exists('get_clients_from_user')) {
             return Client::whereIn('user_id', $users);
         }
         if (Auth::user()->hasRole('property_manager')) {
-            return  Client::with('project','user','customer')->whereIn('user_id', $users);
+            return  Client::with('project', 'user', 'customer')->whereIn('user_id', $users);
         }
         if (Auth::user()->hasRole('property_admin')) {
             return Client::with('sale_person');
@@ -80,19 +80,20 @@ if (!function_exists('get_clients_from_user')) {
 if (!function_exists('get_user_by_projects')) {
     function get_user_by_projects()
     {
-        if(Auth::user()->roles[0]->name == 'property_admin'){
+        if (Auth::user()->roles[0]->name == 'property_admin') {
             $project = ProjectAssignUser::get();
-        }else{
+        } else {
             $project = ProjectAssignUser::where('user_id', auth()->user()->id)->get();
         }
         $user = ProjectAssignUser::groupBy('user_id')->whereIn('project_id', $project->pluck('project_id')->toArray())->where('user_id', '!=', auth()->user()->id)->get()->pluck('user_id');
-        $a2=array(Auth::user()->id);
-        return array_merge($user->toArray(),$a2);
+        $a2 = array(Auth::user()->id);
+        return array_merge($user->toArray(), $a2);
     }
 }
 
-if (!function_exists('project_type')){
-    function project_type($type){
+if (!function_exists('project_type')) {
+    function project_type($type)
+    {
         return ProjectType::where('name', $type)->first()->id;
     }
 }
@@ -104,7 +105,7 @@ if (!function_exists('project_type')){
 if (!function_exists('get_all_projects')) {
     function get_all_projects($type = null)
     {
-        if ($type !== null){
+        if ($type !== null) {
             $project_type = project_type($type);
             $list = ProjectAssignUser::where('user_id', Auth::id())->get();
             return Project::whereIn('id', $list->pluck('project_id')->toArray())->where('type_id', $project_type)->get();
@@ -122,18 +123,18 @@ if (!function_exists('block')) {
     }
 }
 if (!function_exists('get_inventory')) {
-    function get_inventory($type_id,$inventory_id)
+    function get_inventory($type_id, $inventory_id)
     {
-        if($type_id == 1){
+        if ($type_id == 1) {
             $inventory = BuildingInventory::findOrFail($inventory_id);
-        }elseif ($type_id == 2){
+        } elseif ($type_id == 2) {
             $inventory = SocietyInventory::findOrFail($inventory_id);
-        }elseif ($type_id == 3){
+        } elseif ($type_id == 3) {
             $inventory = Farmhouse::findOrFail($inventory_id);
-        }else{
+        } else {
             $inventory = Property::findOrFail($inventory_id);
         }
-        return $inventory;;
+        return $inventory;
     }
 }
 
@@ -187,7 +188,7 @@ if (!function_exists('installment')) {
                 $a3[$i] = $payment_plan->per_month_installment;
             }
             $end = count($a3) / 5;
-            for($i = 1; $i <= $end; $i++){
+            for ($i = 1; $i <= $end; $i++) {
                 $skip_month[] = $i;
             }
             $month_date = Carbon::now();
@@ -199,7 +200,7 @@ if (!function_exists('installment')) {
                     'created_at' => Carbon::now()->addMonths($key),
                 ]);
                 $skip = $key / 5;
-                if(in_array($skip,$skip_month)){
+                if (in_array($skip, $skip_month)) {
                     $month_date->addMonth();
                 }
             }
@@ -231,7 +232,7 @@ if (!function_exists('installment')) {
                     'created_at' => Carbon::now()->addMonths($key),
                 ]);
             }
-        }else{
+        } else {
             for ($i = 0; $total_month > $i; $i++) {
                 $a3[$i] = $payment_plan->per_month_installment;
             }
@@ -257,19 +258,19 @@ if (!function_exists('installment')) {
     }
 }
 if (!function_exists('create_installment_plan')) {
-    function create_installment_plan($client_id,$installment,$down_payment)
+    function create_installment_plan($client_id, $installment, $down_payment)
     {
-        $installment_check = ClientInstallment::where('client_id',$client_id)->first();
+        $installment_check = ClientInstallment::where('client_id', $client_id)->first();
         if ($installment_check == null) {
 
             if ($down_payment !== $installment['payment_plan']->total_price) {
                 foreach ($installment['amount'] as $data) {
-                    if(in_array($data['title'],['down_payment','confirmation_amount'])){
+                    if (in_array($data['title'], ['down_payment', 'confirmation_amount'])) {
                         $status = 'paid';
-                    }else{
+                    } else {
                         $status = 'not_paid';
                     }
-                    if(!$data['amount']){
+                    if (!$data['amount']) {
                         continue;
                     }
                     ClientInstallment::create([
@@ -283,7 +284,6 @@ if (!function_exists('create_installment_plan')) {
                     ]);
                 }
                 return true;
-
             } else {
                 foreach ($installment['amount'] as $data) {
                     ClientInstallment::create([
@@ -306,29 +306,31 @@ if (!function_exists('create_installment_plan')) {
 if (!function_exists('check_target_assign')) {
     function check_target_assign($assign_to)
     {
-        switch ($assign_to){
-            case 'all_property_manager': $role = 'property_manager';
+        switch ($assign_to) {
+            case 'all_property_manager':
+                $role = 'property_manager';
                 break;
-            case 'all_sale_manager': $role = 'sale_manager';
+            case 'all_sale_manager':
+                $role = 'sale_manager';
                 break;
-            case 'all_sales_person': $role = 'sale_person';
+            case 'all_sales_person':
+                $role = 'sale_person';
                 break;
-            default: $role = '';
+            default:
+                $role = '';
         }
-        $arr = ['all_property_manager','all_sale_manager','all_sales_person'];
-        if($assign_to == 'self'){
+        $arr = ['all_property_manager', 'all_sale_manager', 'all_sales_person'];
+        if ($assign_to == 'self') {
             $assign_to_list = [Auth::user()->id];
-        }
-        elseif(in_array($assign_to,$arr)){
+        } elseif (in_array($assign_to, $arr)) {
             $users = get_user_by_projects();
-            $assign_to_list = User::whereIn('id',$users)->with('roles')
+            $assign_to_list = User::whereIn('id', $users)->with('roles')
                 ->whereHas('roles', function ($q) use ($role) {
                     $q->Where('name', $role);
                 })->pluck('id')->toArray();
-        }
-        elseif(is_numeric($assign_to)){
+        } elseif (is_numeric($assign_to)) {
             $assign_to_list = [$assign_to];
-        }else{
+        } else {
             return redirect()->back()->with($this->message('Something went wrong,Try again.', 'error'));
         }
         return $assign_to_list;
@@ -339,7 +341,7 @@ if (!function_exists('task_count_increment')) {
     {
         $date = Carbon::now()->format('Y-m-d');
         $target = Target::where('assign_to', Auth::user()->id)->where('type', $type)->where('from', '<=', $date)->where('to', '>=', $date)->first();
-        if($target){
+        if ($target) {
             $achieved = $target->achieved + 1;
             if ($achieved >= $target->target) {
                 $target->status = 'success';

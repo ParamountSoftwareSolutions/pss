@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('lead_refer', function (Blueprint $table) {
+            Schema::dropIfExists('lead_refers');
             $table->id();
             $table->foreignId('lead_id')->unsigned()->nullable()->constrained('leads')->nullOnDelete();
             $table->foreignId('from')->unsigned()->nullable()->constrained('users')->nullOnDelete();

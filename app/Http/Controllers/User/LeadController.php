@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LeadStoreRequest;
 use App\Models\Country;
+use App\Models\Building;
+use App\Models\Premium;
 use App\Models\Lead;
 use App\Models\LeadHistory;
 use App\Models\Project_assign_user;
@@ -21,11 +23,15 @@ use App\Models\Size;
 use App\Models\Unit;
 use App\Models\BuildingFloor;
 use App\Models\BuildingInventory;
+use App\Models\Client;
+use App\Models\Farmhouse;
 use App\Models\LeadRefer;
 use App\Models\Project;
 use App\Models\Property;
 use App\Models\Society;
 use App\Models\SocietyInventory;
+use App\Models\Type;
+
 // use DataTables;
 class LeadController extends Controller
 {
@@ -36,12 +42,14 @@ class LeadController extends Controller
      */
     public function index(Request $request)
     {
+
         $building = get_all_projects();
         $users = get_user_by_projects();
         $lead = get_leads_from_user($users);
         /**
          * /////////////////////////////////////////////Filters/////////////////////////////////
          */
+
         //Search By Project
         if ($request->project) {
             $lead->where('project_id', $request->project);
@@ -132,16 +140,19 @@ class LeadController extends Controller
                     ->where('status', 'follow_up')
                     ->get()
                     ->unique('lead_id');
-                foreach ($lead_history as $item) {
-                    if ($item->date <= Carbon::today()) {
-                        $newarray[] = $item->toArray()['lead_id'];
+                if (!empty($lead_history)) {
+                    $newarray = [];
+                    foreach ($lead_history as $item) {
+                        if ($item->date <= Carbon::today()) {
+                            $newarray[] = $item->toArray()['lead_id'];
+                        }
                     }
+                    $lead->with('lead_histories')->whereIn('id', $newarray)->where('status', 'follow_up');
+                    if (Auth::user()->hasRole('sale_person')) {
+                        $lead->where('user_id', Auth::id());
+                    }
+                    $sales = $lead->latest('updated_at')->get();
                 }
-                $lead->with('lead_histories')->whereIn('id', $newarray)->where('status', 'follow_up');
-                if (Auth::user()->hasRole('sale_person')) {
-                    $lead->where('user_id', Auth::id());
-                }
-                $sales = $lead->latest('updated_at')->get();
             }
         }
         //Table filter_date
@@ -203,6 +214,15 @@ class LeadController extends Controller
         /**
          * /////////////////////////Meeting Or Pushed Meetings.
          */
+
+        /**
+         *  //////////////////////// project detail/////.
+         */
+        /**
+         *  //////////////////////// project detail/////.
+         */
+
+
         return view('user.lead.index', get_defined_vars());
     }
     // Fetch DataTable data
@@ -217,11 +237,13 @@ class LeadController extends Controller
         $country = Country::get();
         $users = get_user_by_projects();
         $project = get_all_projects();
-        $projects = Project::whereIn('id', $project->pluck('project_id')->toArray())->get();
+
+        $projects = Project::whereIn('id', $project->pluck('id')->toArray())->get();
         $sale_persons = User::whereIn('id', $users)
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
             })->get();
+          
         return view('user.lead.create', get_defined_vars());
     }
 
@@ -233,9 +255,16 @@ class LeadController extends Controller
      */
     public function store(LeadStoreRequest $request)
     {
+
         $rpoject_id_val = (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null;
         $data = [
             'project_id' => $rpoject_id_val,
+            'building_floor_id' => $request->buildingFloor,
+            'type_id' => $request->type,
+            'size_id' => $request->size,
+            'quantity' => $request->quantity,
+            'premia_id' => $request->premium,
+           
             'user_id' => ($request->sale_person_id) ? $request->sale_person_id : auth()->user()->id,
             'created_by' => auth()->user()->id,
             'name' => $request->name,
@@ -254,7 +283,6 @@ class LeadController extends Controller
             'status' => 'new',
             'type' => 'lead',
         ];
-
         $response = Lead::create($data);
         task_count_increment('lead');
         if ($response) {
@@ -286,7 +314,7 @@ class LeadController extends Controller
         $country = Country::get();
         $users = get_user_by_projects();
         $project = get_all_projects();
-        $projects = Project::whereIn('id', $project->pluck('project_id')->toArray())->get();
+        $projects = Project::whereIn('id', $project->pluck('id')->toArray())->get();
         $sale_persons = User::whereIn('id', $users)
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
@@ -296,6 +324,7 @@ class LeadController extends Controller
         $countrys = $lead->country;
         $state = $lead->state;
         $city = $lead->city;
+
         return view('user.lead.edit', get_defined_vars());
     }
 
@@ -376,6 +405,38 @@ class LeadController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->with('error', $validator->errors()->first());
         }
+        if ($request->status == 'mature') {
+
+            $client = Lead::where('id', $request->id)->first();
+            $client_data = [
+                'project_id' => $client->project_id,
+                //'project_type_id' => $request->project_type_id,
+                //'inventory_id' => $request->inventory_id,
+                'customer_id' => $client->id,
+                'user_id' => $client->user_id,
+
+                'name' => $client->name,
+                'email' => $client->email,
+                'password' => $client->password,
+                'number' => $client->number,
+                'alt_phone' => $client->alt_number,
+                'address' => $client->address,
+                'cnic' => $client->cnic,
+                'father_name' => $client->father_name,
+                'country_id' => $client->country_id,
+                'state_id' => $client->state_id,
+                'city_id' => $client->city_id,
+
+                'registration_number' => rand(100, 100000),
+                'hidden_file_number' => "",
+                'comment' => $client->comment,
+                'created_by' => auth()->user()->id,
+                'status' => 'mature',
+            ];
+            Client::create($client_data);
+        }
+
+
         $lead_data = [
             'status' => $request->status,
         ];
@@ -393,16 +454,20 @@ class LeadController extends Controller
         ];
 
         $response = LeadHistory::create($lead_histories_data);
-        switch($request->status){
-            case 'arrange_meeting' : $type = 'meeting';
+        switch ($request->status) {
+            case 'arrange_meeting':
+                $type = 'meeting';
                 break;
-            case 'follow_up' : $type = 'call';
+            case 'follow_up':
+                $type = 'call';
                 break;
-            case 'mature' : $type = 'conversion';
+            case 'mature':
+                $type = 'conversion';
                 break;
-            default: $type = null;
+            default:
+                $type = null;
         }
-        if($type){
+        if ($type) {
             task_count_increment($type);
         }
         if ($response) {
@@ -537,32 +602,47 @@ class LeadController extends Controller
         $type = null;
         $premium = null;
         $floor = null;
+        $block = null;
         switch ($projectTypeId) {
             case "1":
 
                 $building = Building::where('project_id', $projectId)->first();
-                $project = BuildingInventory::where('building_id', $building->id);
-                $floor_list = json_decode($project->floor_list);
+
+                $project = BuildingInventory::where('building_id', 1);
+
+                $floor_list = json_decode($building->floor_list);
                 $floor = BuildingFloor::whereIn('id', $floor_list)->get();
-                $size_list = json_decode($project->apartment_size);
+
+                $size_list = json_decode($building->apartment_size);
+
                 $size = Size::whereIn('id', $size_list)->get();
-                $type = json_decode($project->type);
+
+                $type_id = json_decode($building->type);
+                $type = Type::whereIn('id', $type_id)->get();
 
                 break;
             case "2":
                 $society = Society::where('project_id', $projectId)->first();
-                $project = SocietyInventory::where('society_id', $society->id);
-                $size_list = json_decode($project->size_id)->get();
-                $size = Size::whereIn('id', $size_list);
-                $premium_list = json_decode($project->premium_id)->get();
-                $premium = premium::whereIn('id', $premium_list);
+                $block = json_decode($society->block);
+                $size = Size::where('project_type_id', $projectTypeId)->get();
+                $premium = premium::where('project_type_id', $projectTypeId)->get();
+                $block = SocietyInventory::with('block')->where('project_id', $projectId)->get();
                 break;
             case "3":
-                $project = Property::where('project_id', $projectId)->first();
-                $size_list = json_decode($project->size_id)->get();
-                $size = Size::whereIn('id', $size_list);
-                $premium_list = json_decode($project->premium_id)->get();
-                $premium = premium::whereIn('id', $premium_list);
+                //form House
+                // $project = Property::where('project_id', $projectId)->first();
+                // echo '<pre>';
+                // print_r($project);
+                // echo '<pre>';
+                // die();
+                // $size_list = json_decode($project->size_id)->get();
+                // $size = Size::whereIn('id', $size_list);
+                // $premium_list = json_decode($project->premium_id)->get();
+                // $premium = premium::whereIn('id', $premium_list);
+                $size = Size::where('project_type_id', $projectTypeId)->get();
+                $premium = premium::where('project_type_id', $projectTypeId)->get();
+
+                $block = Farmhouse::where('project_id',$projectId)->fisrt();
                 break;
                 // case "4":
 
@@ -572,9 +652,10 @@ class LeadController extends Controller
                 $type = null;
                 $premium = null;
                 $floor = null;
+                $block = null;
                 break;
         }
-        $data = json_encode([$size, $floor, $type, $premium]);
+        $data = json_encode([$size, $floor, $type, $premium,$block]);
         return  $data;
     }
 
@@ -647,12 +728,12 @@ class LeadController extends Controller
                 }
             } else {
                 $lead = Lead::where('id', $collection['id'])->first();
-                if(!$lead) {
-                    return back()->with($this->message("Lead id '".$collection['id']."' does not exist!", "error"));
+                if (!$lead) {
+                    return back()->with($this->message("Lead id '" . $collection['id'] . "' does not exist!", "error"));
                 }
-                $number_lead = Lead::where('number',$collection['number'])->first();
-                if($number_lead) {
-                    return back()->with($this->message("Phone number '".$collection['number']."' already exist!", "error"));
+                $number_lead = Lead::where('number', $collection['number'])->first();
+                if ($number_lead) {
+                    return back()->with($this->message("Phone number '" . $collection['number'] . "' already exist!", "error"));
                 }
                 $lead->name = $collection['name'];
                 $lead->number = $collection['number'];
@@ -679,5 +760,4 @@ class LeadController extends Controller
         }
         return (new FastExcel($storage))->download('/public/panel/assets/lead.xlsx');
     }
-
 }
