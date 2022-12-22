@@ -17,6 +17,13 @@ class CreateLeadsTable extends Migration
            // Schema::dropIfExists('leads');
             $table->id();
             $table->integer('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
+           
+            $table->integer('building_floor_id')->unsigned()->nullable()->constrained('building_floors')->nullOnDelete();
+            $table->integer('type_id')->unsigned()->nullable()->constrained('types')->nullOnDelete();
+            $table->integer('size_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
+            $table->integer('premia_id')->nullable();
+            $table->integer('quantity')->nullable();
+           
             $table->foreignId('user_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->string('name');

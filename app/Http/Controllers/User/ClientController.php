@@ -25,10 +25,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use App\Models\BuildingEmployee;
+use App\Models\BuildingInventory;
 use App\Models\Client;
 use App\Models\ClientHistory;
+use App\Models\Farmhouse;
 use App\Models\Lead;
 use App\Models\Project;
+use App\Models\Property;
+use App\Models\SocietyInventory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use SebastianBergmann\Type\NullType;
@@ -88,13 +92,18 @@ class ClientController extends Controller
     {
         $country = Country::get();
         $users = get_user_by_projects();
+
+
         $project = get_all_projects();
-        $building = Project::whereIn('id', $project->pluck('project_id')->toArray())->get();
+
+        $projects = Project::whereIn('id', $project->pluck('id')->toArray())->get();
+
         $sales_person = User::whereIn('id', $users)
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
             })->get();
         $old_clients = Client::all();
+
         return view('user.client.create', get_defined_vars());
     }
 
@@ -199,15 +208,16 @@ class ClientController extends Controller
         }
         $client = Client::create($client_data);
         if ($client) {
-            task_count_increment('client');
-            $inventory = get_inventory($client->project_type_id,$client->inventory_id);
-            $installment = installment($inventory->payment_plan_id);
-            if ($installment['total_price'] == $installment['payment_plan']->total_price) {
-                $inventory->status = 'sold';
-                $inventory->save();
-                create_installment_plan($client->id,$installment,$request->down_payment);
-            }
-            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Lead Insert Successfully');
+            // task_count_increment('client');
+            // $inventory = get_inventory($client->project_type_id,$client->inventory_id);
+            // $installment = installment($inventory->payment_plan_id);
+            // if ($installment['total_price'] == $installment['payment_plan']->total_price) {
+            //     $inventory->status = 'sold';
+            //     $inventory->save();
+            //     create_installment_plan($client->id,$installment,$request->down_payment);
+            // }
+
+            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Client Insert Successfully');
         } else {
             return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
         }
@@ -221,7 +231,7 @@ class ClientController extends Controller
     public function show($id)
     {
         $client = Client::findOrFail($id);
-        $client_installment = ClientInstallment::where('client_id',$id)->orderBy('due_date','ASC')->get();
+        $client_installment = ClientInstallment::where('client_id', $id)->orderBy('due_date', 'ASC')->get();
         return view('user.client.show', get_defined_vars());
     }
 
@@ -293,17 +303,6 @@ class ClientController extends Controller
      */
     public function destroy($panel, $id)
     {
-        $sale = BuildingSale::findOrFail($id);
-        $sale->delete();
-        $floor_detail = FloorDetail::where('id', $sale->floor_detail_id)->first();
-        $floor_detail->status = 'available';
-        $floor_detail->save();
-        User::findOrFail($sale->customer_id)->forceDelete();
-        if ($sale) {
-            return response()->json(['status' => 'success', 'message' => 'Property Sale Client Delete Successfully']);
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'Property Sale Client Receipt Delete Error']);
-        }
     }
 
 
@@ -326,6 +325,25 @@ class ClientController extends Controller
         }
     }
 
+
+    // get inventories
+    public function building_inventory($id)
+    {
+
+        $response = BuildingInventory::where('building_floor_id', $id)->where('status', 'available')->get()->toArray();
+        // $data = json_encode($response->toArray());
+        $data = json_encode($response);
+        return  $data;
+    }
+    public function societyBlock_inventory($id)
+    {
+        $response = BuildingInventory::where('building_floor_id', $id)->where('status', 'available')->get()->toArray();
+        // $data = json_encode($response->toArray());
+        $data = json_encode($response);
+        return  $data;
+    }
+
+    // get inventories
     public function changeStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -387,23 +405,188 @@ class ClientController extends Controller
             return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'Please select first any lead');
         }
     }
-
-    public function active($id)
+    public function client_transfered($id)
     {
         $country = Country::get();
         $users = get_user_by_projects();
         $project = get_all_projects();
-        $projects = Project::whereIn('id', $project->pluck('project_id')->toArray())->get();
+        $projects = Project::whereIn('id', $project->pluck('id')->toArray())->get();
         $sale_persons = User::whereIn('id', $users)
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
             })->get();
         $client = Client::with('customer', 'sale_person', 'country', 'state', 'city')->where('id', $id)->first();
+        $clients = Client::with('customer')->get();
 
+        return view('user.client.transfer', get_defined_vars());
+    }
+    public function transfered_store(Request $request)
+    {
+        $client = Client::where('id', $request->client_trnafer_id)->first();
+        $client_data = [
+            'project_id' => $client->project_id,
+            'project_type_id' => $client->project_type_id,
+            'inventory_id' => $client->inventory_id,
+            'customer_id' => Null,
+            'user_id' => auth()->user()->id,
+            'name' => $request->name_new,
+            'email' => $request->email_new,
+            'password' => $request->password_new,
+            'number' => $request->phone_number_new,
+            'alt_phone' => $request->alt_phone_new,
+            'address' => $request->address_new,
+            'cnic' => $request->cnic_new,
+            'down_payment' => $request->down_payment,
+            'dob' => $request->dob_new,
+            'father_name' => $request->father_name_new,
+            'country_id' => $request->country_id_new,
+            'state_id' => $request->state_id_new,
+            'city_id' => $request->city_id_new,
+            'hidden_file_number' => "",
+            'down_payment' => $request->down_payment,
+            'created_by' => auth()->user()->id,
+            'status' => 'mature',
+        ];
+        $client_res = Client::create($client_data);
+        //client Status update and create history
+        Client::where('id', $request->client_trnafer_id)->update(['status' => 'transfered']);
+        $client_histories_data = [
+            'client_id' => $request->client_trnafer_id,
+            'user_id' => auth()->user()->id,
+            'status' => 'Transfered',
+            'comment' => 'Client Avtive Now',
+            'is_read' => 0,
+        ];
+        ClientHistory::create($client_histories_data);
+        //client Status update and create history
+        if ($client_res) {
+            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Client Insert Successfully');
+        } else {
+            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+        }
+    }
+    public function client_active($id)
+    {
+        $country = Country::get();
+        $users = get_user_by_projects();
+        $project = get_all_projects();
+        $projects = Project::whereIn('id', $project->pluck('id')->toArray())->get();
+        $sale_persons = User::whereIn('id', $users)
+            ->whereHas('roles', function ($q) {
+                $q->where('name', 'sale_person');
+            })->get();
+        $client = Client::with('customer', 'sale_person', 'country', 'state', 'city')->where('id', $id)->first();
         $clients = Client::with('customer')->get();
         return view('user.client.active', get_defined_vars());
     }
-    public function installment(Request $request,$client_id, $id)
+    public function active(Request $request, $id)
+    {
+        if (!empty($request->building_id)) {
+            $project_id = json_decode($request->building_id)->id;
+        } else {
+            $project_id = Null;
+        }
+        if (!empty($request->building_id)) {
+            $type_id = json_decode($request->building_id)->type_id;
+        } else {
+            $type_id = Null;
+        }
+        if (is_numeric($request->inventory_id)) {
+            $inventory_id = $request->inventory_id;
+        } else {
+            $inventory_id = Null;
+        }
+
+        $client_data = [
+            'project_id' => $project_id,
+            'project_type_id' => $type_id,
+            'inventory_id' => $inventory_id,
+            'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : Null,
+            'name' => $request->name_new,
+            'email' => $request->email_new,
+            'password' => $request->password_new,
+            'number' => $request->phone_number_new,
+            'alt_phone' => $request->alt_phone_new,
+            'address' => $request->address_new,
+            'cnic' => $request->cnic_new,
+            'down_payment' => $request->down_payment,
+            'dob' => $request->dob_new,
+            'father_name' => $request->father_name_new,
+            'country_id' => $request->country_id_new,
+            'state_id' => $request->state_id_new,
+            'city_id' => $request->city_id_new,
+            'hidden_file_number' => "",
+            'down_payment' => $request->down_payment,
+            'created_by' => auth()->user()->id,
+            'status' => 'mature',
+        ];
+        $response = Client::where('id', $id)->update($client_data);
+
+        // Change Status In Inventory Sold 
+        if ($type_id == '1') {
+            $update_status = [
+                'status' => 'sold',
+            ];
+            BuildingInventory::where('id', $request->inventory_id)->update($update_status);
+            $get_inventory_id = $request->inventory_id;
+        } elseif ($type_id == '2') {
+            $update_status = [
+                'status' => 'sold',
+            ];
+            SocietyInventory::where('id', $request->inventory_id)->update($update_status);
+            $get_inventory_id = $request->inventory_id;
+        } elseif ($type_id == '3') {
+            $update_status = [
+                'status' => 'sold',
+            ];
+            Farmhouse::where('id', $id)->update($update_status);
+            $get_inventory_id = $id;
+        } elseif ($type_id == '4') {
+            $update_status = [
+                'status' => 'sold',
+            ];
+            Property::where('id', $id)->update($update_status);
+            $get_inventory_id = $id;
+        }
+
+        // Change Status In Inventory Sold
+
+        // Change Status In Client
+        $update_data = [
+            'status' => 'active',
+        ];
+        Client::where('id', $id)->update($update_data);
+        $client_histories_data = [
+            'client_id' => $request->id,
+            'user_id' => auth()->user()->id,
+            'status' => 'Active',
+            'comment' => 'Client Avtive Now',
+            'is_read' => 0,
+        ];
+        ClientHistory::create($client_histories_data);
+        // Change Status In Client
+        //Create Payment Plan
+        if ($response) {
+            $get_inventory_project_type_id = $type_id;
+            $get_inventory_inventory_id = $get_inventory_id;
+
+            $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
+
+            $installment = installment($inventory->payment_plan_id);
+
+            if ($installment['total_price'] == $installment['payment_plan']->total_price) {
+                $inventory->status = 'sold';
+                $inventory->save();
+                create_installment_plan($response->id, $installment, $request->down_payment);
+            }
+        }
+        if ($response) {
+            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Client Active Successfully');
+        } else {
+            return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('error', 'SomeThing Went Wrong');
+        }
+    }
+    public function installment(Request $request, $client_id, $id)
     {
         $client = Client::findOrFail($client_id);
         $installment = ClientInstallment::findOrFail($id);

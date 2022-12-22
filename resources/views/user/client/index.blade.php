@@ -25,10 +25,12 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Clients Filters</h4>
-                <div class="row d-flex mb-3 pt-3">
-                    <a href="{{route('clients.index', ['RolePrefix' => RolePrefix()])}}" class="btn btn-success">All Clients</a>
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <a href="{{route('clients.index', ['RolePrefix' => RolePrefix()])}}" class="btn btn-success">All Clients</a>
+                        <a href="{{route('clients.create', ['RolePrefix' => RolePrefix()])}}" class="btn btn-success">Add Clients</a>
+                    </div>
                 </div>
-
                 <!-- Search By Project And Date Range -->
                 <div class="row">
                     <div class="col-md-12 form-inline">
@@ -167,10 +169,13 @@
                                 <div class="dropdown">
                                     <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-success" aria-expanded="false">{{$data->status }}</a>
                                     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                        <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="Active">Active</a>
+
+                                        @if($data->status != 'active')
+                                        <a href="{{ route('client.active', ['RolePrefix' => RolePrefix(), $data->id]) }}" class="dropdown-item has-icon">Active</a>
+                                        @endif
                                         <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="Suspended">Suspended</a>
                                         <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="Cancelled">Cancelled</a>
-                                        <a href="javascript:void(0)" class="dropdown-item has-icon change_status" data-id="{{$data->id}}" data-value="Transfered">Transfered</a>
+                                        <a href="{{ route('client.transfered', ['RolePrefix' => RolePrefix(), $data->id]) }}" class="dropdown-item has-icon">Transfered</a>
                                     </div>
                                 </div>
                             </td>

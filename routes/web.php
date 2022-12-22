@@ -129,7 +129,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('lead/Matured', [LeadController::class, 'matured'])->name('leads.mature');
     Route::get('lead/closed', [LeadController::class, 'closed'])->name('leads.closed');
     Route::get('lead/facebook', [LeadController::class, 'facebook'])->name('leads.facebook');
-    Route::get('lead/getInventory', [LeadController::class, 'facebook'])->name('lead.getInventory');
+    Route::post('lead/getInventory', [LeadController::class, 'getInventory'])->name('lead.getInventory');
     Route::get('lead/refer', [LeadController::class, 'refer'])->name('lead.refer');
     Route::post('lead/refer_lead', [LeadController::class, 'refer_lead'])->name('leads.refer_lead');
     Route::get('lead/accept/{id}', [LeadController::class, 'refer_lead_accept'])->name('lead.accept');
@@ -164,10 +164,20 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
     Route::resource('clients', ClientController::class);
     Route::get('client/change_priority/{priority}/{id}', [ClientController::class, 'changepriority'])->name('client.change_priority');
+   
     Route::post('client/change_status', [ClientController::class, 'changestatus'])->name('client.change_status');
     Route::get('client/comments/{id}', [ClientController::class, 'comments'])->name('client.comments');
-    Route::get('client/active/{id}', [ClientController::class, 'active'])->name('clients.active');
+    
+    Route::get('client/transfered/{id}', [ClientController::class, 'client_transfered'])->name('client.transfered');
+    Route::post('client/transfered_store', [ClientController::class, 'transfered_store'])->name('client.transfered_store');
+    Route::get('client/client_active/{id}', [ClientController::class, 'client_active'])->name('client.active');
+    Route::post('client/active/{id}', [ClientController::class, 'active'])->name('clients.active');
+    
     Route::post('client/{client_id}/installment/{id}', [ClientController::class, 'installment'])->name('clients.installment');
+   
+    Route::get('building_inventory/{id}', [ClientController::class, 'building_inventory']);
+    Route::get('societyBlock_inventory/{id}', [ClientController::class, 'societyBlock_inventory']);
+    // Route::get('client/building_inventory/{id}', [ClientController::class, 'building_inventory'])->name('client.building_inventory');
     // //=============//
     // /* Clients */
     // //=============//

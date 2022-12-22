@@ -26,10 +26,11 @@
                                         </thead>
                                         <tbody>
                                         @forelse($sizes as $data)
+                                       
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->name }}</td>
-                                                <td>{{ $data->unit->name }}</td>
+                                                <td>{{ $data->unit }}</td>
                                                 <td> <span class="badge
                                                 @if($data->project_type->name == 'building')
                                                     badge-blue

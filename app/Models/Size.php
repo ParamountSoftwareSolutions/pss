@@ -17,7 +17,7 @@ class Size extends Model
     }
     public function unit()
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->belongsTo(Unit::class, 'name');
     }
 
     public function project_type()
