@@ -1,5 +1,12 @@
-@extends((new App\Helpers\Helpers)->user_login_route()['file'].'.layout.app')
+@extends('user.layout.app')
 @section('title', 'Expense List')
+@section('style')
+    <style>
+        table{
+            width: 100%;
+        }
+    </style>
+@endsection
 @section('content')
 <div class="main-content">
     <section class="section">
@@ -12,10 +19,10 @@
                         </div>
                         <div class="card-body">
                             <div class="row justify-content-center">
-                                <div class="col-lg-6">
+                                <div class="col-lg-12">
                                     <label style="color: #262424">To: </label> <span style="color: #0a53be"> {{$email->to}}</span>
                                     <h2 class="mb-5 mt-3" style="color: #262424">{{$email->subject}}</h2>
-                                    <p>{{$email->body}}</p>
+                                    <p>{!! $email->body !!}</p>
                                     @php
                                         if(str_contains($email->images,',')){
                                             $images = explode(',',$email->images);
@@ -24,12 +31,12 @@
                                         }
                                     @endphp
                                     @forelse($images as $img)
-                                        <img style="width: 100%" src="{{asset($img)}}" alt="">
+                                        <img style="width: auto" src="{{asset($img)}}" alt="">
                                     @empty
                                     @endforelse
                                 </div>
                             </div>
-                            <div class="row justify-content-center">
+                            <div class="row mt-5 justify-content-center">
                                 <div class="col-lg-6 px-0 d-flex justify-content-between">
                                     <button type=button" class="btn btn-success resend" title="Resend">Resend</button>
                                     <button type="button" class="btn btn-primary forward" title="{{$email->status == 'sent'? 'Forward' : 'Send'}}">{{$email->status == 'sent'? 'Forward' : 'Send'}}</button>

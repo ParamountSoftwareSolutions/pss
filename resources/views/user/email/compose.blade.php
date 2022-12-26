@@ -1,4 +1,4 @@
-@extends((new App\Helpers\Helpers)->user_login_route()['file'].'.layout.app')
+@extends('user.layout.app')
 @section('title', 'All Building List')
 @section('content')
     <div class="main-content">
@@ -94,7 +94,7 @@
     </div>
 @endsection
 @section('script')
-    <script type="text/javascript" src="{{ asset('public/panel/assets/js/spartan-multi-image-picker.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/spartan-multi-image-picker.js') }}"></script>
     <script>
         $(function () {
             $("#coba").spartanMultiImagePicker({
@@ -104,7 +104,7 @@
                 groupClassName: 'col-3',
                 maxFileSize: '2048',
                 placeholderImage: {
-                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    image: '{{asset("assets/img/img2.jpg")}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",

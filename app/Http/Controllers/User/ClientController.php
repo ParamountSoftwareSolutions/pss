@@ -522,7 +522,7 @@ class ClientController extends Controller
         ];
         $response = Client::where('id', $id)->update($client_data);
 
-        // Change Status In Inventory Sold 
+        // Change Status In Inventory Sold
         if ($type_id == '1') {
             $update_status = [
                 'status' => 'sold',

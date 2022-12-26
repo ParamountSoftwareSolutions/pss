@@ -243,7 +243,7 @@ class LeadController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
             })->get();
-          
+
         return view('user.lead.create', get_defined_vars());
     }
 
@@ -264,7 +264,7 @@ class LeadController extends Controller
             'size_id' => $request->size,
             'quantity' => $request->quantity,
             'premia_id' => $request->premium,
-           
+
             'user_id' => ($request->sale_person_id) ? $request->sale_person_id : auth()->user()->id,
             'created_by' => auth()->user()->id,
             'name' => $request->name,

@@ -21,7 +21,7 @@ class EmailController extends Controller
 {
     public function email_compose()
     {
-        return view('email.compose');
+        return view('user.email.compose');
     }
 
     public function email_compose_send(Request $request)
@@ -32,7 +32,7 @@ class EmailController extends Controller
             'subject' => 'required',
         ]);
         if ($validator->fails()) {
-            return redirect()->back()->with($this->message($validator->errors()->first(), 'danger'));
+            return redirect()->back()->with($this->message($validator->errors()->first(), 'error'));
         }
         $data = [];
         $data['subject'] = $request->subject;
@@ -45,37 +45,26 @@ class EmailController extends Controller
                 return redirect()->back()->with($this->message($validator->errors()->first(), 'danger'));
             }
             $data['emails'] = [$request->email];
-            $data['total'] = 1;
-            $data['sent'] = 1;
         }
         else{
-            $building = Helpers::building_detail();
-            $leads = BuildingSale::where('order_type','lead');
-            $clients = BuildingSale::whereIn('building_id', $building->pluck('id')->toArray())->where('order_type','sale');
-            if (Auth::user()->roles[0]->name == 'sale_person') {
-                $leads->where('user_id', Auth::id());
-                $clients->where('user_id', Auth::id());
-            }
-            $leads = $leads->pluck('customer_id')->toArray();
-            $clients = $clients->pluck('customer_id')->toArray();
-            $both = array_merge($leads,$clients);
+            $users = get_user_by_projects();
+            $lead = get_leads_from_user($users)->whereNot('status', 'lost')->whereNot('status', 'mature')->pluck('email')->toArray();
+            $client = get_clients_from_user($users)->pluck('email')->toArray();
+            $both = array_merge($lead,$client);
 
             if($request->email == 'leads'){
-                $users = $leads;
+                $email_arr = $lead;
             }
             elseif($request->email == 'clients'){
-                $users = $clients;
+                $email_arr = $client;
             }
             elseif($request->email == 'both'){
-                $users = $both;
+                $email_arr = $both;
             }
             else{
-                $users = [];
+                $email_arr = [];
             }
-            $email_list = User::whereIn('id',$users)->pluck('email')->toArray();
-            $data['total'] = count($email_list);
-            $data['emails'] = array_filter($email_list);
-            $data['sent'] = count($data['emails']);
+            $data['emails'] = $email_arr;
         }
         if(isset($request->id) && $request->id !== null){
             $email_history = EmailHistory::findOrFail($request->id);
@@ -89,7 +78,7 @@ class EmailController extends Controller
                 $name = time().'-'.rand().'.'.$img->getClientOriginalExtension();
                 $path = 'mail-media/images';
                 $img->move(public_path($path),$name);
-                $new_images[] = 'public/'.$path."/".$name;
+                $new_images[] = $path."/".$name;
             }
         }
         else{
@@ -99,7 +88,7 @@ class EmailController extends Controller
         try {
             foreach($data['emails'] as $email){
                 $data['email'] = $email;
-                Mail::send('email.email_template', $data, function($message) use($data) {
+                Mail::send('user.email.email_template', $data, function($message) use($data) {
                     $message->to($data['email'])->subject($data['subject']);
                 });
                 if (!Mail::failures()) {
@@ -118,7 +107,7 @@ class EmailController extends Controller
                 EmailHistory::findOrFail($request->id)->delete();
             }
 
-            return redirect()->route('email.compose',RolePrefix())->with($this->message($data['sent'].' of '.$data['total'].' Email Sent Successfully', 'success'));
+            return redirect()->route('email.compose',RolePrefix())->with($this->message('Email Sent Successfully', 'success'));
         }
         catch(Exception $e) {
             return redirect()->back()->with($this->message('Email Sent Error', 'danger'));
@@ -127,9 +116,9 @@ class EmailController extends Controller
     public function send_email()
     {
         $email_histories = EmailHistory::where(['send_by'=>Auth::user()->id,'status'=>'sent'])->get();
-        return view('email.sent',compact('email_histories'));
+        return view('user.email.sent',compact('email_histories'));
     }
-    public function email_destroy($panel,$id)
+    public function email_destroy($id)
     {
         $email_history = EmailHistory::findOrFail($id);
         $email_history->delete();
@@ -140,7 +129,7 @@ class EmailController extends Controller
         }
     }
 
-    public function email_forward(Request $request,$panel,$id)
+    public function email_forward(Request $request,$id)
     {
         $mail = EmailHistory::findOrFail($id);
         $validator = Validator::make($request->all(), [
@@ -168,42 +157,31 @@ class EmailController extends Controller
                 return redirect()->back()->with($this->message($validator->errors()->first(), 'danger'));
             }
             $data['emails'] = [$request->email];
-            $data['total'] = 1;
-            $data['sent'] = 1;
         }
         else{
-            $building = Helpers::building_detail();
-            $leads = BuildingSale::where('order_type','lead');
-            $clients = BuildingSale::whereIn('building_id', $building->pluck('id')->toArray())->where('order_type','sale');
-            if (Auth::user()->roles[0]->name == 'sale_person') {
-                $leads->where('user_id', Auth::id());
-                $clients->where('user_id', Auth::id());
-            }
-            $leads = $leads->pluck('id')->toArray();
-            $clients = $clients->pluck('customer_id')->toArray();
-            $both = array_merge($leads,$clients);
+            $users = get_user_by_projects();
+            $lead = get_leads_from_user($users)->whereNot('status', 'lost')->whereNot('status', 'mature')->pluck('email')->toArray();
+            $client = get_clients_from_user($users)->pluck('email')->toArray();
+            $both = array_merge($lead,$client);
 
             if($request->email == 'leads'){
-                $users = $leads;
+                $email_arr = $lead;
             }
             elseif($request->email == 'clients'){
-                $users = $clients;
+                $email_arr = $client;
             }
             elseif($request->email == 'both'){
-                $users = $both;
+                $email_arr = $both;
             }
             else{
-                $users = [];
+                $email_arr = [];
             }
-            $email_list = User::whereIn('id',$users)->pluck('email')->toArray();
-            $data['total'] = count($email_list);
-            $data['emails'] = array_filter($email_list);
-            $data['sent'] = count($data['emails']);
+            $data['emails'] = $email_arr;
         }
         try {
             foreach($data['emails'] as $email){
                 $data['email'] = $email;
-                Mail::send('email.email_template', $data, function($message) use($data) {
+                Mail::send('user.email.email_template', $data, function($message) use($data) {
                     $message->to($data['email'])->subject($data['subject']);
                 });
                 if (!Mail::failures()) {
@@ -221,28 +199,28 @@ class EmailController extends Controller
 			if($mail->status == 'draft'){
                 $mail->delete();
             }
-            return redirect()->route('email.send_email',RolePrefix())->with($this->message($data['sent'].' of '.$data['total'].' Email Sent Successfully', 'success'));
+            return redirect()->route('email.sent',RolePrefix())->with($this->message('Email Sent Successfully', 'success'));
         }
         catch(Exception $e) {
             return redirect()->back()->with($this->message('Email Sent Error', 'danger'));
         }
     }
-    public function email_detail($panel,$id)
+    public function email_detail($id)
     {
         $email = EmailHistory::findOrFail($id);
-        return view('email.detail',compact('email'));
+        return view('user.email.detail',compact('email'));
     }
 
-    public function email_view($panel,$id)
+    public function email_view($id)
     {
         $email = EmailHistory::findOrFail($id);
-        return view('email.compose_draft',compact('email'));
+        return view('user.email.compose_draft',compact('email'));
     }
 
     public function draft_email()
     {
         $email_histories = EmailHistory::where(['send_by'=>Auth::user()->id,'status'=>'draft'])->get();
-        return view('email.draft',compact('email_histories'));
+        return view('user.email.draft',compact('email_histories'));
     }
 
     public function email_compose_save(Request $request)
@@ -260,7 +238,7 @@ class EmailController extends Controller
                 $name = time().'-'.rand().'.'.$img->getClientOriginalExtension();
                 $path = 'mail-media/images';
                 $img->move(public_path($path),$name);
-                $new_images[] = 'public/'.$path."/".$name;
+                $new_images[] = $path."/".$name;
             }
         }
         else{
@@ -275,7 +253,7 @@ class EmailController extends Controller
         $email_history->status = 'draft';
         $email_history->date = date('Y-m-d H:i:s');
         $email_history->save();
-        return redirect()->route('email.draft_email',RolePrefix())->with($this->message('Email Saved', 'success'));
+        return redirect()->route('email.draft',RolePrefix())->with($this->message('Email Saved', 'success'));
     }
 
     public function remove_image_email(Request $request)
@@ -294,7 +272,7 @@ class EmailController extends Controller
         $email->save();
         return true;
     }
-    public function email_resend(Request $request,$panel,$id)
+    public function email_resend(Request $request,$id)
     {
         $email = EmailHistory::findOrFail($id);
         $data['email'] = $email->to;
@@ -309,7 +287,6 @@ class EmailController extends Controller
         }else{
             $data['image'] = null;
         }
-//        dd($data);
         Mail::send('email.email_template', $data, function($message) use($data) {
             $message->to($data['email'])->subject($data['subject']);
         });
@@ -322,7 +299,7 @@ class EmailController extends Controller
             $email_history->status = 'sent';
             $email_history->date = date('Y-m-d H:i:s');
             $email_history->save();
-            return redirect()->route('email.send_email',RolePrefix())->with($this->message('Email Sent Successfully', 'success'));
+            return redirect()->route('email.sent',RolePrefix())->with($this->message('Email Sent Successfully', 'success'));
         }
         else{
             return redirect()->back()->with($this->message('Email Sent Error', 'danger'));

@@ -245,18 +245,21 @@
                     </div>
                 </li>
                 <li>
-                    <a href="#clients_bar" data-toggle="collapse">
+                    <a href="#email" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
-                        <span> Clients </span>
+                        <span> Email </span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="clients_bar">
+                    <div class="collapse" id="email">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{route('clients.create', ['RolePrefix' => RolePrefix()])}}">Add Client</a>
+                                <a href="{{route('email.compose', ['RolePrefix' => RolePrefix()])}}">Compose</a>
                             </li>
                             <li>
-                                <a href="{{route('clients.index', ['RolePrefix' => RolePrefix()])}}">All Clients</a>
+                                <a href="{{route('email.sent', ['RolePrefix' => RolePrefix()])}}">Sent</a>
+                            </li>
+                            <li>
+                                <a href="{{route('email.draft', ['RolePrefix' => RolePrefix()])}}">Drafts</a>
                             </li>
                         </ul>
                     </div>

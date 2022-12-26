@@ -164,17 +164,17 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
     Route::resource('clients', ClientController::class);
     Route::get('client/change_priority/{priority}/{id}', [ClientController::class, 'changepriority'])->name('client.change_priority');
-   
+
     Route::post('client/change_status', [ClientController::class, 'changestatus'])->name('client.change_status');
     Route::get('client/comments/{id}', [ClientController::class, 'comments'])->name('client.comments');
-    
+
     Route::get('client/transfered/{id}', [ClientController::class, 'client_transfered'])->name('client.transfered');
     Route::post('client/transfered_store', [ClientController::class, 'transfered_store'])->name('client.transfered_store');
     Route::get('client/client_active/{id}', [ClientController::class, 'client_active'])->name('client.active');
     Route::post('client/active/{id}', [ClientController::class, 'active'])->name('clients.active');
-    
+
     Route::post('client/{client_id}/installment/{id}', [ClientController::class, 'installment'])->name('clients.installment');
-   
+
     Route::get('building_inventory/{id}', [ClientController::class, 'building_inventory']);
     Route::get('societyBlock_inventory/{id}', [ClientController::class, 'societyBlock_inventory']);
     // Route::get('client/building_inventory/{id}', [ClientController::class, 'building_inventory'])->name('client.building_inventory');
@@ -216,12 +216,12 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
         Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
         Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
         Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');
-        Route::get('sent', [EmailController::class,'send_email'])->name('send_email');
+        Route::get('sent', [EmailController::class,'send_email'])->name('sent');
         Route::get('detail/{id}', [EmailController::class,'email_detail'])->name('detail');
-        Route::get('draft', [EmailController::class,'draft_email'])->name('draft_email');
+        Route::get('draft', [EmailController::class,'draft_email'])->name('draft');
         Route::get('view/{id}', [EmailController::class,'email_view'])->name('view');
         Route::post('forward/{id}', [EmailController::class,'email_forward'])->name('forward');
-        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('email_destroy');
+        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('destroy');
         Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
         Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
     });
