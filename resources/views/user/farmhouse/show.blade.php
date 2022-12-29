@@ -12,7 +12,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="text-center table table-striped" id="table-1">
                                         <thead>
                                         <tr>
                                             <th class="text-center">#</th>
@@ -41,7 +41,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7"> No More Data In this Table.</td>
+                                                <td colspan="9"> No More Data In this Table.</td>
                                             </tr>
                                         @endforelse
                                         </tbody>

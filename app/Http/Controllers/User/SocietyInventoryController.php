@@ -5,7 +5,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Block;
 use App\Models\Category;
-use App\Models\PaymentPlan;
+use App\Models\InventoryHistory;
+use App\Models\Project;
 use App\Models\Premium;
 use App\Models\Size;
 use App\Models\Society;
@@ -123,9 +124,13 @@ class SocietyInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($society_id, $block_id, $id)
     {
-        //
+        $society = Society::findOrFail($society_id);
+        $project = Project::where('type_id',2)->findOrFail($society->project_id);
+        $inventory = SocietyInventory::where(['society_id'=>$society_id,'project_id'=>$project->id,'block_id'=>$block_id])->findOrFail($id);
+        $inventory_histories = InventoryHistory::where('project_type_id',2)->where('inventory_id',$id)->latest('updated_at')->get();
+        return view('user.farmhouse.show', compact('inventory','inventory_histories'));
     }
 
     /**

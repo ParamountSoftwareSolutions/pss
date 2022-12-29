@@ -38,17 +38,28 @@
                                                 <td>{{ $data->area }} square feet</td>
                                                 <td>{{ $data->type->name }}</td>
                                                 <td>{{ $data->category->name }}</td>
-                                                <td>@if($data->status == 'sold')
-                                                        <div class="badge badge-success badge-shadow">Sold</div>
-                                                    @elseif($data->status == 'available')
-                                                        <div class="badge badge-primary badge-shadow">Available</div>
-                                                    @elseif($data->status == 'reserved')
-                                                        <div class="badge badge-warning badge-shadow">Reserved</div>
-                                                    @elseif($data->status == 'hold')
-                                                        <div class="badge badge-info badge-shadow">hold</div>
-                                                    @else
-                                                        <div class="badge badge-danger badge-shadow">Cancel</div>
-                                                    @endif
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <a href="javascript:void(0)" data-toggle="dropdown" class="badge @if($data->status == 'sold')
+                                                            badge-danger @elseif($data->status == 'hold')
+                                                            badge-warning @elseif($data->status == 'available')
+                                                            badge-success @elseif($data->status == 'canceled')
+                                                            badge-light @else
+                                                            badge-secondary @endif
+                                                            " aria-expanded="false">
+                                                            @if($data->status == null)
+                                                                Not Selected
+                                                            @else
+                                                                {{ ucfirst(Illuminate\Support\Str::replace('_', ' ', $data->status)) }}
+                                                            @endif
+                                                        </a>
+                                                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                            <a class="dropdown-item has-icon change_status @if($data->status == 'available') d-none  @endif" data-value="available" data-id="{{$data->id}}">Available</a>
+                                                            <a class="dropdown-item has-icon change_status @if($data->status == 'hold') d-none @endif" data-value="hold" data-id="{{$data->id}}">Hold</a>
+                                                            <a class="dropdown-item has-icon change_status @if($data->status == 'sold') d-none @endif" data-value="sold" data-id="{{$data->id}}">Sold</a>
+                                                            <a class="dropdown-item has-icon change_status @if($data->status == 'canceled') d-none @endif" data-value="canceled" data-id="{{$data->id}}">Canceled</a>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td>{{ $data->created_at }}</td>
                                                 <td>
@@ -57,22 +68,15 @@
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
-                                                    {{--<a href="{{ route('floor_detail.edit', ['building_id' => $building_id, 'floor_id' => $floor_id, 'id' => $data->id]) }}"
-                                                       class="btn btn-primary" title="Detail">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                             stroke-width="2" stroke-linecap="round"
-                                                             stroke-linejoin="round" class="feather feather-eye">
-                                                            <path
-                                                                d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                            <circle cx="12" cy="12" r="3"></circle>
-                                                        </svg>
-                                                    </a>--}}
                                                     <button type="button" data-url="{{ route('building.floor.building_inventory.destroy', ['RolePrefix' => RolePrefix(), 'building' =>
                                                         $building_id, 'floor' => $floor_id, 'building_inventory' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
-
+                                                    <a href="{{ route('building.floor.building_inventory.show', ['RolePrefix' => RolePrefix(), 'building' => $building_id,
+                                                    'floor' => $floor_id, 'building_inventory' => $data->id]) }}"
+                                                       class="btn btn-primary px-1 py-0" title="Edit">
+                                                        <i class="fa fa-comment"></i>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @empty
@@ -90,6 +94,124 @@
             </div>
         </section>
     </div>
+    <form id="statusForm">
+        @csrf
+        <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Change Status</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="form_id">
+                        <input type="hidden" name="status" id="form_status">
+                        <div class="row form_hold">
+                            <div class="form-group col-md-6 name">
+                                <label>Name</label>
+                                <input type="text" name="name" class="form-control">
+                                @error('name')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-6 email">
+                                <label>Email</label>
+                                <input type="text" name="email" class="form-control">
+                                @error('email')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-6 cnic">
+                                <label>CNIC</label>
+                                <input type="number" name="cnic" class="form-control">
+                                @error('cnic')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-6 phone_number">
+                                <label>Phone Number</label>
+                                <input type="number" name="phone_number" class="form-control">
+                                @error('phone_number')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-12 amount">
+                                <label>Amount</label>
+                                <input type="number" name="amount" class="form-control">
+                                @error('amount')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label>Comment</label>
+                                <textarea class="form-control" name="comment" id="comment" cols="30" rows="5" required></textarea>
+                                @error('comment')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-whitesmoke br">
+                        <input type="submit" class="btn btn-primary" value="submit" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 @endsection
 @section('script')
+    <script>
+        $(document).ready(function () {
+            $("body").on("click", ".change_status", function() {
+                $('.form_hold').hide();
+                var status = $(this).attr('data-value');
+                if (status == 'hold' || status == 'sold') {
+                    // $('input[name="name"]').attr('required');
+                    // $('input[name="email"]').attr('required');
+                    // $('input[name="cnic"]').attr('required');
+                    // $('input[name="phone_number"]').attr('required');
+                    $('input[name="amount"]').attr('required');
+                    $('.form_hold').show();
+                } else {
+                    // $('input[name="name"]').removeAttr('required');
+                    // $('input[name="email"]').removeAttr('required');
+                    // $('input[name="cnic"]').removeAttr('required');
+                    // $('input[name="phone_number"]').removeAttr('required');
+                    $('input[name="amount"]').removeAttr('required');
+                    $('.form_hold').hide();
+                }
+                var id = $(this).attr('data-id');
+                $('#form_status').val(status);
+                $('#form_id').val(id);
+                $('#statusForm').attr('action', "{{route('inventory.change_status', ['RolePrefix' => RolePrefix(),'project_id'=>3])}}");
+                $('#statusModal').modal('show');
+            });
+            $('#statusForm').submit(function (e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: "{{route('inventory.change_status', ['RolePrefix' => RolePrefix(),'project_id'=>1])}}",
+                    type: "POST",
+                    data: formData,
+                    success: function(data) {
+                        if (data.status == 'success') {
+                            $('#statusModal').modal('hide');
+                            successMsg(data.message);
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                        if (data.status == 'error') {
+                            errorMsg(data.message);
+                        }
+                    },
+                });
+            })
+        })
+    </script>
 @endsection

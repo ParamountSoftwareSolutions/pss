@@ -12,6 +12,7 @@ use App\Models\Farmhouse;
 use App\Models\FloorDetailFile;
 use App\Models\PaymentPlan;
 use App\Models\Premium;
+use App\Models\Project;
 use App\Models\Size;
 use App\Models\Type;
 use App\Models\InventoryHistory;
@@ -181,9 +182,13 @@ class BuildingInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($building_id, $floor_id, $id)
     {
-
+        $building = Building::findOrFail($building_id);
+        $project = Project::where('type_id',1)->findOrFail($building->project_id);
+        $inventory = BuildingInventory::where(['building_id'=>$building_id,'project_id'=>$project->id,'building_floor_id'=>$floor_id])->findOrFail($id);
+        $inventory_histories = InventoryHistory::where('project_type_id',1)->where('inventory_id',$id)->latest('updated_at')->get();
+        return view('user.farmhouse.show', compact('inventory','inventory_histories'));
     }
 
     /**

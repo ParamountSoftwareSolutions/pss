@@ -128,7 +128,7 @@ class FarmhouseInventoryController extends Controller
     public function show($project_id,$inventory_id)
     {
         $project = Project::where('type_id',3)->findOrFail($project_id);
-        $inventory = Farmhouse::with('files')->where('project_id',$project_id)->findOrFail($inventory_id);
+        $inventory = Farmhouse::where('project_id',$project_id)->findOrFail($inventory_id);
         $inventory_histories = InventoryHistory::where('project_type_id',3)->where('inventory_id',$inventory_id)->latest('updated_at')->get();
         return view('user.farmhouse.show', compact('inventory','inventory_histories'));
     }

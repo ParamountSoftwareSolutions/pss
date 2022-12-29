@@ -156,17 +156,17 @@
                 $('.form_hold').hide();
                 var status = $(this).attr('data-value');
                 if (status == 'hold' || status == 'sold') {
-                    $('input[name="name"]').attr('required');
-                    $('input[name="email"]').attr('required');
-                    $('input[name="cnic"]').attr('required');
-                    $('input[name="phone_number"]').attr('required');
+                    // $('input[name="name"]').attr('required');
+                    // $('input[name="email"]').attr('required');
+                    // $('input[name="cnic"]').attr('required');
+                    // $('input[name="phone_number"]').attr('required');
                     $('input[name="amount"]').attr('required');
                     $('.form_hold').show();
                 } else {
-                    $('input[name="name"]').removeAttr('required');
-                    $('input[name="email"]').removeAttr('required');
-                    $('input[name="cnic"]').removeAttr('required');
-                    $('input[name="phone_number"]').removeAttr('required');
+                    // $('input[name="name"]').removeAttr('required');
+                    // $('input[name="email"]').removeAttr('required');
+                    // $('input[name="cnic"]').removeAttr('required');
+                    // $('input[name="phone_number"]').removeAttr('required');
                     $('input[name="amount"]').removeAttr('required');
                     $('.form_hold').hide();
                 }

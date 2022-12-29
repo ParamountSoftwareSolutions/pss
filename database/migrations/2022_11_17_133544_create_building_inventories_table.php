@@ -27,7 +27,7 @@ class CreateBuildingInventoriesTable extends Migration
             $table->foreignId('type_id')->unsigned()->nullable()->constrained('types')->nullOnDelete();
             $table->foreignId('category_id')->unsigned()->nullable()->constrained('categories')->nullOnDelete();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
-            $table->string('status');
+            $table->enum('status', ['available', 'hold', 'sold','token','canceled'])->default('available');
             $table->timestamps();
         });
     }
