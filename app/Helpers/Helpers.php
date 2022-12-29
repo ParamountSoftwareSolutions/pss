@@ -167,7 +167,7 @@ if (!function_exists('installment')) {
             ]);
         }
 
-        if ($payment_plan->half_year_installment !== null && $total_month > 12) {
+        if ($payment_plan->half_year_installment !== null && $total_month >= 12) {
             $price_per_year = $payment_plan->half_year_installment;
             $yearly_month = $total_month / 6;
             $monthly = ($total_month / 12) * 10;
@@ -204,7 +204,7 @@ if (!function_exists('installment')) {
                     $month_date->addMonth();
                 }
             }
-        } elseif ($payment_plan->quarterly_payment !== null && $total_month > 12) {
+        } elseif ($payment_plan->quarterly_payment !== null && $total_month >= 12) {
             $quarterly_price = $payment_plan->quarterly_payment;
             $quarterly_month = $total_month / 3;
             $monthly = ($total_month / 12) * 8;

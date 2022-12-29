@@ -9,6 +9,7 @@ use App\Models\BuildingInventory;
 use App\Models\BuildingInventoryFile;
 use App\Models\Category;
 use App\Models\FarmhouseFile;
+use App\Models\InventoryHistory;
 use App\Models\Premium;
 use App\Models\Farmhouse;
 use App\Models\Block;
@@ -124,9 +125,12 @@ class FarmhouseInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($project_id,$inventory_id)
     {
-        //
+        $project = Project::where('type_id',3)->findOrFail($project_id);
+        $inventory = Farmhouse::with('files')->where('project_id',$project_id)->findOrFail($inventory_id);
+        $inventory_histories = InventoryHistory::where('project_type_id',3)->where('inventory_id',$inventory_id)->latest('updated_at')->get();
+        return view('user.farmhouse.show', compact('inventory','inventory_histories'));
     }
 
     /**
@@ -135,10 +139,10 @@ class FarmhouseInventoryController extends Controller
      * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function edit($project_id,$farmhouse_id)
+    public function edit($project_id,$inventory_id)
     {
         $project = Project::findOrFail($project_id);
-        $farmhouse = Farmhouse::with('files')->where('project_id',$project_id)->findOrFail($farmhouse_id);
+        $farmhouse = Farmhouse::with('files')->where('project_id',$project_id)->findOrFail($inventory_id);
         $sizes = Size::get();
         $project_type_id = $this->project_type_id;
         $premiums = Premium::where('project_type_id',$project_type_id)->get();

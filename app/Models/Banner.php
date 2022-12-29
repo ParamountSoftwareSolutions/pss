@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Banner extends Model
 {
     use HasFactory;
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
 }

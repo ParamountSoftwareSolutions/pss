@@ -145,4 +145,10 @@ class ProjectController extends Controller
             return response()->json(['message' => 'Project has not deleted, something went wrong. Try again', 'status' => 'error']);
         }
     }
+
+    public function get_project($id)
+    {
+        $projects = Project::where('type_id',$id)->get();
+        return response()->json($projects);
+    }
 }

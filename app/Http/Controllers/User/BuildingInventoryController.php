@@ -14,7 +14,8 @@ use App\Models\PaymentPlan;
 use App\Models\Premium;
 use App\Models\Size;
 use App\Models\Type;
-use App\Models\Unit;
+use App\Models\InventoryHistory;
+use Egulias\EmailValidator\Result\InvalidEmail;
 use http\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,10 +52,10 @@ class BuildingInventoryController extends Controller
         $premium = Premium::whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
-        $bed = Size::where('unit_id', 'bed')->whereHas('project_type', function ($q) {
+        $bed = Size::where('unit', 'bed')->whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
-        $bath = Size::where('unit_id', 'bath')->whereHas('project_type', function ($q) {
+        $bath = Size::where('unit', 'bath')->whereHas('project_type', function ($q) {
             $q->where('name', 'building');
         })->get();
         $nature = Type::whereHas('project_type', function ($q) {
@@ -291,7 +292,52 @@ class BuildingInventoryController extends Controller
         } else {
             return json_encode('error');
         }
-
-
+    }
+    public function change_status(Request $request, $project_type_id)
+    {
+        $request->validate([
+            'id' => 'required',
+            'status' => 'required',
+        ]);
+        $inventory = get_inventory($project_type_id,$request->id);
+        if(!$inventory){
+            return response()->json(['message'=>'Inventory not found, something went wrong! try again...','status'=>'error']);
+        }
+        $status_arr = ['hold','sold'];
+        if(in_array($request->status,$status_arr)){
+            $request->validate([
+//                'name' => 'required',
+//                'email' => 'required',
+//                'cnic' => 'required',
+//                'phone_number' => 'required',
+                'amount' => 'required',
+            ]);
+            $inventory_history = [
+                'project_type_id'=>$project_type_id,
+                'inventory_id' => $request->id,
+                'status' => $request->status,
+                'name' => $request->name,
+                'email' => $request->email,
+                'cnic' => $request->cnic,
+                'phone_number' => $request->phone_number,
+                'amount' => $request->amount,
+                'comment' => $request->comment,
+            ];
+        }else{
+            $inventory_history = [
+                'project_type_id'=>$project_type_id,
+                'inventory_id' => $request->id,
+                'status' => $request->status,
+                'comment' => $request->comment,
+            ];
+        }
+        $response = InventoryHistory::create($inventory_history);
+        if($response){
+            $inventory->status = $request->status;
+            $inventory->save();
+            return response()->json(['message'=>'Inventory status has been updated successfully!','status'=>'success']);
+        }else{
+            return response()->json(['message'=>'Inventory status not changed, something went wrong! try again...','status'=>'error']);
+        }
     }
 }

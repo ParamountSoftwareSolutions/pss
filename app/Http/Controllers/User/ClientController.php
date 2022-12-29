@@ -571,13 +571,14 @@ class ClientController extends Controller
             $get_inventory_inventory_id = $get_inventory_id;
 
             $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
-
             $installment = installment($inventory->payment_plan_id);
+            dd($installment);
 
             if ($installment['total_price'] == $installment['payment_plan']->total_price) {
                 $inventory->status = 'sold';
                 $inventory->save();
-                create_installment_plan($response->id, $installment, $request->down_payment);
+                dd($id, $installment, $request->down_payment);
+                create_installment_plan($id, $installment, $request->down_payment);
             }
         }
         if ($response) {

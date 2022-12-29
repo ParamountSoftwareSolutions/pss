@@ -8,9 +8,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Farmhouse List</h4>
-{{--                                <a href="{{ route('farmhouse.create', ['RolePrefix' => RolePrefix()]) }}" class="btn btn-primary"--}}
-{{--                                   style="margin-left: auto; display: block;">Add New</a>--}}
+                                <h4>Inventory History</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -18,29 +16,28 @@
                                         <thead>
                                         <tr>
                                             <th class="text-center">#</th>
+                                            <th>Status</th>
+                                            <th>Amount</th>
                                             <th>Name</th>
-{{--                                            <th>Type</th>--}}
-                                            <th>Action</th>
+                                            <th>Email</th>
+                                            <th>CNIC</th>
+                                            <th>Phone Number</th>
+                                            <th>Comment</th>
+                                            <th>Date</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($projects as $data)
+                                        @forelse($inventory_histories as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
+                                                <td>{{ ucfirst($data->status) }}</td>
+                                                <td>{{ $data->amount }}</td>
                                                 <td>{{ $data->name }}</td>
-                                                <td>
-{{--                                                    <a href="{{ route('farmhouse.edit', ['RolePrefix' => RolePrefix(), 'farmhouse' => $data->id]) }}"--}}
-{{--                                                       class="btn btn-primary px-1 py-0" title="Edit">--}}
-{{--                                                        <i class="fa fa-edit"></i>--}}
-{{--                                                    </a>--}}
-                                                    <a href="{{ route('farmhouse.inventory.index', ['RolePrefix' => RolePrefix(), 'farmhouse' => $data->id]) }}"
-                                                       class="btn btn-primary px-1 py-0" title="View PDF">
-                                                        <i class="fa fa-eye"></i>
-                                                    </a>
-{{--                                                    <button type="button" data-url="{{ route('farmhouse.destroy',['RolePrefix' => RolePrefix(), 'farmhouse' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">--}}
-{{--                                                        <i class="fa fa-trash"></i>--}}
-{{--                                                    </button>--}}
-                                                </td>
+                                                <td>{{ $data->email }}</td>
+                                                <td>{{ $data->cnic }}</td>
+                                                <td>{{ $data->phone_number }}</td>
+                                                <td>{{ $data->comment }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($data->updated_at)->format('M d, Y') }}</td>
                                             </tr>
                                         @empty
                                             <tr>

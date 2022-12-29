@@ -18,27 +18,29 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse(json_decode($building->floor_list) as $data)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                @php( $id = (int) $data)
-                                                @php( $floor = \App\Models\BuildingFloor::findOrFail($id))
-                                                <td>{{ $floor->name }}</td>
-                                                <td>
-                                                    <a href="{{ route('building.floor.building_inventory.index', ['RolePrefix' => RolePrefix(), 'building' =>
-                                                    $building->id,
-                                                    'floor' => (int) $data])
-                                                     }}"
-                                                       class="btn btn-primary px-1 py-0" title="Edit">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7"> No More Data In this Table.</td>
-                                            </tr>
-                                        @endforelse
+                                        @if($building->floor_list)
+                                            @forelse(json_decode($building->floor_list) as $data)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    @php( $id = (int) $data)
+                                                    @php( $floor = \App\Models\BuildingFloor::findOrFail($id))
+                                                    <td>{{ $floor->name }}</td>
+                                                    <td>
+                                                        <a href="{{ route('building.floor.building_inventory.index', ['RolePrefix' => RolePrefix(), 'building' =>
+                                                        $building->id,
+                                                        'floor' => (int) $data])
+                                                         }}"
+                                                           class="btn btn-primary px-1 py-0" title="Edit">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="7"> No More Data In this Table.</td>
+                                                </tr>
+                                            @endforelse
+                                        @endif
                                         </tbody>
                                     </table>
                                 </div>

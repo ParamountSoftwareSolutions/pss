@@ -281,6 +281,43 @@
                         </ul>
                     </div>
                 </li>
+                <li>
+                    <a href="#banner" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Banner </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="banner">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('banner.index', ['RolePrefix' => RolePrefix()])}}">Banner List</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#more" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> More </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="more">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('about.index', ['RolePrefix' => RolePrefix()])}}">About</a>
+                            </li>
+                            <li>
+                                <a href="{{route('faq.index', ['RolePrefix' => RolePrefix()])}}">FAQs</a>
+                            </li>
+                            <li>
+                                <a href="{{route('privacy_policy.index', ['RolePrefix' => RolePrefix()])}}">Privacy Policy</a>
+                            </li>
+                            <li>
+                                <a href="{{route('term.index', ['RolePrefix' => RolePrefix()])}}">Terms</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </div>
         </li>

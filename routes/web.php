@@ -28,6 +28,11 @@ use App\Http\Controllers\User\EmailController;
 use App\Http\Controllers\User\BuildingExtraDetailController;
 use App\Http\Controllers\User\FeatureController;
 use App\Http\Controllers\User\TargetController;
+use App\Http\Controllers\User\AboutController;
+use App\Http\Controllers\User\FaqController;
+use App\Http\Controllers\User\PrivacyPolicyController;
+use App\Http\Controllers\User\TermController;
+use App\Http\Controllers\User\BannerController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -68,6 +73,19 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
 Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePrefix']], function () {
     Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
+
+    //===============================//
+    //  Banner App related Routes    //
+    //===============================//
+
+    Route::resource('about', AboutController::class);
+    Route::resource('faq', FaqController::class);
+    Route::resource('privacy_policy', PrivacyPolicyController::class);
+    Route::resource('term', TermController::class);
+    Route::resource('banner', BannerController::class);
+    Route::post('banner/image/remove', [BannerController::class, 'image_remove']);
+
+
     //=========================//
     //  Project Management    //
     //=========================//
@@ -119,7 +137,10 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('state/{id}', [HomeController::class, 'state']);
     Route::get('city/{id}', [HomeController::class, 'city']);
     Route::get('get-premium/{type}', [PremiumController::class, 'get_premium']);
+    Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
+    Route::get('get-project/{project_type_id}', [ProjectController::class, 'get_project']);
     //Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
+    Route::post('inventory/change-status/{project_id}', [BuildingInventoryController::class, 'change_status'])->name('inventory.change_status');
 
     //=========================//
     //  Leads Management    //
@@ -184,7 +205,6 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
     //             //End New Routes    Get Payment Plan
 
-    Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
 
 
 
