@@ -140,38 +140,130 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>City</label>
-                                            <select class="form-control" name="city_id_new">
-                                                @if(!empty($client->city_id))
-                                                <option value="{{$client->city_id}}" selected>{{$client->city->name}}</option>
-                                                @endif
-                                                <option label="" disabled>Select Detail</option>
-                                            </select>
-                                            @error('city_id_new')
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Email <small style="color: red">*</small></label>
+                                            <input type="email" class="form-control" name="email_new" required>
+                                            @error('email_new')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Password <small style="color: red">*</small></label>
+                                            <input type="password" class="form-control" name="password_new" autocomplete="off" required>
+                                            @error('password_new')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Phone <small style="color: red">*</small></label>
+                                            <input type="number" class="form-control" name="phone_number_new" required>
+                                            @error('phone_number_new')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label>Alternative Phone (Optional)</label>
+                                            <input type="text" class="form-control" name="alt_phone_new" autocomplete="off">
+                                            @error('alt_phone_new')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Sales Person</label>
+                                            <select class="form-control" name="sale_person_id" required>
+
+                                                <option value="" disabled>Select Sale Person ...</option>
+
+                                                @if (!empty($sale_persons))
+                                                    @foreach ($sale_persons as $sale_person_val)
+                                                        <option value="{{ $sale_person_val->id }}">{{ $sale_person_val->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Down Payment<small style="color: red">*</small></label>
+                                            <input type="number" class="form-control" name="down_payment" required>
+                                            @error('down_payment')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Address <small style="color: red">*</small></label>
+                                            <input type="text" class="form-control" name="address_new" autocomplete="off" required>
+                                            @error('address_new')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label>Date of birth <small style="color: red">*</small></label>
+                                            <input type="date" class="form-control" name="dob_new" autocomplete="off" required>
+                                            @error('dob_new')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label for="country">Country <small style="color: red">*</small></label>
+                                            <select class="form-control" name="country_id_new" required>
+
+                                                <option>Select Country</option>
+                                                @foreach($country as $data)
+                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('country_id_new')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>State <small style="color: red">*</small></label>
+                                                <select class="form-control" name="state_id_new" required>
+
+                                                    <option label="" disabled>Select State</option>
+                                                </select>
+                                                @error('state_id_new')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>City</label>
+                                                <select class="form-control" name="city_id_new">
+                                                    @if(!empty($client->city_id))
+                                                        <option value="{{$client->city_id}}" selected>{{$client->city->name}}</option>
+                                                    @endif
+                                                    <option label="" disabled>Select Detail</option>
+                                                </select>
+                                                @error('city_id_new')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- Old Client Form --}}
+
+                                <div class="card-footer text-right">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
                                 </div>
                             </div>
-                            {{-- Old Client Form --}}
-
-                            <div class="card-footer text-right">
-                                <button class="btn btn-primary" type="submit">Submit</button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
-</div>
+        </section>
+    </div>
 @endsection
 @section('script')
-<script>
-    $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
 
         // State Select
         $('select[name="country_id_new"]').on('change', function() {
@@ -352,12 +444,30 @@
                         option.value = element.id;
                         document.getElementById("selectBuildingFloor").append(option);
                     });
-                } else if (project.type_id == 2) {
-                    block.forEach(element => {
-                        var option = document.createElement('option');
-                        option.text = element.id;
-                        option.value = element.id;
-                        document.getElementById("selectPremiumScocity").append(option);
+                } else {
+                    alert('danger');
+                }
+            });
+            // City Select
+            $('select[name="state_id_new"]').on('change', function() {
+                var state_id = $(this).val();
+                if (state_id) {
+                    $.ajax({
+                        url: "{{ url(RolePrefix().'/city') }}/" + state_id,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            $('select[name="city_id_new"]').empty();
+                            if (data.length === 0) {
+                                $('select[name="city_id_new"]').append('<option value="">N/A</option>');
+
+                            } else {
+                                $('select[name="city_id_new"]').append('<option value="">Please  Select</option>');
+                                $.each(data, function(key, value) {
+                                    $('select[name="city_id_new"]').append('<option value="' + value.id + '">' + value.name + '</option>');
+                                });
+                            }
+                        },
                     });
                 } else if (project.type_id == 3) {
                     // block.forEach(element => {
@@ -373,39 +483,38 @@
                     //     document.getElementById("selectPremium").append(option);
                     // });
                 }
-            }
-        });
-    }
-
-    function project() {
-        var project = document.getElementById("selectProject").value;
-        project = JSON.parse(project);
-        switch (project.type_id) {
-            case 1:
-                document.getElementById("premiumSocity").style.display = "none";
-                document.getElementById("buildingfloor").style.display = "block";
-                document.getElementById("selectBuildingFloorInventoryHide").style.display = "block";
-
-                break;
-            case 2:
-                document.getElementById("premiumSocity").style.display = "block";
-                document.getElementById("buildingfloor").style.display = "none";
-                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
-                break;
-            case 3:
-                document.getElementById("premiumSocity").style.display = "none";
-                document.getElementById("buildingfloor").style.display = "none";
-                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
-                break;
-            case 4:
-                document.getElementById("premiumSocity").style.display = "none";
-                document.getElementById("buildingfloor").style.display = "none";
-                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
-                break;
+            });
         }
-    }
-</script>
-<script>
 
-</script>
+        function project() {
+            var project = document.getElementById("selectProject").value;
+            project = JSON.parse(project);
+            switch (project.type_id) {
+                case 1:
+                    document.getElementById("premiumSocity").style.display = "none";
+                    document.getElementById("buildingfloor").style.display = "block";
+                    document.getElementById("selectBuildingFloorInventoryHide").style.display = "block";
+
+                    break;
+                case 2:
+                    document.getElementById("premiumSocity").style.display = "block";
+                    document.getElementById("buildingfloor").style.display = "none";
+                    document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
+                    break;
+                case 3:
+                    document.getElementById("premiumSocity").style.display = "none";
+                    document.getElementById("buildingfloor").style.display = "none";
+                    document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
+                    break;
+                case 4:
+                    document.getElementById("premiumSocity").style.display = "none";
+                    document.getElementById("buildingfloor").style.display = "none";
+                    document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
+                    break;
+            }
+        }
+    </script>
+    <script>
+
+    </script>
 @endsection

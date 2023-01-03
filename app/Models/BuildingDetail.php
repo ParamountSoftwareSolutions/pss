@@ -17,4 +17,16 @@ class BuildingDetail extends Model
     {
         return $this->hasMany(BuildingDetailFile::class, 'building_detail_id');
     }
+    public function logo_image()
+    {
+        return $this->hasMany(BuildingDetailFile::class, 'building_detail_id')->where('type', 'logo');
+    }
+    public function payment_plan_image()
+    {
+        return $this->hasMany(BuildingDetailFile::class, 'building_detail_id')->where('type', 'payment_plan');
+    }
+    public function floor_plan_image()
+    {
+        return $this->hasMany(BuildingDetailFile::class, 'building_detail_id')->where('type', 'floor_plan');
+    }
 }

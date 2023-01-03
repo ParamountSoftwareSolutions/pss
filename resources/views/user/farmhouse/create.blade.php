@@ -203,7 +203,8 @@
                         } else {
                             $('select[name="payment_plan_id"]').append('<option value="">Please  Select</option>');
                             $.each(data, function (key, value) {
-                                $('select[name="payment_plan_id"]').append('<option value="' + value.id + '">' + value.name + '</option>');
+                                var price = value.after_commission_price ? value.after_commission_price : value.total_price;
+                                $('select[name="payment_plan_id"]').append('<option value="' + value.id + '">' + value.name +'('+ price +')'+ '</option>');
                             });
                         }
                     },
@@ -221,7 +222,7 @@
                 groupClassName: 'col-3',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    image: '{{asset("assets/img/img2.jpg")}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
@@ -258,7 +259,7 @@
                 groupClassName: 'col-3',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    image: '{{asset("assets/img/img2.jpg")}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",

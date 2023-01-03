@@ -47,7 +47,7 @@
                                                 <option label="" disabled>Select Bed</option>
                                                 @foreach($size as $data)
                                                     <option value="{{ $data->id }}" @if ($apartment_size_check !== null) @if (in_array($data->id, $apartment_size_check)) selected
-                                                        @endif @endif>{{ $data->name }} - {{ $data->unit->name }}</option>
+                                                        @endif @endif>{{ $data->name }} - {{ $data->unit }}</option>
                                                 @endforeach
                                             </select>
                                             @error('apartment_size')

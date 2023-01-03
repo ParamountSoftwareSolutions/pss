@@ -16,7 +16,7 @@ class SocietyInventorySeeder extends Seeder
     {
         SocietyInventory::insert([
             [
-                'project_id' => 3,
+                'project_id' => 4,
                 'society_id' => 1,
                 'block_id' => 1,
                 'category_id' => 7,
@@ -30,7 +30,7 @@ class SocietyInventorySeeder extends Seeder
                 'status' => 'available',
             ],
             [
-                'project_id' => 3,
+                'project_id' => 4,
                 'society_id' => 1,
                 'block_id' => 1,
                 'category_id' => 9,
@@ -44,7 +44,7 @@ class SocietyInventorySeeder extends Seeder
                 'status' => 'available',
             ],
             [
-                'project_id' => 3,
+                'project_id' => 4,
                 'society_id' => 1,
                 'block_id' => 1,
                 'category_id' => 10,

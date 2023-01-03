@@ -29,20 +29,33 @@
                                         </div>
                                     </div>
                                     <div class="row field">
+                                        <div class="form-group col-md-4 simple">
+                                            <label class="d-flex align-items-center">
+                                                <label>Plot/Unit No <sup style="color: red">*</sup></label>
+                                                <a href="#" style="margin-left: auto; display: block;" class="btn btn-primary btn-sm bulk-btn" data-value="bulk">Bulk Create</a>
+                                            </label>
+                                            <input type="text" class="form-control simple-input" name="simple_unit_no" value="{{ old('unit_no') }}">
+                                            @error('unit_no')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                         <div class="form-group col-md-4 bulk">
-                                            <label>Plot/Unit No <sup style="color: red">*</sup></label>
+                                            <label class="d-flex align-items-center">
+                                                <label>Plot/Unit No <sup style="color: red">*</sup></label>
+                                                <a href="#" style="margin-left: auto; display: block;" class="btn btn-primary btn-sm bulk-btn" data-value="simple">Simple Create</a>
+                                            </label>
                                             <div class="input-group mb-2">
-                                                <input type="text" class="form-control bulk_unit_no" name="bulk_unit_no[]" class="input-group-text" value="{{ old
+                                                <input type="text" class="form-control bulk_unit_no" name="bulk_unit_no" class="input-group-text" value="{{ old
                                                 ('unit_no') }}" placeholder="unit name">
                                                 <div class="input-group-prepend preselection-prepend">
                                                     <div class="input-group-text">-</div>
                                                 </div>
-                                                <input type="number" class="form-control start_unit_no" name="start_unit_no[]" value="{{ old('start_unit_no') }}"
+                                                <input type="number" class="form-control start_unit_no" name="start_unit_no" value="{{ old('start_unit_no') }}"
                                                        placeholder="start unit">
                                                 <div class="input-group-prepend preselection-prepend">
                                                     <div class="input-group-text">-</div>
                                                 </div>
-                                                <input type="number" class="form-control end_unit_no" name="end_unit_no[]" value="{{ old('end_unit_no') }}"
+                                                <input type="number" class="form-control end_unit_no" name="end_unit_no" value="{{ old('end_unit_no') }}"
                                                        placeholder="end
                                                  unit">
                                             </div>
@@ -52,7 +65,7 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Project Types<small style="color: red">*</small></label>
-                                            <select class="form-control" name="category_id[]" required>
+                                            <select class="form-control" name="category_id" required>
                                                 <option value="">Select Types</option>
                                                 @foreach($category as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -61,6 +74,16 @@
                                             @error('category_id')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Area<small style="color: red">*</small></label>
+                                                <input type="number" class="form-control" name="area"
+                                                       value="{{ old('area') }}" required>
+                                                @error('area')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <div class="form-group">
@@ -77,45 +100,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label>Premium Location</label>
-                                            <select class="form-control" name="premium_id[]">
-                                                <option value="">Select Types</option>
-                                                @foreach($premium as $data)
-                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('premium_id')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <div class="form-group">
-                                                <label>Area<small style="color: red">*</small></label>
-                                                <input type="number" class="form-control" name="area[]"
-                                                       value="{{ old('area') }}" required>
-                                                @error('area')
-                                                <div class="text-danger mt-2">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <label class="d-block">Select Payment Plan<small style="color: red">*</small></label>
-                                            <div class="input-group mb-3">
-                                                <select name="payment_plan_id[]" class="form-control" required>
-                                                    <option value="">Select Payment Plan</option>
-                                                    @foreach($payment_plan as $payment)
-                                                        <option value="{{$payment->id}}">{{$payment->name.' ('.$payment->total_price.')' }} </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            @error('payment_plan_id')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4">
                                             <div class="form-group">
                                                 <label>Bed</label>
-                                                <select class="form-control" name="bed[]">
+                                                <select class="form-control" name="bed">
                                                     <option value="">Select Bed</option>
                                                     @foreach($bed as $data)
                                                         <option value="{{ $data->id }}">{{ $data->name }} - {{ $data->unit_id }}</option>
@@ -129,7 +116,7 @@
                                         <div class="form-group col-md-4">
                                             <div class="form-group">
                                                 <label>Bath</label>
-                                                <select class="form-control" name="bath[]">
+                                                <select class="form-control" name="bath">
                                                     <option value="">Select Bath</option>
                                                     @foreach($bath as $data)
                                                         <option value="{{ $data->id }}">{{ $data->name }} - {{ $data->unit_id }}</option>
@@ -140,48 +127,43 @@
                                                 @enderror
                                             </div>
                                         </div>
-
-                                        {{--<div class="form-group col-md-4">
-                                            <label>Status<small style="color: red">*</small></label>
-                                            <select class="form-control" name="status" required>
-                                                <option value="">Select Status</option>
-                                                <option value="sold">Sold</option>
-                                                <option value="hold">Hold</option>
-                                                <option value="available">Available</option>
+                                        <div class="form-group col-md-4">
+                                            <label>Premium Location</label>
+                                            <select class="form-control" name="premium_id">
+                                                <option value="">Select Types</option>
+                                                <option value="regular">Regular</option>
+                                                @foreach($premium as $data)
+                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                                @endforeach
                                             </select>
-                                            @error('status')
+                                            @error('premium_id')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
-                                        </div>--}}
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label class="d-block">Select Payment Plan<small style="color: red">*</small></label>
+                                            <div class="input-group mb-3">
+                                                <select name="payment_plan_id" class="form-control" required>
+                                                    <option value="">Select Payment Plan</option>
+                                                </select>
+                                            </div>
+                                            @error('payment_plan_id')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    {{--Add new Sction--}}
+                                    {{--Add new Sction
                                     <div class="brother"></div>
                                     <div>
                                         <div>
                                             <button name="addnew">+</button>
                                             <button name="removenew">-</button>
                                         </div>
-                                    </div>
+                                    </div>--}}
                                 </div>
                             </div>
 
                             <div class="card card-primary">
-                                {{--<div class="card-header ui-sortable-handle">
-                                    <h4>Floor Detail Images <small style="color: red">* (ratio 1:1)</small></h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <div>
-                                            <div class="row mb-3">
-                                                <div class="col-3">
-                                                    <img style="height: 200px;width: 100%" class="banner-image"
-                                                         src="{{ asset('public/images/building/floor/apartment.png') }}">
-                                                </div>
-                                            </div>
-                                            <div id="coba" class="row"></div>
-                                        </div>
-                                    </div>
-                                </div>--}}
                                 <div class="card-footer text-right">
                                     <button class="btn btn-primary" type="submit">Submit</button>
                                 </div>
@@ -232,12 +214,80 @@
         });
     </script>
     <script>
-        $(' button[name="addnew"]').on('click', function () {
-            $('.card-body').children('.field').clone().appendTo('.brother');
+        $(document).ready(function(){
+            $('.bulk').hide();
+            $('.simple-input').attr('required', true);
+
+            $('.bulk-btn').on('click', function () {
+                var val = $(this).data('value');
+                console.log(val);
+                if (val == 'bulk') {
+                    $('.bulk_unit_no').attr('required', true);
+                    $('.start_unit_no').attr('required', true);
+                    $('.end_unit_no').attr('required', true);
+
+                    $('.simple-input').removeAttr('required', false);
+                    $('.simple-input').css('display', 'none');
+                    $('.simple-input').val('');
+
+                    $('.bulk_unit_no').css('display', 'block');
+                    $('.start_unit_no').css('display', 'block');
+                    $('.end_unit_no').css('display', 'block');
+
+                    $('.bulk').css('display', 'block');
+
+                    $('.simple').hide();
+                    $('.bulk').show();
+                } else {
+                    $('.simple-input').attr('required', true);
+
+                    $('.bulk_unit_no').removeAttr('required', false);
+                    $('.start_unit_no').removeAttr('required', false);
+                    $('.end_unit_no').removeAttr('required', false);
+
+                    $('.simple-input').css('display', 'block');
+
+                    $('.bulk_unit_no').css('display', 'none');
+                    $('.start_unit_no').css('display', 'none');
+                    $('.end_unit_no').css('display', 'none');
+
+                    $('.bulk_unit_no').val('');
+                    $('.start_unit_no').val('');
+                    $('.end_unit_no').val('');
+
+                    $('.simple').show();
+                    $('.bulk').hide();
+                }
+            });
+            $('select[name="premium_id"]').change(function () {
+                var premium_id = $(this).val();
+                $.ajax({
+                    url: "{{ url(RolePrefix().'/get-payment-plan') }}/" + premium_id + "/" + 1,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        $('select[name="payment_plan_id"]').empty();
+                        if (data.length === 0) {
+                            $('select[name="payment_plan_id"]').append('<option value="">N/A</option>');
+                        } else {
+                            $('select[name="payment_plan_id"]').append('<option value="">Please  Select</option>');
+                            $.each(data, function (key, value) {
+                                var price = value.after_commission_price ? value.after_commission_price : value.total_price;
+                                $('select[name="payment_plan_id"]').append('<option value="' + value.id + '">' + value.name +'('+ price +')'+ '</option>');
+                            });
+                        }
+                    },
+                });
+                return;
+            });
+            // $(' button[name="addnew"]').on('click', function () {
+            //     $('.card-body').children('.field').clone().appendTo('.brother');
+            // });
+            // $(' button[name="removenew"]').on('click', function () {
+            //     $('.field:last-child').remove();
+            // });
         });
-        $(' button[name="removenew"]').on('click', function () {
-            $('.field:last-child').remove();
-        });
+
     </script>
 
 @endsection

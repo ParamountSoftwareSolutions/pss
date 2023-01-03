@@ -148,50 +148,6 @@
             var premium_id = $('select[name="premium_id"]').val();
             var project_type_id = {{$project_type_id}};
             getPaymentPlan(premium_id,project_type_id);
-            $('.bulk').hide();
-            $('.simple-input').attr('required', true);
-
-            $('.bulk-btn').on('click', function () {
-                var val = $(this).data('value');
-                console.log(val);
-                if (val == 'bulk') {
-                    $('.bulk_unit_no').attr('required', true);
-                    $('.start_unit_no').attr('required', true);
-                    $('.end_unit_no').attr('required', true);
-
-                    $('.simple-input').removeAttr('required', false);
-                    $('.simple-input').css('display', 'none');
-                    $('.simple-input').val('');
-
-                    $('.bulk_unit_no').css('display', 'block');
-                    $('.start_unit_no').css('display', 'block');
-                    $('.end_unit_no').css('display', 'block');
-
-                    $('.bulk').css('display', 'block');
-
-                    $('.simple').hide();
-                    $('.bulk').show();
-                } else {
-                    $('.simple-input').attr('required', true);
-
-                    $('.bulk_unit_no').removeAttr('required', false);
-                    $('.start_unit_no').removeAttr('required', false);
-                    $('.end_unit_no').removeAttr('required', false);
-
-                    $('.simple-input').css('display', 'block');
-
-                    $('.bulk_unit_no').css('display', 'none');
-                    $('.start_unit_no').css('display', 'none');
-                    $('.end_unit_no').css('display', 'none');
-
-                    $('.bulk_unit_no').val('');
-                    $('.start_unit_no').val('');
-                    $('.end_unit_no').val('');
-
-                    $('.simple').show();
-                    $('.bulk').hide();
-                }
-            });
             $('select[name="premium_id"]').change(function () {
                 var premium_id = $(this).val();
                 var project_type_id = {{$project_type_id}};
@@ -213,7 +169,8 @@
                         $.each(data, function (key, value) {
                             let oldlId = '{{ $farmhouse->payment_plan_id }}';
                             let selected = value.id == oldlId ? "selected" : "";
-                            $('select[name="payment_plan_id"]').append('<option ' + selected + ' value="' + value.id + '">' + value.name + '</option>');
+                            var price = value.after_commission_price ? value.after_commission_price : value.total_price;
+                            $('select[name="payment_plan_id"]').append('<option value="' + value.id + '"'+selected+'>' + value.name +'('+ price +')'+ '</option>');
                         });
                     }
                 },
@@ -229,7 +186,7 @@
                 groupClassName: 'col-3',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    image: '{{asset("assets/img/img2.jpg")}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",

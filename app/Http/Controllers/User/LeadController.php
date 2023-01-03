@@ -43,10 +43,10 @@ class LeadController extends Controller
      */
     public function index(Request $request)
     {
-
         $building = get_all_projects();
         $users = get_user_by_projects();
         $lead = get_leads_from_user($users);
+//        dd($lead->get());
         /**
          * /////////////////////////////////////////////Filters/////////////////////////////////
          */
@@ -222,7 +222,6 @@ class LeadController extends Controller
         /**
          *  //////////////////////// project detail/////.
          */
-
 
         return view('user.lead.index', get_defined_vars());
     }
@@ -704,42 +703,85 @@ class LeadController extends Controller
         }
 
         foreach ($collections as $key => $collection) {
-            if ($collection['name'] === "") {
-                return back()->with($this->message('Please fill row:' . ($key + 2) . ' field: name', 'error'));
+            if ($collection['username'] === "") {
+                return back()->with($this->message('Username is required', 'error'));
             }
-            if ($collection['number'] === "") {
-                return back()->with($this->message('Please fill row:' . ($key + 2) . ' field: number!', 'error'));
+            if ($collection['phone_number'] === "") {
+                return back()->with($this->message('Phone number is required', 'error'));
+            }
+            if ($collection['sale_person_id'] === "") {
+                return back()->with($this->message('Sale person id is required', 'error'));
+            }else{
+                $user = User::find($collection['sale_person_id']);
+                if(!$user){
+                    return back()->with($this->message('Sale person id '.$collection['sale_person_id'].' does not exsist.. try again', 'error'));
+                }
+            }
+            if ($collection['id']) {
+                $lead = Lead::where('id', $collection['id'])->first();
+                if(!$lead){
+                    return back()->with($this->message('Lead id '.$collection['id'].' does not exsist.. try again ', 'error'));
+                }
+                else{
+                    $lead = Lead::where('number',$collection['phone_number'])->where('id','!==',$collection['id'])->first();
+                    if($lead){
+                        return back()->with($this->message('Phone number '.$collection['phone_number'].' already exsist.. try again', 'error'));
+                    }
+                }
             }
         }
 
         foreach ($collections as $key => $collection) {
+            if (empty($collection['source'])) {
+                $collection['source'] = null;
+            }
+            if (empty($collection['source'])) {
+                $collection['email'] = null;
+            }
             if ($collection['id'] == "") {
-                $lead = Lead::where('number', $collection['number'])->first();
-                if ($lead) {
-                    $lead->name = $collection['name'];
-                    $lead->user_id = $collection['sale_person_id'];
-                    $lead->source = $collection['source'];
-                    $lead->save();
-                } else {
+                $lead = Lead::where('number', $collection['phone_number'])->first();
+                if (!$lead) {
                     $lead = new Lead;
-                    $lead->name = $collection['name'];
-                    $lead->number = $collection['number'];
-                    $lead->user_id = $collection['sale_person_id'];
-                    $lead->source = $collection['source'];
-                    $lead->save();
                 }
+                if($lead->user_id != $collection['sale_person_id']){
+                    $lead_history = [
+                        'lead_id' => $lead->id,
+                        'status' => 'lead_assign',
+                        'date' => date('Y-m-d H:i:s'),
+                        'user_id' => Auth::user()->id,
+                        'assign_to' => $collection['sale_person_id'],
+                    ];
+                    LeadHistory::create($lead_history);
+                }
+                $lead->name = $collection['username'];
+                $lead->number = $collection['phone_number'];
+                $lead->user_id = $collection['sale_person_id'];
+                $lead->email = $collection['email'];
+                $lead->source = $collection['source'];
+                $lead->save();
             } else {
                 $lead = Lead::where('id', $collection['id'])->first();
                 if (!$lead) {
                     return back()->with($this->message("Lead id '" . $collection['id'] . "' does not exist!", "error"));
                 }
-                $number_lead = Lead::where('number', $collection['number'])->first();
+                $number_lead = Lead::where('number', $collection['phone_number'])->first();
                 if ($number_lead) {
-                    return back()->with($this->message("Phone number '" . $collection['number'] . "' already exist!", "error"));
+                    return back()->with($this->message("Phone number '" . $collection['phone_number'] . "' already exist!", "error"));
                 }
-                $lead->name = $collection['name'];
-                $lead->number = $collection['number'];
+                if($lead->user_id != $collection['sale_person_id']){
+                    $lead_history = [
+                        'lead_id' => $lead->id,
+                        'status' => 'lead_assign',
+                        'date' => date('Y-m-d H:i:s'),
+                        'user_id' => Auth::user()->id,
+                        'assign_to' => $collection['sale_person_id'],
+                    ];
+                    LeadHistory::create($lead_history);
+                }
+                $lead->name = $collection['username'];
+                $lead->number = $collection['phone_number'];
                 $lead->user_id = $collection['sale_person_id'];
+                $lead->email = $collection['email'];
                 $lead->source = $collection['source'];
                 $lead->save();
             }
@@ -749,18 +791,19 @@ class LeadController extends Controller
     public function bulk_export()
     {
         $users = get_user_by_projects();
-        $lead = get_leads_from_user($users)->get();
+        $lead = get_leads_from_user($users);
+        $sales = $lead->whereNot('status', 'lost')->whereNot('status', 'mature')->orderBy('updated_at', 'desc')->get();
         $storage = [];
-        foreach ($lead as $item) {
+        foreach ($sales as $item) {
             $storage[] = [
                 'id' => $item['id'],
-                'name' => $item['name'],
-                'number' => $item['number'],
+                'username' => $item['name'],
+                'phone_number' => $item['number'],
                 'sale_person_id' => $item['user_id'],
                 'source' => $item['source'],
             ];
         }
-        return (new FastExcel($storage))->download('/public/panel/assets/lead.xlsx');
+        return (new FastExcel($storage))->download('/public/assets/lead.xlsx');
     }
 
 

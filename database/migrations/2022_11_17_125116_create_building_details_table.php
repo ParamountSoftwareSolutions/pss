@@ -15,7 +15,7 @@ class CreateBuildingDetailsTable extends Migration
     {
         Schema::create('building_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('building_id')->unsigned()->nullable()->constrained('buildings')->nullOnDelete();
+            $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
             $table->string('developer')->nullable();
             $table->string('address')->nullable();
             $table->string('latitude')->nullable();

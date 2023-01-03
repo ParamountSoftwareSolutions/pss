@@ -44,13 +44,14 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Unit</label>
-                                            <select class="form-control" name="unit_id" required>
+                                            <select class="form-control" name="unit" required>
                                                 <option label="" disabled selected>Select Unit</option>
-                                                @foreach($unit as $data)
-                                                    <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
-                                                @endforeach
+                                                <option value="bed">Bed</option>
+                                                <option value="bath">Bath</option>
+                                                <option value="marla">Marla</option>
+                                                <option value="kenal">Kenal</option>
                                             </select>
-                                            @error('type_id')
+                                            @error('unit')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>

@@ -20,4 +20,9 @@ class Project extends Model
     {
         return $this->belongsTo(ProjectType::class, 'type_id');
     }
+
+    public function building_detail()
+    {
+        return $this->hasOne(BuildingDetail::class, 'project_id');
+    }
 }

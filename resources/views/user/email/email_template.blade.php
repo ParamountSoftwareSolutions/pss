@@ -349,7 +349,7 @@
                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                       <td>
-                        <p>Hi {{$email}},</p>
+                          <p><b>{{$subject}}</b></p>
                         <p>{!! $body !!}</p>
                         <p>Good luck! Hope it works.</p>
 						 {{-- @if(isset($image) && ($image != null || $image != []))--}}
@@ -379,7 +379,9 @@
                 </tr>
                 <tr>
                     <td class="content-block powered-by">
-                        Powered by <a href="https://paramountsoftwaresolutions.com/">Paramount Software Solutions<img src="{{asset('public/panel/assets/img/logo-login.png')}}" width="50px" height="40px" class="logo"/></a>.
+                        Powered by <a href="https://paramountsoftwaresolutions.com/">Paramount Software Solutions
+{{--                            <img src="{{asset('public/panel/assets/img/logo-login.png')}}" width="50px" height="40px" class="logo"/>--}}
+                        </a>.
                     </td>
                 </tr>
               </table>

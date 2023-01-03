@@ -74,8 +74,7 @@ class BuildingController extends Controller
         $category = Category::whereHas('project_type', function ($q){
             $q->where('name', 'building');
         })->get();
-        $unit = Unit::where('name', 'bed')->get();
-        $size = Size::where('project_type_id', project_type('building'))->whereIn('unit_id', $unit->pluck('id')->toArray())->get();
+        $size = Size::where('project_type_id', project_type('building'))->where('unit', 'bed')->get();
         return view('user.building.edit', compact('floor', 'building', 'size', 'category'));
     }
 

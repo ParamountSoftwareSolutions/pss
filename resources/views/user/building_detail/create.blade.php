@@ -7,7 +7,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <form method="post"
-                              action="{{ route('building.extra_detail.store',['RolePrefix' => RolePrefix(), 'building' => $id]) }}"
+                              action="{{ route('project.extra_detail.store',['RolePrefix' => RolePrefix(), 'project' => $id]) }}"
                               enctype="multipart/form-data">
                             @csrf
                             <div class="card">
@@ -39,6 +39,22 @@
                                                 <input type="text" class="form-control" name="price"
                                                        placeholder="PKR 1Lak to 10Lak"
                                                        value="{{ old('price') }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Latitude</label>
+                                                <input type="text" class="form-control" name="latitude"
+                                                       placeholder=""
+                                                       value="{{ old('latitude') }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Longitude</label>
+                                                <input type="text" class="form-control" name="longitude"
+                                                       placeholder=""
+                                                       value="{{ old('longitude') }}">
                                             </div>
                                         </div>
                                         <div class="form-group col-md-12">
@@ -115,6 +131,17 @@
                             </div>
                             <!-- Multi Image Upload -->
                             <div class="card card-primary">
+                                <div class="card-header ui-sortable-handle">
+                                    <h4>Main Logo Images <small style="color: red">* (ratio 1:1)</small></h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div>
+                                            <div class="row" id="coba-logo"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><div class="card card-primary">
                                 <div class="card-header ui-sortable-handle">
                                     <h4>Payment Plan Images <small style="color: red">* (ratio 1:1)</small></h4>
                                 </div>
@@ -350,7 +377,44 @@
                 groupClassName: 'col-3',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    image: '{{asset("assets/img/img2.jpg")}}',
+                    width: '100%'
+                },
+                dropFileLabel: "Drop Here",
+                onAddRow: function (index, file) {
+
+                },
+                onRenderedPreview: function (index) {
+
+                },
+                onRemoveRow: function (index) {
+
+                },
+                onExtensionErr: function (index, file) {
+                    toastr.error('Please only input png or jpg type file', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                },
+                onSizeErr: function (index, file) {
+                    toastr.error('File size too big', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#coba-logo").spartanMultiImagePicker({
+                fieldName: 'logo_images[]',
+                maxCount: 4,
+                rowHeight: '215px',
+                groupClassName: 'col-3',
+                maxFileSize: '',
+                placeholderImage: {
+                    image: '{{asset("assets/img/img2.jpg")}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
@@ -389,7 +453,7 @@
                 groupClassName: 'col-3',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    image: '{{asset("assets/img/img2.jpg")}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",

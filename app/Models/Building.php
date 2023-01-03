@@ -25,9 +25,4 @@ class Building extends Model
     {
         return $this->belongsTo(BuildingFile::class, 'building_id');
     }
-
-    public function building_detail()
-    {
-        return $this->hasOne(BuildingDetail::class, 'building_id');
-    }
 }

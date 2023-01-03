@@ -136,7 +136,7 @@
                                         <div class="form-group col-md-4">
                                             <div class="form-group">
                                                 <label>City</label>
-                                                @if($society->state_id == null)
+                                                @if($society->city_id == null)
                                                     <select class="form-control" name="city">
                                                         <option label="" disabled selected>Select Detail</option>
                                                     </select>

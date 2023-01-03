@@ -27,7 +27,7 @@ class CreateSocietyInventoriesTable extends Migration
             $table->foreignId('bath_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
-            $table->string('status');
+            $table->enum('status', ['available', 'hold', 'sold','token','canceled'])->default('available');
             $table->timestamps();
         });
     }
