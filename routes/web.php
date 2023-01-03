@@ -29,6 +29,7 @@ use App\Http\Controllers\User\BuildingExtraDetailController;
 use App\Http\Controllers\User\FeatureController;
 use App\Http\Controllers\User\TargetController;
 use App\Models\lead;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/fake_leads', function () {
@@ -45,6 +46,13 @@ Route::get('/fake_leads', function () {
         lead::create($data);
     }
 });
+
+Route::get('/updateapp', function()
+{
+    Artisan::call('dump-autoload');
+    echo 'dump-autoload complete';
+});
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -89,12 +97,12 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //  Building Features      //
     //=========================//
     Route::group(['prefix' => 'building/feature', 'as' => 'feature.'], function () {
-        Route::get('/{key}', [FeatureController::class,'index'])->name('index');
-        Route::get('{key}/create', [FeatureController::class,'create'])->name('create');
-        Route::post('{key}/store', [FeatureController::class,'store'])->name('store');
-        Route::get('{key}/edit/{id}', [FeatureController::class,'edit'])->name('edit');
-        Route::put('{key}/update/{id}', [FeatureController::class,'update'])->name('update');
-        Route::delete('{key}/destroy/{id}', [FeatureController::class,'destroy'])->name('destroy');
+        Route::get('/{key}', [FeatureController::class, 'index'])->name('index');
+        Route::get('{key}/create', [FeatureController::class, 'create'])->name('create');
+        Route::post('{key}/store', [FeatureController::class, 'store'])->name('store');
+        Route::get('{key}/edit/{id}', [FeatureController::class, 'edit'])->name('edit');
+        Route::put('{key}/update/{id}', [FeatureController::class, 'update'])->name('update');
+        Route::delete('{key}/destroy/{id}', [FeatureController::class, 'destroy'])->name('destroy');
     });
 
     //=========================//
@@ -103,7 +111,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('building', BuildingController::class);
     Route::resource('floor', FloorController::class);
     Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
-    Route::get('building_extra_detail', [BuildingExtraDetailController::class,'building_extra_detail'])->name('building_extra_detail');
+    Route::get('building_extra_detail', [BuildingExtraDetailController::class, 'building_extra_detail'])->name('building_extra_detail');
     Route::resource('building.extra_detail', BuildingExtraDetailController::class);
     Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
 
@@ -154,6 +162,11 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('/webhook/leads/{page_id}/{token}', [WebHookController::class, 'leads'])->name('webhook.leads');
     Route::get('/webhook/lead_assign_to_mangers/{page_id}/{token}', [WebHookController::class, 'lead_assign_to_mangers'])->name('webhook.lead_assign_to_mangers');
     Route::get('/webhook/lead_assign_to_sale_person/{page_id}/{token}', [WebHookController::class, 'lead_assign_to_sale_person'])->name('webhook.lead_assign_to_sale_person');
+    Route::get('/webhook/lead_assign_to_me/{page_id}/{token}', 'WebHookController@lead_assign_to_me')->name('webhook.lead_assign_to_me');
+    Route::get('/webhook/lead_assign_to_both/{page_id}/{token}', 'WebHookController@lead_assign_to_both')->name('webhook.lead_assign_to_both');
+    //Dublicate leads
+    Route::get('/webhook/dublicate', [WebHookController::class, 'dublicate'])->name('webhook.dublicate');
+    Route::get('/webhook/dublicate_store/{id}', [WebHookController::class, 'dublicate_store'])->name('webhook.dublicate_store');
 
     // //=============//
     // /* Leads */
@@ -164,20 +177,24 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
     Route::resource('clients', ClientController::class);
     Route::get('client/change_priority/{priority}/{id}', [ClientController::class, 'changepriority'])->name('client.change_priority');
-   
+
     Route::post('client/change_status', [ClientController::class, 'changestatus'])->name('client.change_status');
     Route::get('client/comments/{id}', [ClientController::class, 'comments'])->name('client.comments');
-    
+
     Route::get('client/transfered/{id}', [ClientController::class, 'client_transfered'])->name('client.transfered');
     Route::post('client/transfered_store', [ClientController::class, 'transfered_store'])->name('client.transfered_store');
     Route::get('client/client_active/{id}', [ClientController::class, 'client_active'])->name('client.active');
     Route::post('client/active/{id}', [ClientController::class, 'active'])->name('clients.active');
-    
+
     Route::post('client/{client_id}/installment/{id}', [ClientController::class, 'installment'])->name('clients.installment');
-   
+
     Route::get('building_inventory/{id}', [ClientController::class, 'building_inventory']);
     Route::get('societyBlock_inventory/{id}', [ClientController::class, 'societyBlock_inventory']);
     // Route::get('client/building_inventory/{id}', [ClientController::class, 'building_inventory'])->name('client.building_inventory');
+   
+       //Inventory historys
+       Route::get('sale/history', [ClientController::class, 'history'])->name('lead.history');
+       //Inventory historys
     // //=============//
     // /* Clients */
     // //=============//
@@ -194,15 +211,15 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //====================//
 
     Route::group(['prefix' => 'targets', 'as' => 'target.'], function () {
-        Route::get('/', [TargetController::class,'my_targets'])->name('index');
-        Route::get('staff-targets', [TargetController::class,'staff_targets'])->name('staff_targets');
-        Route::get('assign-target', [TargetController::class,'assign_target'])->name('assign_target');
-        Route::post('store', [TargetController::class,'store'])->name('store');
-        Route::get('get-role-list/{role}', [TargetController::class,'get_role_list'])->name('get_role_list');
-        Route::get('edit-task/{id}', [TargetController::class,'edit_task'])->name('edit_task');
-        Route::post('update-task/{id}', [TargetController::class,'update_task'])->name('update_task');
-        Route::get('task-reports', [TargetController::class,'task_reports'])->name('task_reports');
-        Route::get('task/get-report/{id}', [TargetController::class,'get_report'])->name('get_report');
+        Route::get('/', [TargetController::class, 'my_targets'])->name('index');
+        Route::get('staff-targets', [TargetController::class, 'staff_targets'])->name('staff_targets');
+        Route::get('assign-target', [TargetController::class, 'assign_target'])->name('assign_target');
+        Route::post('store', [TargetController::class, 'store'])->name('store');
+        Route::get('get-role-list/{role}', [TargetController::class, 'get_role_list'])->name('get_role_list');
+        Route::get('edit-task/{id}', [TargetController::class, 'edit_task'])->name('edit_task');
+        Route::post('update-task/{id}', [TargetController::class, 'update_task'])->name('update_task');
+        Route::get('task-reports', [TargetController::class, 'task_reports'])->name('task_reports');
+        Route::get('task/get-report/{id}', [TargetController::class, 'get_report'])->name('get_report');
     });
 
 
@@ -212,17 +229,17 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // /* Email Routes */
     // //=============//
 
-    Route::group(['prefix' => 'email','as'=>'email.'], function () {
-        Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
-        Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
-        Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');
-        Route::get('sent', [EmailController::class,'send_email'])->name('send_email');
-        Route::get('detail/{id}', [EmailController::class,'email_detail'])->name('detail');
-        Route::get('draft', [EmailController::class,'draft_email'])->name('draft_email');
-        Route::get('view/{id}', [EmailController::class,'email_view'])->name('view');
-        Route::post('forward/{id}', [EmailController::class,'email_forward'])->name('forward');
-        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('email_destroy');
-        Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
-        Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
+    Route::group(['prefix' => 'email', 'as' => 'email.'], function () {
+        Route::get('compose', [EmailController::class, 'email_compose'])->name('compose');
+        Route::post('compose/send', [EmailController::class, 'email_compose_send'])->name('compose.send');
+        Route::post('compose/save', [EmailController::class, 'email_compose_save'])->name('compose.save');
+        Route::get('sent', [EmailController::class, 'send_email'])->name('send_email');
+        Route::get('detail/{id}', [EmailController::class, 'email_detail'])->name('detail');
+        Route::get('draft', [EmailController::class, 'draft_email'])->name('draft_email');
+        Route::get('view/{id}', [EmailController::class, 'email_view'])->name('view');
+        Route::post('forward/{id}', [EmailController::class, 'email_forward'])->name('forward');
+        Route::delete('destroy/{id}', [EmailController::class, 'email_destroy'])->name('email_destroy');
+        Route::post('remove/image', [EmailController::class, 'remove_image_email'])->name('remove_image_email');
+        Route::post('resend/{id}', [EmailController::class, 'email_resend'])->name('resend');
     });
 });

@@ -24,6 +24,7 @@ use App\Models\Unit;
 use App\Models\BuildingFloor;
 use App\Models\BuildingInventory;
 use App\Models\Client;
+use App\Models\ClientHistory;
 use App\Models\Farmhouse;
 use App\Models\LeadRefer;
 use App\Models\Project;
@@ -243,7 +244,7 @@ class LeadController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'sale_person');
             })->get();
-          
+
         return view('user.lead.create', get_defined_vars());
     }
 
@@ -264,7 +265,7 @@ class LeadController extends Controller
             'size_id' => $request->size,
             'quantity' => $request->quantity,
             'premia_id' => $request->premium,
-           
+
             'user_id' => ($request->sale_person_id) ? $request->sale_person_id : auth()->user()->id,
             'created_by' => auth()->user()->id,
             'name' => $request->name,
@@ -614,7 +615,6 @@ class LeadController extends Controller
                 $floor = BuildingFloor::whereIn('id', $floor_list)->get();
 
                 $size_list = json_decode($building->apartment_size);
-
                 $size = Size::whereIn('id', $size_list)->get();
 
                 $type_id = json_decode($building->type);
@@ -642,7 +642,7 @@ class LeadController extends Controller
                 $size = Size::where('project_type_id', $projectTypeId)->get();
                 $premium = premium::where('project_type_id', $projectTypeId)->get();
 
-                $block = Farmhouse::where('project_id',$projectId)->fisrt();
+                $block = Farmhouse::where('project_id', $projectId)->first();
                 break;
                 // case "4":
 
@@ -655,7 +655,9 @@ class LeadController extends Controller
                 $block = null;
                 break;
         }
-        $data = json_encode([$size, $floor, $type, $premium,$block]);
+
+        $data = json_encode([$size, $floor, $type, $premium, $block]);
+
         return  $data;
     }
 
@@ -760,4 +762,9 @@ class LeadController extends Controller
         }
         return (new FastExcel($storage))->download('/public/panel/assets/lead.xlsx');
     }
+
+
+
+
+
 }

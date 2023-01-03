@@ -258,7 +258,7 @@ if (!function_exists('installment')) {
     }
 }
 if (!function_exists('create_installment_plan')) {
-    function create_installment_plan($client_id, $installment, $down_payment)
+    function create_installment_plan($client_id, $project_type_id, $inventory_id, $installment, $down_payment)
     {
         $installment_check = ClientInstallment::where('client_id', $client_id)->first();
         if ($installment_check == null) {
@@ -275,6 +275,8 @@ if (!function_exists('create_installment_plan')) {
                     }
                     ClientInstallment::create([
                         'client_id' => $client_id,
+                        'project_type_id' => $project_type_id,
+                        'inventory_id' => $inventory_id,
                         'title' => $data['title'],
                         'installment_amount' => $data['amount'],
                         'due_date' => $data['due_date'],

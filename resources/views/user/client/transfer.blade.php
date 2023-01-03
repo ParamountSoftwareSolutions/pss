@@ -12,7 +12,7 @@
                 <div>{{ $error }}</div>
                 @endforeach
                 <div class="col-12 col-md-12 col-lg-12">
-                    <form method="POST" action="{{ route('client.transfered_store', ['RolePrefix' => RolePrefix()]) }}" novalidate>  
+                    <form method="POST" action="{{ route('client.transfered_store', ['RolePrefix' => RolePrefix()]) }}" novalidate>
                         @csrf
                         <input type="hidden" name="client_trnafer_id" value="{{$id}}">
                         <div class="card">
@@ -83,9 +83,7 @@
                                     <div class="form-group col-md-4">
                                         <label>Sales Person</label>
                                         <select class="form-control" name="sale_person_id" required>
-
                                             <option value="" disabled>Select Sale Person ...</option>
-
                                             @if (!empty($sale_persons))
                                             @foreach ($sale_persons as $sale_person_val)
                                             <option value="{{ $sale_person_val->id }}">{{ $sale_person_val->name }}</option>
@@ -94,9 +92,9 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label>Down Payment<small style="color: red">*</small></label>
-                                        <input type="number" class="form-control" name="down_payment" required>
-                                        @error('down_payment')
+                                        <label>Price<small style="color: red">*</small></label>
+                                        <input type="number" class="form-control" name="price" required>
+                                        @error('price')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -155,6 +153,13 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="form-group col-md-12">
+                                        <label>Comment</label>
+                                        <textarea class="form-control" name="comment" id="comment" cols="30" rows="10" required></textarea>
+                                        @error('comment')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                             {{-- Old Client Form --}}
@@ -183,7 +188,6 @@
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
-                        console.log(data);
                         $('select[name="state_id_new"]').empty();
                         if (data.length === 0) {
                             $('select[name="state_id_new"]').append('<option value="">N/A</option>');
