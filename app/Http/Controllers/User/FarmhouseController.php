@@ -29,7 +29,7 @@ class FarmhouseController extends Controller
     public function index()
     {
         $projects = get_all_projects('farm_house');
-        return view('user.farmhouse.show', compact('projects'));
+        return view('user.farmhouse.view', compact('projects'));
     }
 
     /**

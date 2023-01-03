@@ -509,7 +509,7 @@
         }
 
 
-        //Change Status 
+        //Change Status
         $("body").on("click", ".change_status", function() {
             $('.start_time').hide();
             $('.end_time').hide();
@@ -575,7 +575,7 @@
         // });
     });
 
-    //Change Status 
+    //Change Status
 </script>
 <script>
     function getComboA(selectObject) {

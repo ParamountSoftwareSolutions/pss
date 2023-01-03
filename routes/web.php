@@ -33,6 +33,7 @@ use App\Http\Controllers\User\FaqController;
 use App\Http\Controllers\User\PrivacyPolicyController;
 use App\Http\Controllers\User\TermController;
 use App\Http\Controllers\User\BannerController;
+use App\Http\Controllers\User\DealerController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Route;
 
@@ -121,8 +122,9 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('building', BuildingController::class);
     Route::resource('floor', FloorController::class);
     Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
-    Route::get('building_extra_detail', [BuildingExtraDetailController::class,'building_extra_detail'])->name('building_extra_detail');
-    Route::resource('building.extra_detail', BuildingExtraDetailController::class);
+    Route::get('extra_detail/{project_type}', [BuildingExtraDetailController::class,'project_extra_detail'])->name('project_extra_detail');
+    Route::resource('project.extra_detail', BuildingExtraDetailController::class);
+    Route::post('extra-detail/remove/image', [BuildingExtraDetailController::class, 'image_remove']);
     Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
 
     //=========================//
@@ -139,6 +141,8 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('get-premium/{type}', [PremiumController::class, 'get_premium']);
     Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
     Route::get('get-project/{project_type_id}', [ProjectController::class, 'get_project']);
+    Route::get('get-inventories/{project_id}', [ProjectController::class, 'get_inventories']);
+    Route::get('get-floor-block/{project_id}', [ProjectController::class, 'get_floor_block']);
     //Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
     Route::post('inventory/change-status/{project_id}', [BuildingInventoryController::class, 'change_status'])->name('inventory.change_status');
 
@@ -233,6 +237,25 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // //=============//
 
     Route::group(['prefix' => 'email','as'=>'email.'], function () {
+        Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
+        Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
+        Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');
+        Route::get('sent', [EmailController::class,'send_email'])->name('sent');
+        Route::get('detail/{id}', [EmailController::class,'email_detail'])->name('detail');
+        Route::get('draft', [EmailController::class,'draft_email'])->name('draft');
+        Route::get('view/{id}', [EmailController::class,'email_view'])->name('view');
+        Route::post('forward/{id}', [EmailController::class,'email_forward'])->name('forward');
+        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('destroy');
+        Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
+        Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
+    });
+
+    // //===============//
+    // /* Dealer Routes */
+    // //===============//
+
+    Route::resource('dealer', DealerController::class);
+    Route::group(['prefix' => 'dealer','as'=>'email.'], function () {
         Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
         Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
         Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');

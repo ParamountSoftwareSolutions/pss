@@ -79,7 +79,7 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">All Building</a>
-                                <a href="{{route('building_extra_detail', ['RolePrefix' => RolePrefix()])}}">Building
+                                <a href="{{route('project_extra_detail', ['RolePrefix' => RolePrefix(),'project_type'=>'building'])}}">Building
                                     Extra Detail</a>
                                 <a href="#building_feature" data-toggle="collapse">
                                     <i data-feather="shopping-cart"></i>
@@ -116,6 +116,8 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>
+                                <a href="{{route('project_extra_detail', ['RolePrefix' => RolePrefix(),'project_type'=>'society'])}}">Society
+                                    Extra Detail</a>
                             </li>
                         </ul>
                     </div>
@@ -137,7 +139,7 @@
                         </ul>
                     </div>
                 </li>
-                <li>
+                {{--<li>
                     <a href="#society" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
                         <span> Society </span>
@@ -153,7 +155,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li>--}}
                 <li>
                     <a href="#farmhouse" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
@@ -164,6 +166,8 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{route('farmhouse.index', ['RolePrefix' => RolePrefix()])}}">All Farmhouse</a>
+                                <a href="{{route('project_extra_detail', ['RolePrefix' => RolePrefix(),'project_type'=>'farm_house'])}}">Farmhouse
+                                    Extra Detail</a>
                             </li>
                         </ul>
                     </div>
@@ -291,6 +295,20 @@
                         <ul class="nav-second-level">
                             <li>
                                 <a href="{{route('banner.index', ['RolePrefix' => RolePrefix()])}}">Banner List</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#dealer" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Dealer </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="dealer">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="{{route('dealer.index', ['RolePrefix' => RolePrefix()])}}">Dealer List</a>
                             </li>
                         </ul>
                     </div>

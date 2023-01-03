@@ -26,6 +26,8 @@ return new class extends Migration
             $table->time('end_time')->nullable();
             $table->time('call_time')->nullable();
             $table->string('is_read')->nullable();
+            $table->foreignId('user_id')->unsigned()->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('assign_to')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

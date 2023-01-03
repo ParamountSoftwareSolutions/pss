@@ -4,12 +4,16 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\RolePrefix;
+use App\Models\Block;
 use App\Models\Building;
+use App\Models\BuildingFloor;
+use App\Models\BuildingInventory;
 use App\Models\Farmhouse;
 use App\Models\Project;
 use App\Models\ProjectAssignUser;
 use App\Models\ProjectType;
 use App\Models\Society;
+use App\Models\SocietyInventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -150,5 +154,39 @@ class ProjectController extends Controller
     {
         $projects = Project::where('type_id',$id)->get();
         return response()->json($projects);
+    }
+
+    public function get_inventories($id)
+    {
+        $project = Project::where('id',$id)->first();
+        if($project->type_id == 1){
+            $inventories = BuildingInventory::where('project_id',$id)->get();
+        }
+        elseif($project->type_id == 2){
+            $inventories = SocietyInventory::where('project_id',$id)->get();
+        }
+        elseif($project->type_id == 3){
+            $inventories = Farmhouse::where('project_id',$id)->get();
+        }else{
+            $inventories = null;
+        }
+        return response()->json($inventories);
+    }
+    public function get_floor_block($project_id)
+    {
+        $project = Project::where('id',$project_id)->first();
+        if($project->type_id == 1){
+            $building = Building::where('project_id',$project_id)->first();
+            $block_id = json_decode($building->floor_list,true);
+            $floors = BuildingFloor::whereIn('id',$block_id)->get();
+        }
+        elseif($project->type_id == 2){
+            $society = Society::where('project_id',$project_id)->first();
+            $block_id = json_decode($society->block,true);
+            $floors = Block::whereIn('id',$block_id)->get();
+        }else{
+            $floors = null;
+        }
+        return response()->json($floors);
     }
 }

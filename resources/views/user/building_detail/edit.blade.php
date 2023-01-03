@@ -7,7 +7,7 @@
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
                         <form method="post"
-                              action="{{ route('building.extra_detail.update', ['RolePrefix' => RolePrefix(),'building' => $building->id, 'extra_detail' => $building_detail->id]) }}"
+                              action="{{ route('project.extra_detail.update', ['RolePrefix' => RolePrefix(),'project' => $project->id, 'extra_detail' => $building_detail->id]) }}"
                               enctype="multipart/form-data">
                             @csrf
                             @method('put')
@@ -40,6 +40,22 @@
                                                 <input type="text" class="form-control" name="price"
                                                        placeholder="PKR 1Lak to 10Lak"
                                                        value="{{ old('price', $building_detail->price) }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Latitude</label>
+                                                <input type="text" class="form-control" name="latitude"
+                                                       placeholder=""
+                                                       value="{{ old('latitude',$building_detail->latitude) }}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Longitude</label>
+                                                <input type="text" class="form-control" name="longitude"
+                                                       placeholder=""
+                                                       value="{{ old('longitude',$building_detail->longitude) }}">
                                             </div>
                                         </div>
                                         <div class="form-group col-md-12">
@@ -145,6 +161,33 @@
                                 </div>
                             </div>
                             <!-- Multi Image Upload -->
+
+                            <div class="card card-primary">
+                                <div class="card-header ui-sortable-handle">
+                                    <h4>Main Logo Images <small style="color: red">* (ratio 1:1)</small></h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <div>
+                                            <div class="row mb-3">
+                                                @if($building_detail->logo_image->count())
+                                                    @foreach($building_detail->logo_image as $img)
+                                                        <div class="col-3 img-{{$img->id}}">
+                                                            <img style="height: 200px;width: 100%" class="banner-image"
+                                                                 src="{{asset($img->file)}}">
+                                                            <a href=""
+                                                               style="margin-top: -35px;border-radius: 0"
+                                                               class="btn btn-danger btn-block btn-sm remove-logo-image"
+                                                               data-id="{{ $img->id }}" data-target="img-{{$img->id}}">Remove</a>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            </div>
+                                            <div id="coba-logo" class="row coba-logo"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="card card-primary">
                                 <div class="card-header ui-sortable-handle">
                                     <h4>Payment Plan Images <small style="color: red">* (ratio 1:1)</small></h4>
@@ -153,15 +196,15 @@
                                     <div class="form-group">
                                         <div>
                                             <div class="row mb-3">
-                                                @if($building_detail->building_detail_image->where('type', 'payment_plan') !== null)
-                                                    @foreach($building_detail->building_detail_image->where('type', 'payment_plan') as $img)
-                                                        <div class="col-3">
+                                                @if($building_detail->payment_plan_image->count())
+                                                    @foreach($building_detail->payment_plan_image as $img)
+                                                        <div class="col-3 img-{{$img->id}}">
                                                             <img style="height: 200px;width: 100%" class="banner-image"
                                                                  src="{{asset($img->file)}}">
                                                             <a href=""
                                                                style="margin-top: -35px;border-radius: 0"
                                                                class="btn btn-danger btn-block btn-sm remove-image-payment"
-                                                               data-id="{{ $img->id }}">Remove</a>
+                                                               data-id="{{ $img->id }}" data-target="img-{{$img->id}}">Remove</a>
                                                         </div>
                                                     @endforeach
                                                 @endif
@@ -179,15 +222,15 @@
                                     <div class="form-group">
                                         <div>
                                             <div class="row mb-3">
-                                                @if($building_detail->building_detail_image->where('type', 'floor_plan') !== null)
-                                                    @foreach($building_detail->building_detail_image->where('type', 'floor_plan') as $img)
-                                                        <div class="col-3">
+                                                @if($building_detail->floor_plan_image->count())
+                                                    @foreach($building_detail->floor_plan_image as $img)
+                                                        <div class="col-3 img-{{$img->id}}">
                                                             <img style="height: 200px;width: 100%" class="banner-image"
                                                                  src="{{asset($img->file)}}">
                                                             <a href=""
                                                                style="margin-top: -35px;border-radius: 0"
                                                                class="btn btn-danger btn-block btn-sm remove-image-floor"
-                                                               data-id="{{ $img->id }}">Remove</a>
+                                                               data-id="{{ $img->id }}" data-target="img-{{$img->id}}">Remove</a>
                                                         </div>
                                                     @endforeach
                                                 @endif
@@ -409,7 +452,7 @@
     </div>
 @endsection
 @section('script')
-    <script type="text/javascript" src="{{ asset('public/panel/assets/js/spartan-multi-image-picker.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/spartan-multi-image-picker.js') }}"></script>
     <script>
         ClassicEditor
             .create(document.querySelector('#editor1'))
@@ -429,7 +472,7 @@
                 groupClassName: 'col-3',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    image: '{{asset("assets/img/img2.jpg")}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
@@ -459,13 +502,13 @@
     </script>
     <script>
         $('.remove-image-payment').on('click', function (e) {
-            //e.preventDefault();
+            e.preventDefault();
             var id = $(this).data("id");
-            console.log(id);
             var building_detail_id = {{ $building_detail->id }};
+            var box = $(this).data("target");
             if (id) {
                 $.ajax({
-                    url: "{{ url('property-manager/banner-detail/payment-image/remove') }}",
+                    url: "{{ url(RolePrefix().'/extra-detail/remove/image') }}",
                     type: "POST",
                     data: {
                         _token: '{{ csrf_token() }}',
@@ -486,6 +529,85 @@
                                 toast.addEventListener('mouseleave', Swal.resumeTimer)
                             }
                         })
+                        $('.'+box).remove();
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Image Remove Successfully.',
+                        });
+                    },
+                });
+            } else {
+                alert('danger');
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#coba-logo").spartanMultiImagePicker({
+                fieldName: 'logo_images[]',
+                maxCount: 4,
+                rowHeight: '215px',
+                groupClassName: 'col-3',
+                maxFileSize: '',
+                placeholderImage: {
+                    image: '{{asset("assets/img/img2.jpg")}}',
+                    width: '100%'
+                },
+                dropFileLabel: "Drop Here",
+                onAddRow: function (index, file) {
+
+                },
+                onRenderedPreview: function (index) {
+
+                },
+                onRemoveRow: function (index) {
+
+                },
+                onExtensionErr: function (index, file) {
+                    toastr.error('Please only input png or jpg type file', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                },
+                onSizeErr: function (index, file) {
+                    toastr.error('File size too big', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        $('.remove-logo-image').on('click', function (e) {
+            e.preventDefault();
+            var id = $(this).data("id");
+            var building_detail_id = {{ $building_detail->id }};
+            var box = $(this).data("target");
+            if (id) {
+                $.ajax({
+                    url: "{{ url(RolePrefix().'/extra-detail/remove/image') }}",
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: id,
+                        building_detail_id: building_detail_id,
+                        type: 'logo'
+                    },
+                    success: function (response) {
+                        console.log(response.name);
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        })
+                        $('.'+box).remove();
                         Toast.fire({
                             icon: 'success',
                             title: 'Image Remove Successfully.',
@@ -508,7 +630,7 @@
                 groupClassName: 'col-3',
                 maxFileSize: '',
                 placeholderImage: {
-                    image: '{{asset("public/panel/assets/img/img2.jpg")}}',
+                    image: '{{asset("assets/img/img2.jpg")}}',
                     width: '100%'
                 },
                 dropFileLabel: "Drop Here",
@@ -538,13 +660,13 @@
     </script>
     <script>
         $('.remove-image-floor').on('click', function (e) {
-            //e.preventDefault();
+            e.preventDefault();
             var id = $(this).data("id");
-            console.log(id);
             var building_detail_id = {{ $building_detail->id }};
+            var box = $(this).data("target");
             if (id) {
                 $.ajax({
-                    url: "{{ url('property-manager/banner-detail/payment-image/remove') }}",
+                    url: "{{ url(RolePrefix().'/extra-detail/remove/image') }}",
                     type: "POST",
                     data: {
                         _token: '{{ csrf_token() }}',
@@ -565,6 +687,7 @@
                                 toast.addEventListener('mouseleave', Swal.resumeTimer)
                             }
                         })
+                        $('.'+box).remove();
                         Toast.fire({
                             icon: 'success',
                             title: 'Image Remove Successfully.',

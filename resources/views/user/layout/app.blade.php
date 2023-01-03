@@ -17,6 +17,9 @@
     <link href="{{asset('/assets/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" id="bs-default-stylesheet" />
     <link href="{{asset('/assets/css/app.min.css')}}" rel="stylesheet" type="text/css" id="app-default-stylesheet" />
 
+    <link rel="stylesheet" href="{{ asset('assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/bundles/datatables/datatables.min.css') }}">
+
     <link href="{{asset('assets/css/bootstrap-dark.min.css')}}" rel="stylesheet" type="text/css" id="bs-dark-stylesheet" disabled />
     <link href="{{asset('assets/css/app-dark.min.css')}}" rel="stylesheet" type="text/css" id="app-dark-stylesheet" disabled />
 
@@ -61,23 +64,28 @@
     <!-- App js-->
     <script src="{{asset('assets/js/app.min.js')}}"></script>
     <!-- third party js -->
-    <script src="{{asset('assets/libs/datatables.net/js/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.html5.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.flash.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.print.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-keytable/js/dataTables.keyTable.min.js')}}"></script>
-    <script src="{{asset('assets/libs/datatables.net-select/js/dataTables.select.min.js')}}"></script>
-    <script src="{{asset('assets/libs/pdfmake/build/pdfmake.min.js')}}"></script>
-    <script src="{{asset('assets/libs/pdfmake/build/vfs_fonts.js')}}"></script>
+
+    <script src="{{ asset('assets/bundles/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/bundles/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/js/page/datatables.js') }}"></script>
+{{--    <script src="{{asset('assets/libs/datatables.net/js/jquery.dataTables.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.html5.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.flash.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.print.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-keytable/js/dataTables.keyTable.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-select/js/dataTables.select.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/pdfmake/build/pdfmake.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/pdfmake/build/vfs_fonts.js')}}"></script>--}}
     <!-- third party js ends -->
     <!-- Datatables init -->
-    <script src="{{asset('assets/js/pages/datatables.init.js')}}"></script>
-    <script src="{{asset('assets/js/pages/datatables.init.js')}}"></script>
+{{--    <script src="{{asset('assets/js/pages/datatables.init.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/js/pages/datatables.init.js')}}"></script>--}}
     <!-- Ckeditor -->
     <script src="{{asset('assets/js/ckeditor.js')}}"></script>
     <script src="{{asset('assets/js/spartan-multi-image-picker.js')}}"></script>

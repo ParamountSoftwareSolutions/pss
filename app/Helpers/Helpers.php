@@ -137,6 +137,27 @@ if (!function_exists('get_inventory')) {
         return $inventory;
     }
 }
+if (!function_exists('get_inventory_by_project')) {
+    function get_inventory_by_project($project_id)
+    {
+        if($project_id){
+            $project = Project::findOrFail($project_id);
+            if ($project->type_id == 1) {
+                $inventories = BuildingInventory::where('project_id',$project_id)->get();
+            } elseif ($project->type_id == 2) {
+                $inventories = SocietyInventory::where('project_id',$project_id)->get();
+            } elseif ($project->type_id == 3) {
+                $inventories = Farmhouse::where('project_id',$project_id)->get();
+            } else {
+                $inventories = Property::where('project_id',$project_id)->get();
+            }
+        }else{
+            $inventories = null;
+        }
+
+        return $inventories;
+    }
+}
 
 if (!function_exists('installment')) {
     function installment($payment_plan_id)

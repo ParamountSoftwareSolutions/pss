@@ -21,18 +21,18 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($buildings as $data)
+                                        @forelse($project as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->project->name }}</td>
+                                                <td>{{ $data->name }}</td>
                                                 <td>
-                                                    @if(\App\Models\BuildingDetail::where('building_id', $data->id)->first() == null)
-                                                        <a href="{{ route('building.extra_detail.create',['RolePrefix' => RolePrefix(),'building' => $data->id]) }}"
+                                                    @if(\App\Models\BuildingDetail::where('project_id', $data->id)->first() == null)
+                                                        <a href="{{ route('project.extra_detail.create',['RolePrefix' => RolePrefix(),'project' => $data->id]) }}"
                                                            class="btn btn-primary px-1 py-0" title="Create And Update Details">
                                                             <i class="fa fa-edit"></i>
                                                         </a>
                                                     @else
-                                                        <a href="{{ route('building.extra_detail.edit', ['RolePrefix' => RolePrefix(), 'extra_detail' => $data->building_detail->id,'building' => $data->id]) }}"
+                                                        <a href="{{ route('project.extra_detail.edit', ['RolePrefix' => RolePrefix(), 'extra_detail' => $data->building_detail->id,'project' => $data->id]) }}"
                                                            class="btn btn-primary px-1 py-0" title="Edit">
                                                             <i class="fa fa-edit"></i>
                                                         </a>

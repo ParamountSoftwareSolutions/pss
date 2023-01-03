@@ -33,11 +33,8 @@ class SocietyController extends Controller
      */
     public function index()
     {
-        $societies = Society::with('project')->whereHas('project', function ($q) {
-                $q->whereHas('type', function ($q) {
-                    $q->where('name', 'society');
-                });
-            })->latest()->get();
+        $project = get_all_projects('society');
+        $societies = Society::with('project','society_file')->whereIn('project_id', $project->pluck('id')->toArray())->latest()->get();
         return view('user.society.index', compact('societies'));
     }
 
