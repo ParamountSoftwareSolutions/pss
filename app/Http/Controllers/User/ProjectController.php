@@ -8,10 +8,15 @@ use App\Models\Block;
 use App\Models\Building;
 use App\Models\BuildingFloor;
 use App\Models\BuildingInventory;
+use App\Models\Category;
+use App\Models\Country;
 use App\Models\Farmhouse;
+use App\Models\Feature;
+use App\Models\NocType;
 use App\Models\Project;
 use App\Models\ProjectAssignUser;
 use App\Models\ProjectType;
+use App\Models\Size;
 use App\Models\Society;
 use App\Models\SocietyInventory;
 use Illuminate\Http\Request;
@@ -37,9 +42,41 @@ class ProjectController extends Controller
      */
     public function create()
     {
+//        $i=1;
+//        $x=0;
+//        $n=0;
+//        while($i<10){
+//            if($i<=5){
+//                echo $i."<br>";
+//            }
+//            $i++;
+//            if($i>5){
+//                $x=$x+2;
+//                $n = $i-$x;
+//                echo $n."<br>";
+//            }
+//        }
+//        die();
         $project = Project::get();
         $project_type = ProjectType::latest()->get();
-        return view('user.project.create', compact('project_type', 'project'));
+        $floor = BuildingFloor::get();
+        $building_category = Category::where('project_type_id', project_type('building'))->get();
+        $building_size = Size::where('project_type_id', project_type('building'))->where('unit', 'bed')->get();
+
+        $society_size = Size::where('project_type_id', project_type('society'))->get();
+        $society_category = Category::where('project_type_id', project_type('society'))->get();
+        $noc = NocType::get();
+        $society_block = Block::where('project_type_id', project_type('society'))->get();
+
+        $formhouse_block = Block::where('project_type_id', project_type('farm_house'))->get();
+        $formhouse_category = Category::where('project_type_id', project_type('farm_house'))->get();
+
+        $plot_features = Feature::where('key','plot')->get();
+        $communication_features = Feature::where('key','communication')->get();
+        $community_features = Feature::where('key','community')->get();
+        $health_features = Feature::where('key','health')->get();
+        $other_features = Feature::where('key','other')->get();
+        return view('user.project.create', get_defined_vars());
     }
 
     /**
@@ -51,8 +88,12 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'type_id' => 'required',
+            'project_type_id' => 'required',
+            'project_type_id' => 'required',
+            'project_type_id' => 'required',
+            'project_type_id' => 'required',
+            'project_type_id' => 'required',
+            'project_type_id' => 'required',
         ]);
 
         $project_limit = Project::get();
@@ -61,7 +102,7 @@ class ProjectController extends Controller
         } else {
             $project = new Project();
             $project->name = $request->name;
-            $project->type_id = $request->type_id;
+            $project->type_id = $request->project_type_id;
             $project->save();
 
             $project_assign_user = new ProjectAssignUser();
@@ -69,7 +110,7 @@ class ProjectController extends Controller
             $project_assign_user->user_id = Auth::user()->id;
             $project_assign_user->save();
 
-            $type = ProjectType::findOrFail($request->type_id)->name;
+            $type = ProjectType::findOrFail($request->project_type_id)->name;
 
             if ($type == 'society') {
                 Society::create(['project_id' => $project->id]);

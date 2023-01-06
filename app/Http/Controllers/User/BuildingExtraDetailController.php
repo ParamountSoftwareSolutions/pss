@@ -30,11 +30,13 @@ class BuildingExtraDetailController extends Controller
         $community_features = Feature::where('key','community')->get();
         $health_features = Feature::where('key','health')->get();
         $other_features = Feature::where('key','other')->get();
-        return view('user.building_detail.create', compact('id','plot_features','communication_features','community_features','health_features','other_features'));
+        $bed_arr = [1,2,3];
+        return view('user.building_detail.create', compact('id','plot_features','communication_features','community_features','health_features','other_features','bed_arr'));
     }
 
     public function store(Request $request,$id)
     {
+        dd($request->all());
         $project = Project::findOrFail($id);
         $building_detail_check = BuildingDetail::where('project_id', $project->id)->first();
         if ($building_detail_check == null){
@@ -48,6 +50,14 @@ class BuildingExtraDetailController extends Controller
             'double_bed_flat' => ['building' => $request->building_2bed, 'area' => $request->area_2bed, 'bed' => $request->bed_2bed, 'bath' => $request->bath_2bed, 'price' => $request->price_2bed],
             'studio_bed_flat' => ['building' => $request->building_studio, 'area' => $request->area_studio, 'bed' => $request->studio, 'bath' => $request->bath_studio, 'price' => $request->price_studio],
         ]);
+
+//        $data['shop_detail'] = ['floor' => $request->floor, 'area' => $request->floor_area, 'price' => $request->floor_price];
+//        foreach ($request->detail as $bed => $detail){
+//            $data['bed'.$bed] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $bed, 'bath' => $detail['bath'], 'price' => $detail['price']];
+//        }
+//        dd($data);
+//        dd(json_encode($data));
+
         $building_detail->project_id = $project->id;
         $building_detail->address = $request->address;
         $building_detail->developer = $request->developer;

@@ -131,7 +131,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //  Society Management    //
     //=========================//
     Route::resource('society', SocietyController::class);
-    Route::resource('block', SocietyBlockController::class);
+//    Route::resource('block', SocietyBlockController::class);
     Route::resource('society.block.society_inventory', SocietyInventoryController::class);
 
 
@@ -255,6 +255,10 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // //===============//
 
     Route::resource('dealer', DealerController::class);
+    Route::get('dealer/{dealer}/create', [DealerController::class,'add_new'])->name('dealer.add_new');
+    Route::post('dealer/{dealer}/store', [DealerController::class,'add_new_store'])->name('dealer.add_new_store');
+    Route::get('dealer/{dealer}/project/{project}', [DealerController::class,'dealer_project'])->name('dealer.project');
+    Route::get('dealer/{dealer}/project/{project}/generate-pdf', [DealerController::class,'generatePDF'])->name('dealer.generate_pdf');
     Route::group(['prefix' => 'dealer','as'=>'email.'], function () {
         Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
         Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');

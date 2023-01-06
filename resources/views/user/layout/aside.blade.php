@@ -182,7 +182,6 @@
                         <ul class="nav-second-level">
                             <li><a href="{{route('premium.index', ['RolePrefix' => RolePrefix()])}}">Premium</a></li>
                             <li><a href="{{route('block.index', ['RolePrefix' => RolePrefix()])}}">Block</a></li>
-                            <li><a href="{{route('unit.index', ['RolePrefix' => RolePrefix()])}}">Unit</a></li>
                             <li><a href="{{route('size.index', ['RolePrefix' => RolePrefix()])}}">Size</a></li>
                             <li><a href="{{route('type.index', ['RolePrefix' => RolePrefix()])}}">Type</a></li>
                             <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>

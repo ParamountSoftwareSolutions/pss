@@ -11,6 +11,7 @@ class BlockController extends Controller
 {
     public function index()
     {
+        dd('eeee');
         $blocks = Block::latest()->get();
         return view('user.inventory_extra_data.block.index', compact('blocks'));
     }

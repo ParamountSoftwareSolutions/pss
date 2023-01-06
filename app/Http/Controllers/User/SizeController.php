@@ -27,12 +27,14 @@ class SizeController extends Controller
         $request->validate([
             'type_id' => 'required',
             'name' => 'required',
-            'unit' => 'required',
         ]);
+        $size = Size::where('project_type_id',$request->type_id)->where('name',$request->name)->first();
+        if($size){
+            return redirect()->back()->with(['message' => 'The name has already been taken.', 'alert' => 'error']);
+        }
         $size = new Size();
         $size->project_type_id = $request->type_id;
         $size->name = $request->name;
-        $size->unit = $request->unit;
         $size->save();
         if ($size) {
             return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has created successfully', 'alert' => 'success']);
@@ -64,12 +66,14 @@ class SizeController extends Controller
         $request->validate([
             'type_id' => 'required',
             'name' => 'required',
-            'unit' => 'required',
         ]);
+        $size = Size::whereNot('id',$id)->where('project_type_id',$request->type_id)->where('name',$request->name)->first();
+        if($size){
+            return redirect()->back()->with(['message' => 'The name has already been taken.', 'alert' => 'error']);
+        }
         $size = Size::findOrFail($id);
         $size->project_type_id = $request->type_id;
         $size->name = $request->name;
-        $size->unit = $request->unit;
         $size->save();
         if ($size){
             return redirect()->route('size.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Size has updated successfully', 'alert' => 'success']);
@@ -82,7 +86,6 @@ class SizeController extends Controller
     {
         $size = Size::findOrFail($id);
         $size->delete();
-
         if ($size){
             return response()->json(['message'=>'Size has deleted successfully','status'=> 'success']);
         } else {

@@ -17,7 +17,7 @@ class PaymentPlanSeeder extends Seeder
     {
         PaymentPlan::insert([
             [
-                'project_type_id' => 3,
+                'project_type_id' => 1,
                 'name' => 'Default Monthly',
                 'total_month_installment' => 48,
                 'total_price' => 2100000,
@@ -33,7 +33,7 @@ class PaymentPlanSeeder extends Seeder
                 'rent_price' => 10,
             ],
             [
-                'project_type_id' => 3,
+                'project_type_id' => 1,
                 'name' => 'Default Bi-Annual',
                 'total_month_installment' => 60,
                 'total_price' => 2100000,
@@ -49,7 +49,7 @@ class PaymentPlanSeeder extends Seeder
                 'rent_price' => 10,
             ],
             [
-                'project_type_id' => 3,
+                'project_type_id' => 1,
                 'name' => 'Default Quarterly',
                 'total_month_installment' => 60,
                 'total_price' => 2100000,
@@ -65,13 +65,13 @@ class PaymentPlanSeeder extends Seeder
                 'rent_price' => 10,
             ],
         ]);
-        Farmhouse::insert([
-            [
-                'project_id' => 7,
-                'unit_no' => 'Nobis aute maxime pa',
-                'size_id' => 1,
-                'payment_plan_id' => 1,
-            ],
-        ]);
+//        Farmhouse::insert([
+//            [
+//                'project_id' => 7,
+//                'unit_no' => 'Nobis aute maxime pa',
+//                'size_id' => 1,
+//                'payment_plan_id' => 1,
+//            ],
+//        ]);
     }
 }

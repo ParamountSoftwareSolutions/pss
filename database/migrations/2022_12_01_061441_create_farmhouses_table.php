@@ -16,12 +16,15 @@ return new class extends Migration
         Schema::create('farmhouses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
-            $table->foreignId('block_id')->unsigned()->nullable()->constrained('blocks')->nullOnDelete();
-            $table->string('unit_no')->nullable();
-            $table->foreignId('size_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
-            $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
-            $table->enum('status', ['available', 'hold', 'sold','token','canceled'])->default('available');
-            $table->foreignId('payment_plan_id')->unsigned()->nullable()->constrained('payment_plans')->nullOnDelete();
+            $table->string('developer')->nullable();
+            $table->text('type')->nullable();
+            $table->text('block')->nullable();
+            $table->string('address')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->string('area')->nullable();
+            $table->text('social_media')->nullable();/*Json data save*/
+            $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
