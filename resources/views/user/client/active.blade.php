@@ -15,61 +15,68 @@
                     <form method="POST" action="{{ route('clients.active', ['RolePrefix' => RolePrefix(), $client->id]) }}" novalidate>
                         @csrf
                         <!-- @method('PUT') -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>Basic Information</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="form-group col-md-4">
-                                        <div class="form-group">
-                                            <label>Project List <small style="color: red">*</small></label>
-                                            <select class="form-control" id="selectProject" onchange="{project(); submitForm()}" name="building_id">
-                                                <option value="" selected disabled>Select Project ...</option>
-                                                @if (!empty($projects))
-                                                @foreach ($projects as $data)
-                                                <option value="{{ $data }}">{{ $data->name }}</option>
-                                                @endforeach
-                                                @endif
-                                            </select>
+                        <?php if ($client->inventory_id) { ?>
+                            <input type="hidden" name="inventory_id" value="{{$client->inventory_id}}">
+                            <input type="hidden" name="project_id" value="{{$client->project_id}}">
+                            <input type="hidden" name="project_type_id" value="{{$client->project_type_id}}">
+                        <?php } else { ?>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4>Basic Information</h4>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <div class="form-group">
+                                                <label>Project List <small style="color: red">*</small></label>
+                                                <select class="form-control" id="selectProject" onchange="{project(); submitForm()}" name="building_id">
+                                                    <option value="" selected disabled>Select Project ...</option>
+                                                    @if (!empty($projects))
+                                                    @foreach ($projects as $data)
+                                                    <option value="{{ $data }}">{{ $data->name }}</option>
+                                                    @endforeach
+                                                    @endif
+                                                </select>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div class="row" id="projectDetails">
+                                        <!-- Building -->
+                                        <div class="form-group col-md-4" id="buildingfloor">
+                                            <div class="form-group">
+                                                <label>Building Floor</label>
+                                                <select class="form-control" name="buildingFloor" id="selectBuildingFloor" required>
+                                                    <option label="" selected>Select Building Floor ...
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4" id="selectBuildingFloorInventoryHide">
+                                            <div class="form-group">
+                                                <label>Building Floor Invetory</label>
+                                                <select class="form-control" name="inventory_id" id="selectBuildingFloorInventory" required>
+                                                    <option label="" selected>Select Building Floor Invetory ... </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- Building -->
+                                        <!-- Society -->
+                                        <div class="form-group col-md-4" id="premiumSocity">
+                                            <div class="form-group">
+                                                <label>Society</label>
+                                                <select class="form-control" name="inventory_id" id="selectPremiumScocity" required>
+                                                    <option label="" disabled selected>Select Society Inventory ...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- Society -->
+
                                     </div>
                                 </div>
-                                <div class="row" id="projectDetails">
-
-                                    <!-- Building -->
-                                    <div class="form-group col-md-4" id="buildingfloor">
-                                        <div class="form-group">
-                                            <label>Building Floor</label>
-                                            <select class="form-control" name="buildingFloor" id="selectBuildingFloor" required>
-                                                <option label="" selected>Select Building Floor ...
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-md-4" id="selectBuildingFloorInventoryHide">
-                                        <div class="form-group">
-                                            <label>Building Floor Invetory</label>
-                                            <select class="form-control" name="inventory_id" id="selectBuildingFloorInventory" required>
-                                                <option label="" selected>Select Building Floor Invetory ... </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <!-- Building -->
-                                    <!-- Society -->
-                                    <div class="form-group col-md-4" id="premiumSocity">
-                                        <div class="form-group">
-                                            <label>Society</label>
-                                            <select class="form-control" name="inventory_id" id="selectPremiumScocity" required>
-                                                <option label="" disabled selected>Select Society Inventory ...</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <!-- Society -->
-
-                                </div>
                             </div>
-                        </div>
+                        <?php } ?>
+
 
                         <div class="card">
                             <div class="card-header">
@@ -216,6 +223,13 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <label>Comment</label>
+                                        <textarea class="form-control" name="comment" id="comment" cols="30" rows="10" required></textarea>
+                                        @error('comment')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -425,10 +439,10 @@
                     });
                 } else if (project.type_id == 3) {
                     // block.forEach(element => {
-                        // var option = document.createElement('option');
-                        // option.text = block.id;
-                        // option.value = element.id;
-                        // document.getElementById("selectSize").append(option);
+                    // var option = document.createElement('option');
+                    // option.text = block.id;
+                    // option.value = element.id;
+                    // document.getElementById("selectSize").append(option);
                     // });
                     // premium.forEach(element => {
                     //     var option = document.createElement('option');

@@ -34,6 +34,7 @@ use App\Models\Project;
 use App\Models\Property;
 use App\Models\SocietyInventory;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use SebastianBergmann\Type\NullType;
 
@@ -178,11 +179,20 @@ class ClientController extends Controller
             } else {
                 $project_type_id = Null;
             }
+            $datalead = [
+                'name' => $request->name_new,
+                'number' => $request->phone_number_new,
+                'cnic' => $request->cnic_new,
+                'alt_number' => $request->alt_phone
+            ];
+            $user = Lead::create($datalead);
+            // $customer_id = $user->id;
+
             $client_data = [
                 'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
                 'project_type_id' => $project_type_id,
                 'inventory_id' => "",
-                'customer_id' => Null,
+                'customer_id' => $user->id,
                 'user_id' => (!empty($request->sale_person_id)) ? $request->sale_person_id : auth()->user()->id,
 
                 'name' => $request->name_new,
@@ -206,7 +216,9 @@ class ClientController extends Controller
                 'status' => 'mature',
             ];
         }
+
         $client = Client::create($client_data);
+
         if ($client) {
             // task_count_increment('client');
             // $inventory = get_inventory($client->project_type_id,$client->inventory_id);
@@ -231,7 +243,11 @@ class ClientController extends Controller
     public function show($id)
     {
         $client = Client::findOrFail($id);
-        $client_installment = ClientInstallment::where('client_id', $id)->orderBy('due_date', 'ASC')->get();
+        if ($client->status == "Transfered") {
+            $client_installment = ClientInstallment::where('client_id', $id)->where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
+        } else {
+            $client_installment = ClientInstallment::where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
+        }
         return view('user.client.show', get_defined_vars());
     }
 
@@ -422,12 +438,23 @@ class ClientController extends Controller
     }
     public function transfered_store(Request $request)
     {
+
         $client = Client::where('id', $request->client_trnafer_id)->first();
+        $datalead = [
+            'name' => $request->name_new,
+            'number' => $request->phone_number_new,
+            'cnic' => $request->cnic_new,
+            'alt_number' => $request->alt_phone
+        ];
+        $user = Lead::create($datalead);
+        $customer_id = $user->id;
+
         $client_data = [
             'project_id' => $client->project_id,
             'project_type_id' => $client->project_type_id,
             'inventory_id' => $client->inventory_id,
-            'customer_id' => Null,
+            'registration_number' => $client->registration_number,
+            'customer_id' => $customer_id,
             'user_id' => auth()->user()->id,
             'name' => $request->name_new,
             'email' => $request->email_new,
@@ -447,14 +474,40 @@ class ClientController extends Controller
             'created_by' => auth()->user()->id,
             'status' => 'mature',
         ];
+
         $client_res = Client::create($client_data);
+        $client_id = $client_res->id;
+
+        //Inventory Id Updates 
+        $installmentData = [
+            'client_id' => $client_id
+        ];
+
+        ClientInstallment::where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->where('client_id', $client->id)->where('status', 'not_paid')->update($installmentData);
+
+        // if ($client->project_type_id == "1") {
+        //     //building
+
+        // } elseif ($client->project_type_id == "2") {
+        //     //society
+        // } elseif ($client->project_type_id == "3") {
+        //     //farm_house
+        // } elseif ($client->project_type_id == "4") {
+        //     //property
+        // }
+        //Inventory Id Updates 
+
         //client Status update and create history
         Client::where('id', $request->client_trnafer_id)->update(['status' => 'transfered']);
         $client_histories_data = [
             'client_id' => $request->client_trnafer_id,
             'user_id' => auth()->user()->id,
+            'transfer_to' => $client_id,
+            'price' => $request->price,
+            'inventory_id' => $client->inventory_id,
+            'project_type_id' => $client->project_type_id,
             'status' => 'Transfered',
-            'comment' => 'Client Avtive Now',
+            'comment' => $request->comment,
             'is_read' => 0,
         ];
         ClientHistory::create($client_histories_data);
@@ -481,20 +534,22 @@ class ClientController extends Controller
     }
     public function active(Request $request, $id)
     {
+
+
         if (!empty($request->building_id)) {
             $project_id = json_decode($request->building_id)->id;
         } else {
-            $project_id = Null;
+            $project_id = $request->project_id;
         }
         if (!empty($request->building_id)) {
             $type_id = json_decode($request->building_id)->type_id;
         } else {
-            $type_id = Null;
+            $type_id = $request->project_type_id;
         }
         if (is_numeric($request->inventory_id)) {
             $inventory_id = $request->inventory_id;
         } else {
-            $inventory_id = Null;
+            $inventory_id = $request->inventory_id;
         }
 
         $client_data = [
@@ -522,34 +577,84 @@ class ClientController extends Controller
         ];
         $response = Client::where('id', $id)->update($client_data);
 
-        // Change Status In Inventory Sold
+        // Change Status In Inventory Sold   
         if ($type_id == '1') {
-            $update_status = [
-                'status' => 'sold',
-            ];
-            BuildingInventory::where('id', $request->inventory_id)->update($update_status);
-            $get_inventory_id = $request->inventory_id;
+            $soldornot = BuildingInventory::where('id', $request->inventory_id)->first();
+            if ($soldornot->status == 'available') {
+                $update_status = [
+                    'status' => 'sold',
+                ];
+                BuildingInventory::where('id', $request->inventory_id)->update($update_status);
+                $get_inventory_id = $request->inventory_id;
+                $get_inventory_project_type_id = $type_id;
+                $get_inventory_inventory_id = $get_inventory_id;
+                $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
+                $installment = installment($inventory->payment_plan_id);
+                if ($installment['total_price'] == $installment['payment_plan']->total_price) {
+                    $inventory->status = 'sold';
+                    $inventory->save();
+                    create_installment_plan($id, $project_id, $inventory_id, $installment, $request->down_payment);
+                }
+            }
         } elseif ($type_id == '2') {
-            $update_status = [
-                'status' => 'sold',
-            ];
-            SocietyInventory::where('id', $request->inventory_id)->update($update_status);
-            $get_inventory_id = $request->inventory_id;
+            $soldornot = SocietyInventory::where('id', $request->inventory_id)->first();
+            if ($soldornot->status == 'available') {
+                $update_status = [
+                    'status' => 'sold',
+                ];
+                SocietyInventory::where('id', $request->inventory_id)->update($update_status);
+                $get_inventory_id = $request->inventory_id;
+                $get_inventory_project_type_id = $type_id;
+                $get_inventory_inventory_id = $get_inventory_id;
+                $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
+                $installment = installment($inventory->payment_plan_id);
+                if ($installment['total_price'] == $installment['payment_plan']->total_price) {
+                    $inventory->status = 'sold';
+                    $inventory->save();
+                    create_installment_plan($id, $project_id, $inventory_id, $installment, $request->down_payment);
+                }
+            }
         } elseif ($type_id == '3') {
-            $update_status = [
-                'status' => 'sold',
-            ];
-            Farmhouse::where('id', $id)->update($update_status);
-            $get_inventory_id = $id;
+            $soldornot = Farmhouse::where('id', $request->inventory_id)->first();
+            if ($soldornot->status == 'available') {
+                $update_status = [
+                    'status' => 'sold',
+                ];
+                Farmhouse::where('id', $id)->update($update_status);
+                $get_inventory_id = $id;
+                $get_inventory_project_type_id = $type_id;
+                $get_inventory_inventory_id = $get_inventory_id;
+                $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
+                $installment = installment($inventory->payment_plan_id);
+                if ($installment['total_price'] == $installment['payment_plan']->total_price) {
+                    $inventory->status = 'sold';
+                    $inventory->save();
+                    create_installment_plan($id, $project_id, $inventory_id, $installment, $request->down_payment);
+                }
+            }
         } elseif ($type_id == '4') {
-            $update_status = [
-                'status' => 'sold',
-            ];
-            Property::where('id', $id)->update($update_status);
-            $get_inventory_id = $id;
+            $soldornot = Property::where('id', $request->inventory_id)->first();
+            if ($soldornot->status == 'available') {
+                $update_status = [
+                    'status' => 'sold',
+                ];
+                Property::where('id', $id)->update($update_status);
+                $get_inventory_id = $id;
+                $get_inventory_project_type_id = $type_id;
+                $get_inventory_inventory_id = $get_inventory_id;
+                $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
+                $installment = installment($inventory->payment_plan_id);
+                if ($installment['total_price'] == $installment['payment_plan']->total_price) {
+                    $inventory->status = 'sold';
+                    $inventory->save();
+                    create_installment_plan($id, $project_id, $inventory_id, $installment, $request->down_payment);
+                }
+            }
         }
+        // Change Status In Inventory Sold   
+        // Update Payment Plan
 
-        // Change Status In Inventory Sold
+        // Update Payment Plan
 
         // Change Status In Client
         $update_data = [
@@ -560,27 +665,12 @@ class ClientController extends Controller
             'client_id' => $request->id,
             'user_id' => auth()->user()->id,
             'status' => 'Active',
-            'comment' => 'Client Avtive Now',
+            'comment' => $request->comment,
             'is_read' => 0,
         ];
         ClientHistory::create($client_histories_data);
         // Change Status In Client
-        //Create Payment Plan
-        if ($response) {
-            $get_inventory_project_type_id = $type_id;
-            $get_inventory_inventory_id = $get_inventory_id;
 
-            $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
-            $installment = installment($inventory->payment_plan_id);
-            dd($installment);
-
-            if ($installment['total_price'] == $installment['payment_plan']->total_price) {
-                $inventory->status = 'sold';
-                $inventory->save();
-                dd($id, $installment, $request->down_payment);
-                create_installment_plan($id, $installment, $request->down_payment);
-            }
-        }
         if ($response) {
             return redirect()->route('clients.index', ['RolePrefix' => RolePrefix()])->with('success', 'Client Active Successfully');
         } else {
@@ -600,4 +690,17 @@ class ClientController extends Controller
             return redirect()->back()->with($this->message('Installment Update Error', 'danger'));
         }
     }
+
+    //Inventory Sale History
+    public function history()
+    {
+        $building = get_all_projects();
+        $users = get_user_by_projects();
+
+
+        $clientHistory = ClientHistory::with('from', 'to', 'sale_person')->whereIn('user_id', $users)->where('status', 'transfered')->get();
+
+        return view('user.client.sale_history.index', get_defined_vars());
+    }
+    //Inventory Sale History
 }

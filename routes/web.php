@@ -35,6 +35,7 @@ use App\Http\Controllers\User\TermController;
 use App\Http\Controllers\User\BannerController;
 use App\Http\Controllers\User\DealerController;
 use App\Models\lead;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/fake_leads', function () {
@@ -51,6 +52,13 @@ Route::get('/fake_leads', function () {
         lead::create($data);
     }
 });
+
+Route::get('/updateapp', function()
+{
+    Artisan::call('dump-autoload');
+    echo 'dump-autoload complete';
+});
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -108,12 +116,12 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //  Building Features      //
     //=========================//
     Route::group(['prefix' => 'building/feature', 'as' => 'feature.'], function () {
-        Route::get('/{key}', [FeatureController::class,'index'])->name('index');
-        Route::get('{key}/create', [FeatureController::class,'create'])->name('create');
-        Route::post('{key}/store', [FeatureController::class,'store'])->name('store');
-        Route::get('{key}/edit/{id}', [FeatureController::class,'edit'])->name('edit');
-        Route::put('{key}/update/{id}', [FeatureController::class,'update'])->name('update');
-        Route::delete('{key}/destroy/{id}', [FeatureController::class,'destroy'])->name('destroy');
+        Route::get('/{key}', [FeatureController::class, 'index'])->name('index');
+        Route::get('{key}/create', [FeatureController::class, 'create'])->name('create');
+        Route::post('{key}/store', [FeatureController::class, 'store'])->name('store');
+        Route::get('{key}/edit/{id}', [FeatureController::class, 'edit'])->name('edit');
+        Route::put('{key}/update/{id}', [FeatureController::class, 'update'])->name('update');
+        Route::delete('{key}/destroy/{id}', [FeatureController::class, 'destroy'])->name('destroy');
     });
 
     //=========================//
@@ -179,6 +187,11 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('/webhook/leads/{page_id}/{token}', [WebHookController::class, 'leads'])->name('webhook.leads');
     Route::get('/webhook/lead_assign_to_mangers/{page_id}/{token}', [WebHookController::class, 'lead_assign_to_mangers'])->name('webhook.lead_assign_to_mangers');
     Route::get('/webhook/lead_assign_to_sale_person/{page_id}/{token}', [WebHookController::class, 'lead_assign_to_sale_person'])->name('webhook.lead_assign_to_sale_person');
+    Route::get('/webhook/lead_assign_to_me/{page_id}/{token}', 'WebHookController@lead_assign_to_me')->name('webhook.lead_assign_to_me');
+    Route::get('/webhook/lead_assign_to_both/{page_id}/{token}', 'WebHookController@lead_assign_to_both')->name('webhook.lead_assign_to_both');
+    //Dublicate leads
+    Route::get('/webhook/dublicate', [WebHookController::class, 'dublicate'])->name('webhook.dublicate');
+    Route::get('/webhook/dublicate_store/{id}', [WebHookController::class, 'dublicate_store'])->name('webhook.dublicate_store');
 
     // //=============//
     // /* Leads */
@@ -203,6 +216,10 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('building_inventory/{id}', [ClientController::class, 'building_inventory']);
     Route::get('societyBlock_inventory/{id}', [ClientController::class, 'societyBlock_inventory']);
     // Route::get('client/building_inventory/{id}', [ClientController::class, 'building_inventory'])->name('client.building_inventory');
+   
+       //Inventory historys
+       Route::get('sale/history', [ClientController::class, 'history'])->name('lead.history');
+       //Inventory historys
     // //=============//
     // /* Clients */
     // //=============//
@@ -218,15 +235,15 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //====================//
 
     Route::group(['prefix' => 'targets', 'as' => 'target.'], function () {
-        Route::get('/', [TargetController::class,'my_targets'])->name('index');
-        Route::get('staff-targets', [TargetController::class,'staff_targets'])->name('staff_targets');
-        Route::get('assign-target', [TargetController::class,'assign_target'])->name('assign_target');
-        Route::post('store', [TargetController::class,'store'])->name('store');
-        Route::get('get-role-list/{role}', [TargetController::class,'get_role_list'])->name('get_role_list');
-        Route::get('edit-task/{id}', [TargetController::class,'edit_task'])->name('edit_task');
-        Route::post('update-task/{id}', [TargetController::class,'update_task'])->name('update_task');
-        Route::get('task-reports', [TargetController::class,'task_reports'])->name('task_reports');
-        Route::get('task/get-report/{id}', [TargetController::class,'get_report'])->name('get_report');
+        Route::get('/', [TargetController::class, 'my_targets'])->name('index');
+        Route::get('staff-targets', [TargetController::class, 'staff_targets'])->name('staff_targets');
+        Route::get('assign-target', [TargetController::class, 'assign_target'])->name('assign_target');
+        Route::post('store', [TargetController::class, 'store'])->name('store');
+        Route::get('get-role-list/{role}', [TargetController::class, 'get_role_list'])->name('get_role_list');
+        Route::get('edit-task/{id}', [TargetController::class, 'edit_task'])->name('edit_task');
+        Route::post('update-task/{id}', [TargetController::class, 'update_task'])->name('update_task');
+        Route::get('task-reports', [TargetController::class, 'task_reports'])->name('task_reports');
+        Route::get('task/get-report/{id}', [TargetController::class, 'get_report'])->name('get_report');
     });
 
 
