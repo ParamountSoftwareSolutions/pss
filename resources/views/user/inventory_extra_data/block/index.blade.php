@@ -28,16 +28,16 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->name }}</td>
                                                 <td><span class="badge
-                                                @if($data->type->name == 'building')
+                                                @if($data->project_type->name == 'building')
                                                         badge-blue
-                                                        @elseif($data->type->name == 'society')
+                                                        @elseif($data->project_type->name == 'society')
                                                         badge-success
-                                                        @elseif($data->type->name == 'farm_house')
+                                                        @elseif($data->project_type->name == 'farm_house')
                                                         badge-danger
                                                         @else
                                                         badge-primary
                                                         @endif
-                                                        ">{{ ucwords($data->type->name) }} </span></td>
+                                                        ">{{ ucwords($data->project_type->name) }} </span></td>
                                                 <td>
                                                     <a href="{{ route('block.edit', ['RolePrefix' => RolePrefix(), 'block' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">

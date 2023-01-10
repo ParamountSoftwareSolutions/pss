@@ -19,6 +19,7 @@ class CreateSocietiesTable extends Migration
             $table->string('developer')->nullable();
             $table->text('type')->nullable();
             $table->text('block')->nullable();
+            $table->text('size')->nullable();
             $table->foreignId('noc_type_id')->unsigned()->nullable()->constrained('noc_types')->nullOnDelete();
             $table->string('address')->nullable();
             $table->foreignId('country_id')->unsigned()->nullable()->constrained('countries')->nullOnDelete();

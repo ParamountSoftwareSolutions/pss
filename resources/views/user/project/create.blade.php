@@ -17,7 +17,7 @@
                                         <div class="form-group col-md-4">
                                             <label>Project Type</label>
                                             <select class="form-control" name="project_type_id">
-                                                <option value="">Select Project Type</option>
+                                                <option value=""disabled >Select Project Type</option>
                                                 @foreach($project_type as $data)
                                                     <option value="{{ $data->id }}">{{ ucwords($data->name) }}</option>
                                                 @endforeach
@@ -59,7 +59,7 @@
                                         <div class="form-group col-md-4 scociety">
                                             <label>NOC Types</label>
                                             <select class="form-control" name="noc_type_id">
-                                                <option value="">Select Society Types</option>
+                                                <option value=""disabled >Select Society Types</option>
                                                 @foreach($noc as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
                                                 @endforeach
@@ -73,7 +73,7 @@
                                         <div class="form-group col-md-4 building">
                                             <label>Building Floor</label>
                                             <select class="form-control select2" multiple="" name="floor_list[]">
-                                                <option value="">Select All Building Floors</option>
+                                                <option value=""disabled >Select All Building Floors</option>
                                                 @foreach($floor as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
                                                 @endforeach
@@ -83,9 +83,22 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4 building">
-                                            <label>Apartment Size</label>
+                                            <label>Building Types</label>
+                                            <select class="form-control select2" multiple="" name="building_type[]">
+                                                <option value=""disabled >Select Building Types</option>
+                                                @foreach($building_category as $data)
+                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-4 bed_select_box">
+                                            <label class="apertment">Apartment Size</label>
+                                            <label class="flats">Flat Size</label>
                                             <select class="form-control select2" multiple="" name="apartment_size[]">
-                                                <option value="">Select Bed</option>
+                                                <option value=""disabled >Select Bed</option>
                                                 <option value="1">1 Bed</option>
                                                 <option value="2">2 Bed</option>
                                                 <option value="3">3 Bed</option>
@@ -98,46 +111,10 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4 building">
-                                            <label>Building Types</label>
-                                            <select class="form-control select2" multiple="" name="type[]">
-                                                <option value="">Select Building Types</option>
-                                                @foreach($building_category as $data)
-                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('type')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4 scociety">
-                                            <label>Society Types</label>
-                                            <select class="form-control select2" multiple="" name="type[]">
-                                                <option value="">Select Society Types</option>
-                                                @foreach($society_category as $data)
-                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('type')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group col-md-4 formhuse">
-                                            <label>Formhouse Types</label>
-                                            <select class="form-control select2" multiple="" name="type[]">
-                                                <option value="">Select Farmhouse Types</option>
-                                                @foreach($formhouse_category as $data)
-                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('type')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
                                         <div class="form-group col-md-4 scociety">
                                             <label>Block</label>
-                                            <select class="form-control select2" multiple="" name="block[]">
-                                                <option value="">Select Society Block
+                                            <select class="form-control select2" multiple="" name="society_block[]">
+                                                <option value=""disabled>Select Block
                                                 </option>
                                                 @foreach($society_block as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
@@ -147,9 +124,21 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                        <div class="form-group col-md-4 scociety">
+                                            <label>Society Types</label>
+                                            <select class="form-control select2" multiple="" name="society_type[]">
+                                                <option value=""disabled>Select Society Types</option>
+                                                @foreach($society_category as $data)
+                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('type')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                         <div class="form-group col-md-4 formhuse">
-                                            <label>Block</label>
-                                            <select class="form-control select2" multiple="" name="block[]">
+                                            <label>Farmhouse Block</label>
+                                            <select class="form-control select2" multiple="" name="farmhouse_block[]">
                                                 <option value="">Select Block
                                                 </option>
                                                 @foreach($formhouse_block as $data)
@@ -160,16 +149,15 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4 scociety">
-                                            <label>Sizes</label>
-                                            <select class="form-control select2" multiple="" name="block[]">
-                                                <option value="">Select Sizes
-                                                </option>
-                                                @foreach($society_size as $data)
+                                        <div class="form-group col-md-4 formhuse">
+                                            <label>Formhouse Types</label>
+                                            <select class="form-control select2" multiple="" name="farmhouse_type[]">
+                                                <option value=""disabled >Select Farmhouse Types</option>
+                                                @foreach($formhouse_category as $data)
                                                     <option value="{{ $data->id }}">{{ $data->name }}</option>
                                                 @endforeach
                                             </select>
-                                            @error('block')
+                                            @error('type')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -265,17 +253,20 @@
                                             @empty
                                             @endforelse
                                         </div>
+                                        <div class="form-group col-md-12">
+                                            <div class="form-group">
+                                                <label>Description</label>
+                                                <textarea name="description" id="editor1" cols="30"
+                                                          rows="10">{!! old('description') !!}</textarea>
+                                                @error('description')
+                                                <div class="text-danger mt-2">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            {{-- Second Form --}}
-                            <div class="card all">
-                                <div class="card-header">
-                                    <h4>Property Types</h4>
-                                </div>
-                                <div class="card-body detail_append">
-
-                                </div>
+                                <div class="card-body shop_detail_append"></div>
+                                <div class="card-body detail_append"></div>
                             </div>
                             <!-- Multi Image Upload -->
                             <div class="card card-primary all">
@@ -302,7 +293,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card card-primary all">
+                            <div class="card card-primary building">
                                 <div class="card-header ui-sortable-handle">
                                     <h4>Floor Images <small style="color: red">* (ratio 1:1)</small></h4>
                                 </div>
@@ -454,6 +445,8 @@
             $('select[name="project_type_id"]').change(function () {
                 var project_type_id = $(this).val();
                 if(project_type_id){
+                    $('.shop_detail_append').empty();
+                    $('.detail_append').empty();
                     if(project_type_id == 1){
                         showBuilding()
                     }else if(project_type_id == 2){
@@ -467,30 +460,13 @@
                 $('.detail_append').empty();
                 var arr = $(this).val();
                 var all_detail = '';
-                var shop_detail = '<div class="section-title mt-0">Shop Details:</div>' +
-                    '          <div class="row">' +
-                    '              <div class="form-group col-md-4">' +
-                    '                  <div class="section-title mt-0">Floor</div>' +
-                    '                  <input type="text" class="form-control" name="floor"' +
-                    '                         placeholder="1st floor to top floor">' +
-                    '              </div>' +
-                    '              <div class="form-group col-md-4">' +
-                    '                  <div class="section-title mt-0">Area</div>' +
-                    '                  <input type="text" class="form-control" name="floor_area" placeholder="">' +
-                    '              </div>' +
-                    '              <div class="form-group col-md-4">' +
-                    '                  <div class="section-title mt-0">Price</div>' +
-                    '                  <input type="text" class="form-control" name="floor_price"' +
-                    '                         placeholder="PKR 1lak to PKR 20LAK">' +
-                    '              </div>' +
-                    '          </div>';
                 arr.forEach(function(val) {
                     var building = 'detail['+val+'][building]';
                     var area = 'detail['+val+'][area]';
                     var bed = 'detail['+val+'][bed]';
                     var bath = 'detail['+val+'][bath]';
                     var price = 'detail['+val+'][price]';
-                    var detail='<div class="section-title mt-0">'+val+' BED Flat Details:</div>' +
+                    var detail='<div class="section-title mt-0"><h6>'+val+' BED Flat Details:</h6></div>' +
                     '          <div class="row">' +
                     '              <div class="form-group col-md-4">' +
                     '                  <div class="section-title mt-0">Building</div>' +
@@ -521,10 +497,159 @@
                     '          </div>';
                     all_detail = all_detail+detail;
                 });
-
-
                 $('.detail_append').empty();
-                $('.detail_append').append(shop_detail+all_detail);
+                $('.detail_append').append(all_detail);
+            })
+            $('select[name="building_type[]"]').change(function () {
+                $('.shop_detail_append').empty();
+                var selectBox = $('select[name="building_type[]"]');
+                var values = $(this).val();
+                var labels = getSelectText(selectBox,values);
+                if(labels.includes('Apartment') && labels.includes('Flats')){
+                    errorMsg('You just can choose either Apartment or Flats');
+                    $('select[name="building_type[]"] option:selected').prop("selected", false);
+                    $('.bed_select_box').hide();
+                    return;
+                }else if(labels.includes('Apartment') || labels.includes('Flats')){
+                    $('.bed_select_box').show();
+                    if(labels.includes('Apartment')){
+                        $('.apertment').show();
+                        $('.flats').hide();
+                    }else if(labels.includes('Flats')){
+                        $('.apertment').hide();
+                        $('.flats').show();
+                    }
+                }else{
+                    $('.bed_select_box').hide();
+                }
+                var newArr = ['Apartment','Flats'];
+                newArr.forEach(function (val) {
+                    labels = labels.filter(function(item) {
+                        return item !== val;
+                    })
+                })
+                var shop_details = '';
+                labels.forEach(function (shop) {
+                    var name = shop.toLowerCase().replace(' ','_');
+                    var floor_name = 'shop_detail['+name+'][floor]';
+                    var floor_area = 'shop_detail['+name+'][floor_area]';
+                    var floor_price = 'shop_detail['+name+'][floor_price]';
+                    var single = '<div class="section-title mt-0"><h6>'+shop+' Details:</h6></div>' +
+                        '          <div class="row">' +
+                        '              <div class="form-group col-md-4">' +
+                        '                  <div class="section-title mt-0">'+shop+'</div>' +
+                        '                  <input type="text" class="form-control" name="'+floor_name+'"' +
+                        '                         placeholder="1st floor to top floor">' +
+                        '              </div>' +
+                        '              <div class="form-group col-md-4">' +
+                        '                  <div class="section-title mt-0">Area</div>' +
+                        '                  <input type="text" class="form-control" name="'+floor_area+'">' +
+                        '              </div>' +
+                        '              <div class="form-group col-md-4">' +
+                        '                  <div class="section-title mt-0">Price</div>' +
+                        '                  <input type="text" class="form-control" name="'+floor_price+'"' +
+                        '                         placeholder="PKR 1lak to PKR 20LAK">' +
+                        '              </div>' +
+                        '          </div>';
+                    shop_details = shop_details+single;
+                });
+                $('.shop_detail_append').append(shop_details);
+            })
+            $('select[name="farmhouse_type[]"]').change(function () {
+                $('.shop_detail_append').empty();
+                $('.detail_append').empty();
+                var selectBox = $('select[name="farmhouse_type[]"]');
+                var values = $(this).val();
+                var labels = getSelectText(selectBox,values);
+                var shop_details = '';
+                labels.forEach(function (shop) {
+                    var name = shop.toLowerCase().replace(' ','_');
+                    var area = 'farmhouse['+name+'][area]';
+                    var price = 'farmhouse['+name+'][price]';
+                    var single = '<div class="section-title mt-0"><h5>'+shop+' Details:</h5></div>' +
+                        '          <div class="row">' +
+                        '              <div class="form-group col-md-4">' +
+                        '                  <div class="section-title mt-0">Area</div>' +
+                        '                  <input type="text" class="form-control" name="'+area+'"' +
+                        '                         placeholder="">' +
+                        '              </div>'+
+                        '              <div class="form-group col-md-4">' +
+                        '                  <div class="section-title mt-0">Price</div>' +
+                        '                  <input type="text" class="form-control" name="'+price+'"' +
+                        '                         placeholder="PKR 1lak to PKR 20LAK">' +
+                        '              </div>' +
+                        '          </div>';
+                    shop_details = shop_details+single;
+                });
+                $('.shop_detail_append').append(shop_details);
+            })
+            $('select[name="society_type[]"]').change(function () {
+                $('.shop_detail_append').empty();
+                var selectBox = $('select[name="society_type[]"]');
+                var values = $(this).val();
+                var labels = getSelectText(selectBox,values);
+                var shop_details = '';
+                labels.forEach(function (shop) {
+                    var name = shop.toLowerCase().replace(' ','_');
+                    var price = 'society['+name+'][price]';
+                    var size = 'society['+name+'][sizes][0][size]';
+                    var size_price = 'society['+name+'][sizes][0][price]';
+                    var single = '<div class="section-title mt-0"><h5>'+shop+' Details:</h5></div>' +
+                        '          <div class="row">' +
+                        '              <div class="form-group col-md-4">' +
+                        '                  <div class="section-title mt-0">Price</div>' +
+                        '                  <input type="text" class="form-control" name="'+price+'"' +
+                        '                         placeholder="PKR 1lak to PKR 20LAK">' +
+                        '              </div>' +
+                        '          </div>' +
+                        '          <div class="ml-2 add_size">' +
+                        '              <div class="row">' +
+                        '                  <div class="form-group col-md-4">' +
+                        '                      <div class="section-title mt-0">Size</div>' +
+                        '                      <input type="text" class="form-control" name="'+size+'"' +
+                        '                         placeholder="3 Marla / 5 Marla">' +
+                        '                      </div>' +
+                        '                  <div class="form-group col-md-4">' +
+                        '                      <div class="section-title mt-0">Price</div>' +
+                        '                      <input type="text" class="form-control" name="'+size_price+'">' +
+                        '                  </div>' +
+                        '              </div>' +
+                        '              <input type="hidden" value="0" name="'+name+'_add_new">' +
+                        '              <button type="button" data-val="'+name+'" class="mb-2 btn btn-light add_new '+name+'_add_new">+</button>' +
+                        '              <button type="button" data-val="'+name+'" class="mb-2 btn btn-light remove">-</button>' +
+                        '          </div>';
+                    shop_details = shop_details+single;
+                });
+                $('.shop_detail_append').append(shop_details);
+            })
+            $('body').on('click','.add_new',function () {
+                var name = $(this).data('val');
+                var i = Number($('input[name="'+name+'_add_new"]').val());
+                i = i+1;
+                var size = 'society['+name+'][sizes]['+i+'][size]';
+                var size_price = 'society['+name+'][sizes]['+i+'][price]';
+                var add_new = '' +
+                    '<div class="row">' +
+                    '   <div class="form-group col-md-4">' +
+                    '       <div class="section-title mt-0">Size</div>' +
+                    '       <input type="text" class="form-control" name="'+size+'"' +
+                    '           placeholder="3 Marla / 5 Marla">' +
+                    '   </div>' +
+                    '   <div class="form-group col-md-4">' +
+                    '       <div class="section-title mt-0">Price</div>' +
+                    '       <input type="text" class="form-control" name="'+size_price+'">' +
+                    '       </div>' +
+                    '   </div>';
+
+                $('input[name="'+name+'_add_new"]').val(i);
+                $('.'+name+'_add_new').before(add_new);
+            })
+            $('body').on('click','.remove',function () {
+                var name = $(this).data('val');
+                var i = Number($('input[name="'+name+'_add_new"]').val());
+                i = i-1;
+                $('input[name="'+name+'_add_new"]').val(i);
+                $('.'+name+'_add_new').prev().remove();
             })
         })
         function hideAll(){
@@ -532,6 +657,7 @@
             $('.building').hide();
             $('.scociety').hide();
             $('.formhuse').hide();
+            $('.bed_select_box').hide();
         }
         function showBuilding(){
             $('.scociety').hide();
@@ -542,14 +668,27 @@
         function showSociety(){
             $('.building').hide();
             $('.formhuse').hide();
+            $('.bed_select_box').hide();
             $('.all').show();
             $('.scociety').show();
         }
         function showFarmhouse(){
             $('.building').hide();
             $('.scociety').hide();
+            $('.bed_select_box').hide();
             $('.all').show();
             $('.formhuse').show();
+        }
+        function getSelectText(selectBox,values) {
+            var labels = [];
+            for (var i = 0; i < values.length; i++) {
+                var label = selectBox.find('option[value="'+values[i]+'"]').text();
+                labels.push(label);
+            }
+            return labels;
+        }
+        function isCommon(arr1, arr2) {
+            return arr1.some(item => arr2.includes(item))
         }
     </script>
 @endsection

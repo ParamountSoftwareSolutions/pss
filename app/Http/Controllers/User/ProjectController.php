@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Middleware\RolePrefix;
 use App\Models\Block;
 use App\Models\Building;
+use App\Models\BuildingDetail;
+use App\Models\BuildingDetailFile;
 use App\Models\BuildingFloor;
 use App\Models\BuildingInventory;
 use App\Models\Category;
@@ -16,6 +18,7 @@ use App\Models\NocType;
 use App\Models\Project;
 use App\Models\ProjectAssignUser;
 use App\Models\ProjectType;
+use App\Models\Property;
 use App\Models\Size;
 use App\Models\Society;
 use App\Models\SocietyInventory;
@@ -89,12 +92,13 @@ class ProjectController extends Controller
     {
         $request->validate([
             'project_type_id' => 'required',
-            'project_type_id' => 'required',
-            'project_type_id' => 'required',
-            'project_type_id' => 'required',
-            'project_type_id' => 'required',
-            'project_type_id' => 'required',
+            'name' => 'required',
+            'address' => 'required',
+            'total_area' => 'required',
         ]);
+        if($request->project_type_id == 4){
+            return redirect()->back()->with($this->message('Project Type is not defined', 'warning'));
+        }
 
         $project_limit = Project::get();
         if (Auth::user()->project == count($project_limit)) {
@@ -112,12 +116,142 @@ class ProjectController extends Controller
 
             $type = ProjectType::findOrFail($request->project_type_id)->name;
 
+
             if ($type == 'society') {
-                Society::create(['project_id' => $project->id]);
+                $request->validate([
+                    'noc_type_id' => 'required',
+                    'society_type' => 'required',
+                    'society_block' => 'required',
+                ]);
+                $society = [
+                    'project_id' => $project->id,
+                    'address' => $request->address,
+                    'area' => $request->total_area,
+                    'developer' => $request->developer,
+                    'noc_type_id' => $request->noc_type_id,
+                    'type' => json_encode($request->society_type),
+                    'block' => json_encode($request->society_block),
+                    'size' => json_encode($request->society_size),
+                    'created_by' => Auth::user()->id,
+                    ];
+                $response = Society::create($society);
+                $data = [];
+                foreach ($request->society as $key => $detail){
+                    $size = [];
+                    foreach ($detail['sizes'] as $key1 => $val){
+                        $size[$key1 ] = ['size'=>$val['size'],'price'=>$val['price']];
+                    }
+                    $data[$key] = ['price' => $detail['price'], 'sizes' => $size];
+                }
+                $data = json_encode($data);
             } elseif ($type == 'building') {
-                Building::create(['project_id' => $project->id]);
+                $request->validate([
+                    'floor_list' => 'required',
+                    'apartment_size' => 'required',
+                    'building_type' => 'required',
+                ]);
+                $building = [
+                    'project_id' => $project->id,
+                    'address' => $request->address,
+                    'area' => $request->total_area,
+                    'developer' => $request->developer,
+                    'type' => json_encode($request->building_type),
+                    'floor_list' => json_encode($request->floor_list),
+                    'apartment_size' => json_encode($request->apartment_size),
+                    'created_by' => Auth::user()->id,
+                ];
+                $response = Building::create($building);
+                $data = [];
+                foreach ($request->detail as $key => $detail){
+                    $data['bed'][$key] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $key, 'bath' => $detail['bath'], 'price' => $detail['price']];
+                }
+                foreach ($request->shop_detail as $key => $detail){
+                    $data[$key] = ['floor' => $detail['floor'], 'area' => $detail['floor_area'], 'price' => $detail['floor_price']];
+                }
+                $data = json_encode($data);
+            } elseif ($type == 'farm_house') {
+                $request->validate([
+                    'farmhouse_type' => 'required',
+                    'farmhouse_block' => 'required',
+                ]);
+                $farmhouse = [
+                    'project_id' => $project->id,
+                    'address' => $request->address,
+                    'area' => $request->total_area,
+                    'developer' => $request->developer,
+                    'type' => json_encode($request->farmhouse_type),
+                    'block' => json_encode($request->farmhouse_block),
+                    'created_by' => Auth::user()->id,
+                ];
+                $response = Farmhouse::create($farmhouse);
+                $data = [];
+                foreach ($request->farmhouse as $key => $detail){
+                    $data[$key] = ['area' => $detail['area'],'price' => $detail['price']];
+                }
+                $data = json_encode($data);
             }
-            if ($project) {
+
+            $plot_feature = isset($request->plot_feature) ? json_encode($request->plot_feature) : null;
+            $communication_feature = isset($request->communication_feature) ? json_encode($request->communication_feature) : null;
+            $community_feature = isset($request->community_feature) ? json_encode($request->community_feature) : null;
+            $health_feature = isset($request->health_feature) ? json_encode($request->health_feature) : null;
+            $other_feature = isset($request->other_feature) ? json_encode($request->other_feature) : null;
+            $extra_detail = [
+                'project_id' => $project->id,
+                'address' => $request->address,
+                'price' => $request->price,
+                'developer' => $request->developer,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'description' => $request->description,
+                'property_type' => $data,
+                'plot_feature' => $plot_feature,
+                'communication_feature' => $communication_feature,
+                'community_feature' => $community_feature,
+                'health_feature' => $health_feature,
+                'other_feature' => $other_feature,
+                'created_by' => Auth::user()->id,
+            ];
+            $building_detail = BuildingDetail::create($extra_detail);
+
+            if ($request->has('logo_images')) {
+                foreach ($request->file('logo_images') as $file) {
+                    $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                    $file->move('public/images/building_detail/logo', $filename);
+                    $file = 'images/building_detail/logo/' . $filename;
+                    BuildingDetailFile::create([
+                        'building_detail_id' => $building_detail->id,
+                        'file' => $file,
+                        'type' => 'logo'
+                    ]);
+                }
+            }
+            if ($request->has('images')) {
+                foreach ($request->file('images') as $file) {
+                    $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                    $file->move('public/images/building_detail/payment', $filename);
+                    $file = 'images/building_detail/payment/' . $filename;
+                    BuildingDetailFile::create([
+                        'building_detail_id' => $building_detail->id,
+                        'file' => $file,
+                        'type' => 'payment_plan'
+                    ]);
+                }
+            }
+
+            if ($request->project_type_id == 1 && $request->has('floor_images')) {
+                foreach ($request->file('floor_images') as $file) {
+                    $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                    $file->move('public/images/building_detail/floor/', $filename);
+                    $file = 'images/building_detail/floor/' . $filename;
+                    BuildingDetailFile::create([
+                        'building_detail_id' => $building_detail->id,
+                        'file' => $file,
+                        'type' => 'floor_plan'
+                    ]);
+                }
+            }
+            if ($response) {
                 return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has created successfully', 'alert' => 'success']);
             } else {
                 return redirect()->back()->with(['message' => 'Project create delete', 'alert' => 'success']);
@@ -144,9 +278,37 @@ class ProjectController extends Controller
      */
     public function edit($id)
     {
-        $project = Project::findOrFail($id);
-        $project_type = ProjectType::latest()->get();
-        return view('user.project.edit', compact('project', 'project_type'));
+        $project = Project::with('building_detail')->findOrFail($id);
+        if($project->type_id == 1){
+            $project_detail = Building::where('project_id',$id)->first();
+        }
+        elseif($project->type_id == 2){
+            $project_detail = Society::where('project_id',$id)->first();
+        }
+        elseif($project->type_id == 3){
+            $project_detail = Farmhouse::where('project_id',$id)->first();
+        }else{
+            $project_detail = Property::where('project_id',$id)->first();
+        }
+
+        $floor = BuildingFloor::get();
+        $building_category = Category::where('project_type_id', project_type('building'))->get();
+        $building_size = Size::where('project_type_id', project_type('building'))->where('unit', 'bed')->get();
+
+        $society_size = Size::where('project_type_id', project_type('society'))->get();
+        $society_category = Category::where('project_type_id', project_type('society'))->get();
+        $noc = NocType::get();
+        $society_block = Block::where('project_type_id', project_type('society'))->get();
+
+        $formhouse_block = Block::where('project_type_id', project_type('farm_house'))->get();
+        $formhouse_category = Category::where('project_type_id', project_type('farm_house'))->get();
+
+        $plot_features = Feature::where('key','plot')->get();
+        $communication_features = Feature::where('key','communication')->get();
+        $community_features = Feature::where('key','community')->get();
+        $health_features = Feature::where('key','health')->get();
+        $other_features = Feature::where('key','other')->get();
+        return view('user.project.edit', get_defined_vars());
 
     }
 
@@ -161,16 +323,153 @@ class ProjectController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'type_id' => 'required',
+            'address' => 'required',
+            'total_area' => 'required',
         ]);
         $project = Project::findOrFail($id);
         $project->name = $request->name;
-        $project->type_id = $request->type_id;
         $project->save();
-        if ($project) {
-            return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has updated successfully', 'alert' => 'success']);
+        $type = ProjectType::findOrFail($project->type_id)->name;
+
+        if ($type == 'society') {
+            $request->validate([
+                'noc_type_id' => 'required',
+                'society_type' => 'required',
+                'society_block' => 'required',
+            ]);
+            $society = [
+                'project_id' => $project->id,
+                'address' => $request->address,
+                'area' => $request->total_area,
+                'developer' => $request->developer,
+                'noc_type_id' => $request->noc_type_id,
+                'type' => json_encode($request->society_type),
+                'block' => json_encode($request->society_block),
+                'size' => json_encode($request->society_size),
+                'created_by' => Auth::user()->id,
+            ];
+            $response = Society::where('project_id',$id)->first()->update($society);
+            $data = [];
+            foreach ($request->society as $key => $detail){
+                $size = [];
+                foreach ($detail['sizes'] as $key1 => $val){
+                    $size[$key1 ] = ['size'=>$val['size'],'price'=>$val['price']];
+                }
+                $data[$key] = ['price' => $detail['price'], 'sizes' => $size];
+            }
+            $data = json_encode($data);
+        } elseif ($type == 'building') {
+            $request->validate([
+                'floor_list' => 'required',
+                'apartment_size' => 'required',
+                'building_type' => 'required',
+            ]);
+            $building = [
+                'project_id' => $project->id,
+                'address' => $request->address,
+                'area' => $request->total_area,
+                'developer' => $request->developer,
+                'type' => json_encode($request->building_type),
+                'floor_list' => json_encode($request->floor_list),
+                'apartment_size' => json_encode($request->apartment_size),
+                'created_by' => Auth::user()->id,
+            ];
+            $response = Building::where('project_id',$id)->first()->update($building);
+            $data = [];
+            foreach ($request->detail as $key => $detail){
+                $data['bed'][$key] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $key, 'bath' => $detail['bath'], 'price' => $detail['price']];
+            }
+            foreach ($request->shop_detail as $key => $detail){
+                $data[$key] = ['floor' => $detail['floor'], 'area' => $detail['floor_area'], 'price' => $detail['floor_price']];
+            }
+            $data = json_encode($data);
+        } elseif ($type == 'farm_house') {
+            $request->validate([
+                'farmhouse_type' => 'required',
+                'farmhouse_block' => 'required',
+            ]);
+            $farmhouse = [
+                'project_id' => $project->id,
+                'address' => $request->address,
+                'area' => $request->total_area,
+                'developer' => $request->developer,
+                'type' => json_encode($request->farmhouse_type),
+                'block' => json_encode($request->farmhouse_block),
+                'created_by' => Auth::user()->id,
+            ];
+            $response = Farmhouse::where('project_id',$id)->first()->update($farmhouse);
+            $data = [];
+            foreach ($request->farmhouse as $key => $detail){
+                $data[$key] = ['area' => $detail['area'],'price' => $detail['price']];
+            }
+            $data = json_encode($data);
+        }
+
+        $plot_feature = isset($request->plot_feature) ? json_encode($request->plot_feature) : null;
+        $communication_feature = isset($request->communication_feature) ? json_encode($request->communication_feature) : null;
+        $community_feature = isset($request->community_feature) ? json_encode($request->community_feature) : null;
+        $health_feature = isset($request->health_feature) ? json_encode($request->health_feature) : null;
+        $other_feature = isset($request->other_feature) ? json_encode($request->other_feature) : null;
+        $extra_detail = [
+            'project_id' => $project->id,
+            'address' => $request->address,
+            'price' => $request->price,
+            'developer' => $request->developer,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'description' => $request->description,
+            'property_type' => $data,
+            'plot_feature' => $plot_feature,
+            'communication_feature' => $communication_feature,
+            'community_feature' => $community_feature,
+            'health_feature' => $health_feature,
+            'other_feature' => $other_feature,
+            'created_by' => Auth::user()->id,
+        ];
+        $building_detail = BuildingDetail::where('project_id',$id)->first()->update($extra_detail);
+        if($building_detail){
+            if ($request->has('logo_images')) {
+                foreach ($request->file('logo_images') as $file) {
+                    $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                    $file->move('public/images/building_detail/logo', $filename);
+                    $file = 'images/building_detail/logo/' . $filename;
+                    BuildingDetailFile::create([
+                        'building_detail_id' => $project->building_detail->id,
+                        'file' => $file,
+                        'type' => 'logo'
+                    ]);
+                }
+            }
+            if ($request->has('images')) {
+                foreach ($request->file('images') as $file) {
+                    $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                    $file->move('public/images/building_detail/payment', $filename);
+                    $file = 'images/building_detail/payment/' . $filename;
+                    BuildingDetailFile::create([
+                        'building_detail_id' => $project->building_detail->id,
+                        'file' => $file,
+                        'type' => 'payment_plan'
+                    ]);
+                }
+            }
+
+            if ($project->type_id == 1 && $request->has('floor_images')) {
+                foreach ($request->file('floor_images') as $file) {
+                    $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
+                    $file->move('public/images/building_detail/floor/', $filename);
+                    $file = 'images/building_detail/floor/' . $filename;
+                    BuildingDetailFile::create([
+                        'building_detail_id' => $project->building_detail->id,
+                        'file' => $file,
+                        'type' => 'floor_plan'
+                    ]);
+                }
+            }
+        }
+        if ($response) {
+            return redirect()->route('project.index', ['RolePrefix' => RolePrefix()])->with(['message' => 'Project has created successfully', 'alert' => 'success']);
         } else {
-            return redirect()->back()->with(['message' => 'Project has not updated, something went wrong. Try again', 'alert' => 'error']);
+            return redirect()->back()->with(['message' => 'Project create delete', 'alert' => 'success']);
         }
     }
 
