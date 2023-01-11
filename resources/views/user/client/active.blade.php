@@ -13,7 +13,7 @@
                         @csrf
                         <!-- @method('PUT') -->
                         <?php if ($client->inventory_id) { ?>
-                            <input type="hidden" name="inventory_id" value="{{$client->inventory_id}}">
+                            <input type="hidden" name="client_inventory_id" value="{{$client->inventory_id}}">
                             <input type="hidden" name="project_id" value="{{$client->project_id}}">
                             <input type="hidden" name="project_type_id" value="{{$client->project_type_id}}">
                         <?php } else { ?>
@@ -52,8 +52,8 @@
                                         <div class="form-group col-md-4" id="selectBuildingFloorInventoryHide">
                                             <div class="form-group">
                                                 <label>Building Floor Invetory</label>
-                                                <select class="form-control" name="inventory_id" id="selectBuildingFloorInventory" required>
-                                                    <option label="" selected>Select Building Floor Invetory ... </option>
+                                                <select class="form-control" name="building_inventory_id" id="selectBuildingFloorInventory" required>
+                                                    <option label=""  value="" selected>Select Building Floor Invetory ... </option>
                                                 </select>
                                             </div>
                                         </div>
@@ -71,7 +71,7 @@
                                         <div class="form-group col-md-4" id="blockSocity">
                                             <div class="form-group">
                                                 <label>Society Inventory</label>
-                                                <select class="form-control" name="inventory_id" id="selectblock_id" required>
+                                                <select class="form-control" name="society_inventory_id" id="selectblock_id" required>
                                                     <option label="" value="" selected>Select Society Inventory ...</option>
                                                 </select>
                                             </div>

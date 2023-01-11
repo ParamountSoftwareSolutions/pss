@@ -19,9 +19,10 @@ class EmployeeController extends Controller
     {
         //$building = Helpers::custom_building_detail();
         //$employee_list = Employee::whereIn('building_id', $building->pluck('id')->toArray())->get()->pluck('user_id')->toArray();
-        $employee = User::whereHas('roles', function ($q) {
-                $q->whereIn('name', ['sale_person', 'office_staff', 'accountant']);
-            })->get();
+        // $employee = User::whereHas('roles', function ($q) {
+        //         $q->whereIn('name', ['sale_person', 'office_staff', 'accountant']);
+        //     })->get();
+        $employee = User::get();
         //->whereIn('id', $employee_list)->get();
         return view('user.employee.index', compact('employee'));
     }

@@ -23,6 +23,9 @@ class CreateUsersTable extends Migration
             $table->string('phone_number')->unique()->nullable();
             $table->string('alt_number')->unique()->nullable();
             $table->string('address')->nullable();
+            $table->string('account_no')->nullable();
+            $table->string('salary')->nullable();
+            $table->string('commission')->nullable();
             $table->foreignId('country_id')->unsigned()->nullable()->constrained('countries')->nullOnDelete();
             $table->foreignId('state_id')->unsigned()->nullable()->constrained('states')->nullOnDelete();
             $table->foreignId('city_id')->unsigned()->nullable()->constrained('cities')->nullOnDelete();

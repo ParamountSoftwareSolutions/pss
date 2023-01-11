@@ -14,6 +14,7 @@ class CitySeeder extends Seeder
      */
     public function run()
     {
+        DB::disableQueryLog();
         $path = public_path("assets/sql/cities.sql");
         DB::unprepared(file_get_contents($path));
     }

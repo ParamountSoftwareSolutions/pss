@@ -9,6 +9,7 @@ use DB;
 use App\Models\StaffSalary;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB as FacadesDB;
 use Rap2hpoutre\FastExcel\FastExcel;
 
 class PayrollController extends Controller
@@ -146,13 +147,13 @@ class PayrollController extends Controller
     public function salary()
     {
 
-        $users = DB::table('users')
+        $users = FacadesFacadesDB::table('users')
             ->join('staff_salaries', 'users.id', '=', 'staff_salaries.user_id')
             ->select('users.*', 'staff_salaries.*')
             ->get();
-        $userList = DB::table('users')->get();
-        $permission_lists = DB::table('permission_lists')->get();
-        return view('user.payroll.employeesalary', compact('users', 'userList', 'permission_lists'));
+        $userList = FacadesFacadesDB::table('users')->get();
+        // $permission_lists = FacadesDB::table('permission_lists')->get();
+        return view('user.payroll.employeesalary', compact('users', 'userList'));
     }
 
     // save record
@@ -174,7 +175,7 @@ class PayrollController extends Controller
             'labour_welfare' => 'required|string|max:255',
         ]);
 
-        DB::beginTransaction();
+        FacadesFacadesDB::beginTransaction();
         try {
             $salary = StaffSalary::updateOrCreate(['user_id' => $request->user_id]);
             $salary->name              = $request->name;
@@ -193,11 +194,11 @@ class PayrollController extends Controller
             $salary->labour_welfare    = $request->labour_welfare;
             $salary->save();
 
-            DB::commit();
+            FacadesDB::commit();
             //Toastr::success('Create new Salary successfully :)','Success');
             return redirect()->back();
         } catch (\Exception $e) {
-            DB::rollback();
+            FacadesDB::rollback();
             //Toastr::error('Add Salary fail :)','Error');
             return redirect()->back();
         }
@@ -206,7 +207,7 @@ class PayrollController extends Controller
     // salary view detail
     public function salaryView($user_id)
     {
-        $users = DB::table('users')
+        $users = FacadesDB::table('users')
             ->join('staff_salaries', 'users.id', '=', 'staff_salaries.user_id')
             //->join('profile_information', 'users.id', '=', 'profile_information.user_id')
             ->select('users.*', 'staff_salaries.*')
@@ -219,7 +220,7 @@ class PayrollController extends Controller
     // update record
     public function updateRecord(Request $request)
     {
-        DB::beginTransaction();
+        FacadesDB::beginTransaction();
         try {
             $update = [
 
@@ -242,11 +243,11 @@ class PayrollController extends Controller
 
 
             StaffSalary::where('id', $request->id)->update($update);
-            DB::commit();
+            FacadesDB::commit();
             //Toastr::success('Salary updated successfully :)','Success');
             return redirect()->back();
         } catch (\Exception $e) {
-            DB::rollback();
+            FacadesDB::rollback();
             //Toastr::error('Salary update fail :)','Error');
             return redirect()->back();
         }
@@ -255,16 +256,16 @@ class PayrollController extends Controller
     // delete record
     public function deleteRecord(Request $request)
     {
-        DB::beginTransaction();
+        FacadesDB::beginTransaction();
         try {
 
             StaffSalary::destroy($request->id);
 
-            DB::commit();
+            FacadesDB::commit();
             //Toastr::success('Salary deleted successfully :)','Success');
             return redirect()->back();
         } catch (\Exception $e) {
-            DB::rollback();
+            FacadesDB::rollback();
             //Toastr::error('Salary deleted fail :)','Error');
             return redirect()->back();
         }

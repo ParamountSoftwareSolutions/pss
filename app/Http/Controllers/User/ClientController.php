@@ -483,7 +483,6 @@ class ClientController extends Controller
                 'created_by' => auth()->user()->id,
                 'status' => 'mature',
             ];
-
         } else {
 
 
@@ -531,11 +530,11 @@ class ClientController extends Controller
         $installmentData = [
             'client_id' => $client_id
         ];
-//         $check  = ClientInstallment::where('project_type_id', $request->project_type_id)->where('inventory_id', $request->inventory_id)->where('client_id', $client->id)->where('status', 'not_paid')->get();
-// echo '<pre>';
-// print_r($check->toArray());
-// echo '<pre>';
-// die();
+        //         $check  = ClientInstallment::where('project_type_id', $request->project_type_id)->where('inventory_id', $request->inventory_id)->where('client_id', $client->id)->where('status', 'not_paid')->get();
+        // echo '<pre>';
+        // print_r($check->toArray());
+        // echo '<pre>';
+        // die();
         ClientInstallment::where('project_id', $request->project_id)->where('inventory_id', $request->inventory_id)->where('client_id', $request->client_trnafer_id)->where('status', 'not_paid')->update($installmentData);
 
         // if ($client->project_type_id == "1") {
@@ -588,9 +587,10 @@ class ClientController extends Controller
     public function active(Request $request, $id)
     {
 
+
         $request->validate([
             // 'building_id' => 'required',
-            'inventory_id' => 'required',
+            // 'inventory_id' => 'required',
 
             'name_new' => 'required',
             'phone_number_new' => 'required|unique:leads,number',
@@ -614,12 +614,17 @@ class ClientController extends Controller
         } else {
             $type_id = $request->project_type_id;
         }
-        if (is_numeric($request->inventory_id)) {
-            $inventory_id = $request->inventory_id;
-        } else {
-            $inventory_id = $request->inventory_id;
-        }
 
+        if (!empty($request->client_inventory_id)) {
+            $inventory_id = $request->client_inventory_id;
+        } elseif (!empty($request->building_inventory_id)) {
+            $inventory_id = $request->building_inventory_id;
+        } elseif (!empty($request->society_inventory_id)) {
+            $inventory_id = $request->society_inventory_id;
+        }
+        if (empty($inventory_id)) {
+            return redirect()->back()->with($this->message('Select Inventory First', 'error'));
+        }
         $client_data = [
             'project_id' => $project_id,
             'project_type_id' => $type_id,
