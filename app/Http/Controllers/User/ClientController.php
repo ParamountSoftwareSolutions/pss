@@ -264,9 +264,9 @@ class ClientController extends Controller
         $client = Client::findOrFail($id);
 
         if ($client->status == "transfered" || $client->status == 'Transfered') {
-            $client_installment = ClientInstallment::where('client_id', $id)->where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
+            $client_installment = ClientInstallment::where('client_id', $id)->where('project_id', $client->project_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
         } else {
-            $client_installment = ClientInstallment::where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
+            $client_installment = ClientInstallment::where('project_id', $client->project_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
         }
         return view('user.client.show', get_defined_vars());
     }
@@ -536,7 +536,7 @@ class ClientController extends Controller
 // print_r($check->toArray());
 // echo '<pre>';
 // die();
-        ClientInstallment::where('project_type_id', $request->project_type_id)->where('inventory_id', $request->inventory_id)->where('client_id', $request->client_trnafer_id)->where('status', 'not_paid')->update($installmentData);
+        ClientInstallment::where('project_id', $request->project_id)->where('inventory_id', $request->inventory_id)->where('client_id', $request->client_trnafer_id)->where('status', 'not_paid')->update($installmentData);
 
         // if ($client->project_type_id == "1") {
         //     //building

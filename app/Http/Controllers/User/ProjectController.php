@@ -45,21 +45,21 @@ class ProjectController extends Controller
      */
     public function create()
     {
-//        $i=1;
-//        $x=0;
-//        $n=0;
-//        while($i<10){
-//            if($i<=5){
-//                echo $i."<br>";
-//            }
-//            $i++;
-//            if($i>5){
-//                $x=$x+2;
-//                $n = $i-$x;
-//                echo $n."<br>";
-//            }
-//        }
-//        die();
+        //        $i=1;
+        //        $x=0;
+        //        $n=0;
+        //        while($i<10){
+        //            if($i<=5){
+        //                echo $i."<br>";
+        //            }
+        //            $i++;
+        //            if($i>5){
+        //                $x=$x+2;
+        //                $n = $i-$x;
+        //                echo $n."<br>";
+        //            }
+        //        }
+        //        die();
         $project = Project::get();
         $project_type = ProjectType::latest()->get();
         $floor = BuildingFloor::get();
@@ -74,11 +74,11 @@ class ProjectController extends Controller
         $formhouse_block = Block::where('project_type_id', project_type('farm_house'))->get();
         $formhouse_category = Category::where('project_type_id', project_type('farm_house'))->get();
 
-        $plot_features = Feature::where('key','plot')->get();
-        $communication_features = Feature::where('key','communication')->get();
-        $community_features = Feature::where('key','community')->get();
-        $health_features = Feature::where('key','health')->get();
-        $other_features = Feature::where('key','other')->get();
+        $plot_features = Feature::where('key', 'plot')->get();
+        $communication_features = Feature::where('key', 'communication')->get();
+        $community_features = Feature::where('key', 'community')->get();
+        $health_features = Feature::where('key', 'health')->get();
+        $other_features = Feature::where('key', 'other')->get();
         return view('user.project.create', get_defined_vars());
     }
 
@@ -90,15 +90,15 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-////        dd($request->all());
-//        dd(json_encode($request->apartment_size));
+        ////        dd($request->all());
+        //        dd(json_encode($request->apartment_size));
         $request->validate([
             'project_type_id' => 'required',
             'name' => 'required',
             'address' => 'required',
             'total_area' => 'required',
         ]);
-        if($request->project_type_id == 4){
+        if ($request->project_type_id == 4) {
             return redirect()->back()->with($this->message('Project Type is not defined', 'warning'));
         }
 
@@ -134,14 +134,14 @@ class ProjectController extends Controller
                     'type' => json_encode($request->society_type),
                     'block' => json_encode($request->society_block),
                     'created_by' => Auth::user()->id,
-                    ];
+                ];
                 $response = Society::create($society);
                 $data = [];
-                if(!empty($request->society)){
-                    foreach ($request->society as $key => $detail){
+                if (!empty($request->society)) {
+                    foreach ($request->society as $key => $detail) {
                         $size = [];
-                        foreach ($detail['sizes'] as $key1 => $val){
-                            $size[$key1 ] = ['size'=>$val['size'],'price'=>$val['price']];
+                        foreach ($detail['sizes'] as $key1 => $val) {
+                            $size[$key1] = ['size' => $val['size'], 'price' => $val['price']];
                         }
                         $data[$key] = ['price' => $detail['price'], 'sizes' => $size];
                     }
@@ -165,14 +165,17 @@ class ProjectController extends Controller
                 ];
                 $response = Building::create($building);
                 $data = [];
-                if(!empty($request->detail)){
-                    foreach ($request->detail as $key => $detail){
+                if (!empty($request->detail)) {
+                    foreach ($request->detail as $key => $detail) {
                         $data['bed'][$key] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $key, 'bath' => $detail['bath'], 'price' => $detail['price']];
                     }
-                    foreach ($request->shop_detail as $key => $detail){
+                }
+                if (!empty($request->shop_detail)) {
+                    foreach ($request->shop_detail as $key => $detail) {
                         $data[$key] = ['floor' => $detail['floor'], 'area' => $detail['floor_area'], 'price' => $detail['floor_price']];
                     }
                 }
+
                 $data = json_encode($data);
             } elseif ($type == 'farm_house') {
                 $request->validate([
@@ -190,9 +193,9 @@ class ProjectController extends Controller
                 ];
                 $response = Farmhouse::create($farmhouse);
                 $data = [];
-                if(!empty($request->farmhouse)){
-                    foreach ($request->farmhouse as $key => $detail){
-                        $data[$key] = ['area' => $detail['area'],'price' => $detail['price']];
+                if (!empty($request->farmhouse)) {
+                    foreach ($request->farmhouse as $key => $detail) {
+                        $data[$key] = ['area' => $detail['area'], 'price' => $detail['price']];
                     }
                 }
                 $data = json_encode($data);
@@ -285,16 +288,14 @@ class ProjectController extends Controller
     public function edit($id)
     {
         $project = Project::with('building_detail')->findOrFail($id);
-        if($project->type_id == 1){
-            $project_detail = Building::where('project_id',$id)->first();
-        }
-        elseif($project->type_id == 2){
-            $project_detail = Society::where('project_id',$id)->first();
-        }
-        elseif($project->type_id == 3){
-            $project_detail = Farmhouse::where('project_id',$id)->first();
-        }else{
-            $project_detail = Property::where('project_id',$id)->first();
+        if ($project->type_id == 1) {
+            $project_detail = Building::where('project_id', $id)->first();
+        } elseif ($project->type_id == 2) {
+            $project_detail = Society::where('project_id', $id)->first();
+        } elseif ($project->type_id == 3) {
+            $project_detail = Farmhouse::where('project_id', $id)->first();
+        } else {
+            $project_detail = Property::where('project_id', $id)->first();
         }
 
         $floor = BuildingFloor::get();
@@ -309,13 +310,12 @@ class ProjectController extends Controller
         $formhouse_block = Block::where('project_type_id', project_type('farm_house'))->get();
         $formhouse_category = Category::where('project_type_id', project_type('farm_house'))->get();
 
-        $plot_features = Feature::where('key','plot')->get();
-        $communication_features = Feature::where('key','communication')->get();
-        $community_features = Feature::where('key','community')->get();
-        $health_features = Feature::where('key','health')->get();
-        $other_features = Feature::where('key','other')->get();
+        $plot_features = Feature::where('key', 'plot')->get();
+        $communication_features = Feature::where('key', 'communication')->get();
+        $community_features = Feature::where('key', 'community')->get();
+        $health_features = Feature::where('key', 'health')->get();
+        $other_features = Feature::where('key', 'other')->get();
         return view('user.project.edit', get_defined_vars());
-
     }
 
     /**
@@ -353,12 +353,12 @@ class ProjectController extends Controller
                 'block' => json_encode($request->society_block),
                 'created_by' => Auth::user()->id,
             ];
-            $response = Society::where('project_id',$id)->first()->update($society);
+            $response = Society::where('project_id', $id)->first()->update($society);
             $data = [];
-            foreach ($request->society as $key => $detail){
+            foreach ($request->society as $key => $detail) {
                 $size = [];
-                foreach ($detail['sizes'] as $key1 => $val){
-                    $size[$key1 ] = ['size'=>$val['size'],'price'=>$val['price']];
+                foreach ($detail['sizes'] as $key1 => $val) {
+                    $size[$key1] = ['size' => $val['size'], 'price' => $val['price']];
                 }
                 $data[$key] = ['price' => $detail['price'], 'sizes' => $size];
             }
@@ -379,12 +379,12 @@ class ProjectController extends Controller
                 'apartment_size' => json_encode($request->apartment_size),
                 'created_by' => Auth::user()->id,
             ];
-            $response = Building::where('project_id',$id)->first()->update($building);
+            $response = Building::where('project_id', $id)->first()->update($building);
             $data = [];
-            foreach ($request->detail as $key => $detail){
+            foreach ($request->detail as $key => $detail) {
                 $data['bed'][$key] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $key, 'bath' => $detail['bath'], 'price' => $detail['price']];
             }
-            foreach ($request->shop_detail as $key => $detail){
+            foreach ($request->shop_detail as $key => $detail) {
                 $data[$key] = ['floor' => $detail['floor'], 'area' => $detail['floor_area'], 'price' => $detail['floor_price']];
             }
             $data = json_encode($data);
@@ -402,10 +402,10 @@ class ProjectController extends Controller
                 'block' => json_encode($request->farmhouse_block),
                 'created_by' => Auth::user()->id,
             ];
-            $response = Farmhouse::where('project_id',$id)->first()->update($farmhouse);
+            $response = Farmhouse::where('project_id', $id)->first()->update($farmhouse);
             $data = [];
-            foreach ($request->farmhouse as $key => $detail){
-                $data[$key] = ['area' => $detail['area'],'price' => $detail['price']];
+            foreach ($request->farmhouse as $key => $detail) {
+                $data[$key] = ['area' => $detail['area'], 'price' => $detail['price']];
             }
             $data = json_encode($data);
         }
@@ -431,8 +431,8 @@ class ProjectController extends Controller
             'other_feature' => $other_feature,
             'created_by' => Auth::user()->id,
         ];
-        $building_detail = BuildingDetail::where('project_id',$id)->first()->update($extra_detail);
-        if($building_detail){
+        $building_detail = BuildingDetail::where('project_id', $id)->first()->update($extra_detail);
+        if ($building_detail) {
             if ($request->has('logo_images')) {
                 foreach ($request->file('logo_images') as $file) {
                     $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
@@ -497,39 +497,36 @@ class ProjectController extends Controller
 
     public function get_project($id)
     {
-        $projects = Project::where('type_id',$id)->get();
+        $projects = Project::where('type_id', $id)->get();
         return response()->json($projects);
     }
 
     public function get_inventories($id)
     {
-        $project = Project::where('id',$id)->first();
-        if($project->type_id == 1){
-            $inventories = BuildingInventory::where('project_id',$id)->get();
-        }
-        elseif($project->type_id == 2){
-            $inventories = SocietyInventory::where('project_id',$id)->get();
-        }
-        elseif($project->type_id == 3){
-            $inventories = Farmhouse::where('project_id',$id)->get();
-        }else{
+        $project = Project::where('id', $id)->first();
+        if ($project->type_id == 1) {
+            $inventories = BuildingInventory::where('project_id', $id)->get();
+        } elseif ($project->type_id == 2) {
+            $inventories = SocietyInventory::where('project_id', $id)->get();
+        } elseif ($project->type_id == 3) {
+            $inventories = Farmhouse::where('project_id', $id)->get();
+        } else {
             $inventories = null;
         }
         return response()->json($inventories);
     }
     public function get_floor_block($project_id)
     {
-        $project = Project::where('id',$project_id)->first();
-        if($project->type_id == 1){
-            $building = Building::where('project_id',$project_id)->first();
-            $block_id = json_decode($building->floor_list,true);
-            $floors = BuildingFloor::whereIn('id',$block_id)->get();
-        }
-        elseif($project->type_id == 2){
-            $society = Society::where('project_id',$project_id)->first();
-            $block_id = json_decode($society->block,true);
-            $floors = Block::whereIn('id',$block_id)->get();
-        }else{
+        $project = Project::where('id', $project_id)->first();
+        if ($project->type_id == 1) {
+            $building = Building::where('project_id', $project_id)->first();
+            $block_id = json_decode($building->floor_list, true);
+            $floors = BuildingFloor::whereIn('id', $block_id)->get();
+        } elseif ($project->type_id == 2) {
+            $society = Society::where('project_id', $project_id)->first();
+            $block_id = json_decode($society->block, true);
+            $floors = Block::whereIn('id', $block_id)->get();
+        } else {
             $floors = null;
         }
         return response()->json($floors);

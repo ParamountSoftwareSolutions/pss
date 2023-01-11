@@ -16,7 +16,7 @@ class CreateClientInstallmentsTable extends Migration
         Schema::create('client_installments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->unsigned()->nullable()->constrained('clients')->nullOnDelete();
-            $table->integer('project_type_id');
+            $table->integer('project_id');
             $table->integer('inventory_id');
             $table->string('title');
             $table->integer('installment_amount');

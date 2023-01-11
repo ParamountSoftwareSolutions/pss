@@ -72,7 +72,7 @@
                                             <div class="form-group">
                                                 <label>Society Inventory</label>
                                                 <select class="form-control" name="inventory_id" id="selectblock_id" required>
-                                                    <option label="" disabled selected>Select Society Inventory ...</option>
+                                                    <option label="" value="" selected>Select Society Inventory ...</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -425,6 +425,7 @@
                 var type = data[2];
                 var premium = data[3];
                 var block = data[4];
+                console.log(block);
                 // console.log(block);
                 $('#selectSize').empty();
                 $('#selectBuildingFloor :first-child').nextAll().remove();
@@ -444,8 +445,8 @@
                     block.forEach(element => {
                         console.log(element.block);
                         var option = document.createElement('option');
-                        option.text = element.block.name;
-                        option.value = element.block.id;
+                        option.text = element.name;
+                        option.value = element.id;
                         document.getElementById("selectPremiumScocity").append(option);
                     });
                 } else if (project.type_id == 3) {

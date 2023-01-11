@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LeadStoreRequest;
+use App\Models\Block;
 use App\Models\Country;
 use App\Models\Building;
 use App\Models\Premium;
@@ -633,10 +634,12 @@ class LeadController extends Controller
                 break;
             case "2":
                 $society = Society::where('project_id', $projectId)->first();
-                $block = json_decode($society->block);
+                // return json_encode($society);;
+                $blocks = json_decode($society->block);
                 $size = Size::where('project_type_id', $projectTypeId)->get();
                 $premium = premium::where('project_type_id', $projectTypeId)->get();
-                $block = SocietyInventory::with('block')->where('project_id', $projectId)->get();
+                // $block = SocietyInventory::with('block')->where('project_id', $projectId)->get();
+                $block = Block::whereIn('id', $blocks)->get();
                 break;
             case "3":
                 //form House
