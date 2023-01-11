@@ -72,11 +72,11 @@ class EmployeeController extends Controller
             'phone_number' => 'required|unique:users,phone_number',
             'working_days' => 'required|max:31'
         ]);
-        if ($request->job_title == 'sale_person') {
-            $request->validate([
-                'sale_manager_id' => 'required',
-            ]);
-        }
+        // if ($request->job_title == 'sale_person') {
+        //     $request->validate([
+        //         'sale_manager_id' => 'required',
+        //     ]);
+        // }
         
         $employee = new User();
         $employee->name = $request->name;
@@ -89,7 +89,7 @@ class EmployeeController extends Controller
         $employee->phone_number = $request->phone_number;
         $employee->cnic = $request->cnic;
         $employee->project = $request->building_id;
-        $employee->sale_manager_id = $request->sale_manager_id;
+        // $employee->sale_manager_id = $request->sale_manager_id ?? null;
         $employee->cnic = $request->cnic;
         $employee->address = $request->address;
         $employee->account_no = $request->account_no;
@@ -160,17 +160,17 @@ class EmployeeController extends Controller
             'phone_number' => 'required|unique:users,phone_number,' . $id,
             'working_days' => 'required|max:31'
         ]);
-        if ($request->job_title == 'sale_person') {
-            $request->validate([
-                'sale_manager_id' => 'required',
-            ]);
-        }
+        // if ($request->job_title == 'sale_person') {
+        //     $request->validate([
+        //         'sale_manager_id' => 'required',
+        //     ]);
+        // }
         $employee = User::findOrFail($id);
         $employee->name = $request->name;
         $employee->email = $request->email;
         $employee->phone_number = $request->phone_number;
         $employee->project = $request->building_id;
-        $employee->sale_manager_id = $request->sale_manager_id;
+        // $employee->sale_manager_id = $request->sale_manager_id;
         $employee->cnic = $request->cnic;
         $employee->address = $request->address;
         $employee->account_no = $request->account_no;

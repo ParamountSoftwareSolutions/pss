@@ -39,7 +39,6 @@ return new class extends Migration
             $table->string('reservation_open')->nullable();
             $table->string('reservation_close')->nullable();
             $table->string('maxreserveperson')->nullable();
-            $table->string('maxreserveperson')->nullable();
             $table->timestamps();
         });
     }

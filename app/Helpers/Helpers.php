@@ -82,6 +82,11 @@ if (!function_exists('get_user_by_projects')) {
     {
         if (Auth::user()->roles[0]->name == 'property_admin') {
             $project = ProjectAssignUser::get();
+        //     $user = User::get()->pluck('id');
+        //     return $user->toArray();
+      
+        //     $a2 = array(Auth::user()->id);
+        //    return array_merge($user->toArray(), $a2);
         } else {
             $project = ProjectAssignUser::where('user_id', auth()->user()->id)->get();
         }
@@ -106,10 +111,21 @@ if (!function_exists('get_all_projects')) {
     function get_all_projects($type = null)
     {
         if ($type !== null) {
+            //for admin
+            if (Auth::user()->roles[0]->name == 'property_admin') {
+                $project_type = project_type($type);
+                return Project::where('type_id', $project_type)->get();
+            }
+            //for admin
             $project_type = project_type($type);
             $list = ProjectAssignUser::where('user_id', Auth::id())->get();
             return Project::whereIn('id', $list->pluck('project_id')->toArray())->where('type_id', $project_type)->get();
         } else {
+            //for admin
+            if (Auth::user()->roles[0]->name == 'property_admin') {
+                return Project::get();
+            }
+            //for admin
             $list = ProjectAssignUser::where('user_id', Auth::id())->get();
             return Project::whereIn('id', $list->pluck('project_id')->toArray())->get();
         }

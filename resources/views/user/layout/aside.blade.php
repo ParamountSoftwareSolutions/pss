@@ -64,7 +64,7 @@
                         </ul>
                     </div>
                 </li>
-                @if($permissions->Building == 'on')
+               
                 <li>
                     <a href="#building" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
@@ -102,7 +102,7 @@
                         </ul>
                     </div>
                 </li>
-                @endif
+             
                 <li>
                     <a href="#society" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
