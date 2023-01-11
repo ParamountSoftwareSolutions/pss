@@ -66,10 +66,19 @@
                             <li>
                                 <a href="{{route('project.index', ['RolePrefix' => RolePrefix()])}}">All Project</a>
                             </li>
+                            <li>
+                                <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">Building</a>
+                            </li>
+                            <li>
+                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">Society</a>
+                            </li>
+                            <li>
+                                <a href="{{route('farmhouse.index', ['RolePrefix' => RolePrefix()])}}">Farmhouse</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
-                <li>
+                {{--<li>
                     <a href="#building" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
                         <span> Building Management </span>
@@ -139,7 +148,7 @@
                         </ul>
                     </div>
                 </li>
-                {{--<li>
+                <li>
                     <a href="#society" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
                         <span> Society </span>
@@ -155,7 +164,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>--}}
+                </li>
                 <li>
                     <a href="#farmhouse" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
@@ -171,7 +180,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li>--}}
                 <li>
                     <a href="#inventory-data" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
@@ -187,6 +196,40 @@
                             <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>
                             <li><a href="{{route('payment_plan.index', ['RolePrefix' => RolePrefix()])}}">Payment
                                     Plan</a></li>
+                            <li>
+                                <a href="#building_feature" data-toggle="collapse">
+                                    <span> Extra Features </span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse" id="building_feature">
+                                    <ul class="nav-second-level">
+                                        <li>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'plot'])}}">Plot
+                                                Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'communication'])}}">Communication
+                                                Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'community'])}}">Community
+                                                Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'health'])}}">Health
+                                                Features</a>
+                                            <a href="{{route('feature.index', ['RolePrefix' => RolePrefix(),'key'=> 'other'])}}">Other
+                                                Features</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <a href="#form" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Form </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="form">
+                        <ul class="nav-second-level">
+                            <li><a href="{{route('membership.index', ['RolePrefix' => RolePrefix()])}}">Membership Form</a></li>
                         </ul>
                     </div>
                 </li>

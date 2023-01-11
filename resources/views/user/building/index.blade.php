@@ -26,10 +26,10 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->project->name }}</td>
                                                 <td>
-                                                    <a href="{{ route('building.edit', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
+                                                    {{--<a href="{{ route('building.edit', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
-                                                    </a>
+                                                    </a>--}}
                                                     <a href="{{ route('building.show', ['RolePrefix' => RolePrefix(), 'building' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-eye"></i>

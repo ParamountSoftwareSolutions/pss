@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Form extends Model
 {
     use HasFactory;
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+    public function project()
+{
+    return $this->belongsTo(Project::class);
+}
 }

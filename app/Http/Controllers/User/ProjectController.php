@@ -34,7 +34,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::latest()->get();
+        $projects = get_all_projects();
         return view('user.project.index', compact('projects'));
     }
 
@@ -131,7 +131,6 @@ class ProjectController extends Controller
                     'noc_type_id' => $request->noc_type_id,
                     'type' => json_encode($request->society_type),
                     'block' => json_encode($request->society_block),
-                    'size' => json_encode($request->society_size),
                     'created_by' => Auth::user()->id,
                     ];
                 $response = Society::create($society);
@@ -345,7 +344,6 @@ class ProjectController extends Controller
                 'noc_type_id' => $request->noc_type_id,
                 'type' => json_encode($request->society_type),
                 'block' => json_encode($request->society_block),
-                'size' => json_encode($request->society_size),
                 'created_by' => Auth::user()->id,
             ];
             $response = Society::where('project_id',$id)->first()->update($society);

@@ -34,6 +34,7 @@ use App\Http\Controllers\User\PrivacyPolicyController;
 use App\Http\Controllers\User\TermController;
 use App\Http\Controllers\User\BannerController;
 use App\Http\Controllers\User\DealerController;
+use App\Http\Controllers\User\MemberShipController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -127,6 +128,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //=========================//
     //  Building Management    //
     //=========================//
+
     Route::resource('building', BuildingController::class);
     Route::resource('floor', FloorController::class);
     Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
@@ -216,7 +218,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('building_inventory/{id}', [ClientController::class, 'building_inventory']);
     Route::get('societyBlock_inventory/{id}', [ClientController::class, 'societyBlock_inventory']);
     // Route::get('client/building_inventory/{id}', [ClientController::class, 'building_inventory'])->name('client.building_inventory');
-   
+
        //Inventory historys
        Route::get('sale/history', [ClientController::class, 'history'])->name('lead.history');
        //Inventory historys
@@ -289,4 +291,9 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
         Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
         Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
     });
+
+
+    Route::resource('membership', MemberShipController::class);
+    Route::get('membership-form-print/{id}', [MemberShipController::class,'printForm'])->name('membership.print.form');
+    Route::get('membership-verify/{id}', [MemberShipController::class,'verify'])->name('membership.verify');
 });
