@@ -15,16 +15,20 @@
                     <form method="POST" action="{{ route('client.transfered_store', ['RolePrefix' => RolePrefix()]) }}" novalidate>
                         @csrf
                         <input type="hidden" name="client_trnafer_id" value="{{$id}}">
+                        <input type="hidden" name="project_id" value="{{$client->project_id}}">
+                        <input type="hidden" name="project_type_id" value="{{$client->project_type_id}}">
+                        <input type="hidden" name="inventory_id" value="{{$client->inventory_id}}">
                         <div class="card">
                             <div class="card-header">
                                 <h4>Client Information</h4>
-                                <!-- <button class="btn btn-primary new-client" style="margin-left: auto; display: block;" type="button">New Client
-                                </button> -->
-                                <!-- <button class="btn btn-primary old-client" style="margin-left: 5px; display: block;" type="button">Old Client
-                                </button> -->
+                                <button class="btn btn-primary new-client" style="margin-left: auto; display: block;" type="button">New Client
+                                </button>
+                                <button class="btn btn-primary old-client" style="margin-left: 5px; display: block;" type="button">Old Client
+                                </button>
                             </div>
                             <input type="hidden" name="client_type" value="new">
                             {{-- New Client Form --}}
+
                             <div class="card-body new-client-form">
                                 <div class="row">
                                     <div class="form-group col-md-4">
@@ -161,11 +165,37 @@
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="card-footer text-right">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
                             </div>
-                            {{-- Old Client Form --}}
 
-                            <div class="card-footer text-right">
-                                <button class="btn btn-primary" type="submit">Submit</button>
+
+
+                            <!-- </div> -->
+                            {{-- Old Client Form --}}
+                            <div class="card-body old-client-form">
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <div class="form-group">
+                                            <label>Clients</label>
+                                            <select class="form-control" name="old_client">
+                                                <option label="" disabled>Select Detail</option>
+                                                @if(!empty($old_clients))
+                                                @foreach($old_clients as $old_clients_value)
+                                                <option value="{{$old_clients_value->id}}" selected>{{$old_clients_value->name}}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            @error('old_client')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
                             </div>
                         </div>
                     </form>

@@ -189,7 +189,7 @@
                                                 <label>Price</label>
                                                 <input type="text" class="form-control" name="price"
                                                        placeholder="PKR 1Lak to 10Lak"
-                                                       value="{{ old('price',$project->building_detail->price) }}">
+                                                       value="{{ old('price',$project->building_detail->price ?? '') }}">
                                             </div>
                                         </div>
                                         <div class="form-group col-md-4 all">
@@ -197,7 +197,7 @@
                                                 <label>Latitude</label>
                                                 <input type="text" class="form-control" name="latitude"
                                                        placeholder=""
-                                                       value="{{ old('latitude',$project->building_detail->latitude) }}">
+                                                       value="{{ old('latitude',$project->building_detail->latitude ?? '') }}">
                                             </div>
                                         </div>
                                         <div class="form-group col-md-4 all">
@@ -205,17 +205,17 @@
                                                 <label>Longitude</label>
                                                 <input type="text" class="form-control" name="longitude"
                                                        placeholder=""
-                                                       value="{{ old('longitude',$project->building_detail->longitude) }}">
+                                                       value="{{ old('longitude',$project->building_detail->longitude ?? '') }}">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <?php
-                                        $plot_f = json_decode($project->building_detail->plot_feature);
-                                        $communication_f = json_decode($project->building_detail->communication_feature);
-                                        $community_f = json_decode($project->building_detail->community_feature);
-                                        $health_f = json_decode($project->building_detail->health_feature);
-                                        $other_f = json_decode($project->building_detail->other_feature);
+                                        $plot_f = !empty($project->building_detail->plot_feature) ? json_decode($project->building_detail->plot_feature) : [];
+                                        $communication_f = !empty($project->building_detail->communication_feature) ? json_decode($project->building_detail->communication_feature) : [];
+                                        $community_f = !empty($project->building_detail->community_feature) ? json_decode($project->building_detail->community_feature) : [];
+                                        $health_f = !empty($project->building_detail->health_feature) ? json_decode($project->building_detail->health_feature) : [];
+                                        $other_f = !empty($project->building_detail->other_feature) ? json_decode($project->building_detail->other_feature) : [];
                                         ?>
                                         <div class="form-group col-md-4">
                                             <div class="section-title mt-0">Plot Features</div>
@@ -288,7 +288,7 @@
                                             <div class="form-group">
                                                 <label>Description</label>
                                                 <textarea name="description" id="editor1" cols="30"
-                                                          rows="10">{!! old('description',$project->building_detail->description) !!}</textarea>
+                                                          rows="10">{!! old('description',$project->building_detail->description ?? '') !!}</textarea>
                                                 @error('description')
                                                 <div class="text-danger mt-2">{{ $message }}</div>
                                                 @enderror
@@ -309,7 +309,7 @@
                                     <div class="form-group">
                                         <div>
                                             <div class="row mb-3">
-                                                @if($project->building_detail->logo_image->count())
+                                                @if(!empty($project->building_detail) && $project->building_detail->logo_image->count())
                                                     @foreach($project->building_detail->logo_image as $img)
                                                         <div class="col-3 img-{{$img->id}}">
                                                             <img style="height: 200px;width: 100%" class="banner-image"
@@ -335,7 +335,7 @@
                                     <div class="form-group">
                                         <div>
                                             <div class="row mb-3">
-                                                @if($project->building_detail->payment_plan_image->count())
+                                                @if(!empty($project->building_detail) && $project->building_detail->payment_plan_image->count())
                                                     @foreach($project->building_detail->payment_plan_image as $img)
                                                         <div class="col-3 img-{{$img->id}}">
                                                             <img style="height: 200px;width: 100%" class="banner-image"
@@ -361,7 +361,7 @@
                                     <div class="form-group">
                                         <div>
                                             <div class="row mb-3">
-                                                @if($project->building_detail->floor_plan_image->count())
+                                                @if(!empty($project->building_detail) && $project->building_detail->floor_plan_image->count())
                                                     @foreach($project->building_detail->floor_plan_image as $img)
                                                         <div class="col-3 img-{{$img->id}}">
                                                             <img style="height: 200px;width: 100%" class="banner-image"
@@ -391,7 +391,7 @@
 
     <input type="hidden" name="types_json" value="{{$project_detail->type}}">
     <input type="hidden" name="apartment_json" value="{{$project_detail->apartment_size}}">
-    <input type="hidden" name="property_data_json" value="{{$project->building_detail->property_type}}">
+    <input type="hidden" name="property_data_json" value="{{!empty($project->building_detail->property_type) ? $project->building_detail->property_type : "{}"}}">
 @endsection
 @section('script')
     <script>

@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use SebastianBergmann\Type\NullType;
 
+use function GuzzleHttp\Promise\all;
+
 class ClientController extends Controller
 {
     /**
@@ -72,11 +74,9 @@ class ClientController extends Controller
         if ($request->statusFilter) {
             $lead->where('status', $request->statusFilter);
         }
-        $clients = $lead->get();
-        $sale_persons = User::whereIn('id', $users)
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'sale_person');
-            })->get();
+        $clients = $lead->orderBy('updated_at', 'desc')->get();
+
+        $sale_persons = User::whereIn('id', $users)->get();
 
         $country = Country::get();
         $client_count = $lead->count();
@@ -94,15 +94,11 @@ class ClientController extends Controller
         $country = Country::get();
         $users = get_user_by_projects();
 
-
         $project = get_all_projects();
 
         $projects = Project::whereIn('id', $project->pluck('id')->toArray())->get();
 
-        $sales_person = User::whereIn('id', $users)
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'sale_person');
-            })->get();
+        $sale_persons = User::whereIn('id', $users)->get();
         $old_clients = Client::all();
 
         return view('user.client.create', get_defined_vars());
@@ -136,11 +132,9 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $request->inventory_id = 1;
-        $request->project_id = 7;
-        $request->project_type_id = 3;
-        if ($request->old_client_id) {
-            $client = Client::where('id', $request->old_client_id)->first();
+        // Old Client Store In database
+        if ($request->client_type == "old") {
+            $client = Client::where('id', $request->old_client)->first();
             if (!empty($client->project_id)) {
                 $project_type_id = Project::where('id', $client->project_id)->first()->type_id;
             } else {
@@ -150,9 +144,8 @@ class ClientController extends Controller
                 'project_id' => $request->project_id,
                 'project_type_id' => $request->project_type_id,
                 'inventory_id' => $request->inventory_id,
-                'customer_id' => Null,
+                'customer_id' => $request->customer_id,
                 'user_id' => auth()->user()->id,
-
                 'name' => $client->name,
                 'email' => $client->email,
                 'password' => $client->password,
@@ -165,7 +158,6 @@ class ClientController extends Controller
                 'country_id' => $client->country_id,
                 'state_id' => $client->state_id,
                 'city_id' => $client->city_id,
-
                 'registration_number' => rand(100, 100000),
                 'hidden_file_number' => "",
                 'down_payment' => $client->down_payment,
@@ -174,6 +166,35 @@ class ClientController extends Controller
                 'status' => 'mature',
             ];
         } else {
+
+            // New Client Store In database
+            $request->validate([
+                'name_new' => 'required',
+                'phone_number_new' => 'required|unique:leads,number',
+                'phone_number_new' => 'unique:leads,alt_number',
+                'email_new' => 'unique:leads,email',
+                'father_name_new' => 'required',
+                'cnic_new' => 'required',
+                'address_new' => 'required',
+                'dob_new' => 'required',
+                'password_new' => 'required',
+                'down_payment' => 'required',
+            ]);
+            // $validator = Validator::make($request->all(), [
+            //     'name_new' => 'required',
+            //     'phone_number_new' => 'required|unique:leads,number',
+            //     'phone_number_new' => 'unique:leads,alt_number',
+            //     'email_new' => 'unique:leads,email',
+            //     'father_name_new' => 'required',
+            //     'cnic_new' => 'required',
+            //     'address_new' => 'required',
+            //     'dob_new' => 'required',
+            //     'password_new' => 'required',
+            //     'down_payment' => 'required',
+            // ]);
+            // if ($validator->fails()) {
+            //     return redirect()->back()->with(['status' => 'error', 'message' => $validator->errors()->first()]);
+            // }
             if (!empty(json_decode($request->building_id)->id)) {
                 $project_type_id = Project::where('id', json_decode($request->building_id)->id)->first()->type_id;
             } else {
@@ -186,8 +207,6 @@ class ClientController extends Controller
                 'alt_number' => $request->alt_phone
             ];
             $user = Lead::create($datalead);
-            // $customer_id = $user->id;
-
             $client_data = [
                 'project_id' => (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null,
                 'project_type_id' => $project_type_id,
@@ -200,8 +219,8 @@ class ClientController extends Controller
                 'password' => $request->password_new,
                 'number' => $request->phone_number_new,
                 'alt_phone' => $request->alt_phone,
-                'dob' => $request->dob,
-                'address' => $request->address,
+                'dob' => $request->dob_new,
+                'address' => $request->address_new,
                 'cnic' => $request->cnic_new,
                 'father_name' => $request->father_name_new,
                 'country_id' => $request->country_id_new,
@@ -211,7 +230,7 @@ class ClientController extends Controller
                 'registration_number' => rand(100, 100000),
                 'hidden_file_number' => "",
                 'down_payment' => $request->down_payment,
-                'comment' => $request->comment,
+                // 'comment' => $request->comment,
                 'created_by' => auth()->user()->id,
                 'status' => 'mature',
             ];
@@ -243,7 +262,8 @@ class ClientController extends Controller
     public function show($id)
     {
         $client = Client::findOrFail($id);
-        if ($client->status == "Transfered") {
+
+        if ($client->status == "transfered" || $client->status == 'Transfered') {
             $client_installment = ClientInstallment::where('client_id', $id)->where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
         } else {
             $client_installment = ClientInstallment::where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
@@ -353,7 +373,7 @@ class ClientController extends Controller
     }
     public function societyBlock_inventory($id)
     {
-        $response = BuildingInventory::where('building_floor_id', $id)->where('status', 'available')->get()->toArray();
+        $response = SocietyInventory::where('block_id', $id)->where('status', 'available')->get()->toArray();
         // $data = json_encode($response->toArray());
         $data = json_encode($response);
         return  $data;
@@ -427,53 +447,82 @@ class ClientController extends Controller
         $users = get_user_by_projects();
         $project = get_all_projects();
         $projects = Project::whereIn('id', $project->pluck('id')->toArray())->get();
-        $sale_persons = User::whereIn('id', $users)
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'sale_person');
-            })->get();
+        $sale_persons = User::whereIn('id', $users)->get();
         $client = Client::with('customer', 'sale_person', 'country', 'state', 'city')->where('id', $id)->first();
         $clients = Client::with('customer')->get();
-
+        $old_clients = Client::all();
         return view('user.client.transfer', get_defined_vars());
     }
     public function transfered_store(Request $request)
     {
 
-        $client = Client::where('id', $request->client_trnafer_id)->first();
-        $datalead = [
-            'name' => $request->name_new,
-            'number' => $request->phone_number_new,
-            'cnic' => $request->cnic_new,
-            'alt_number' => $request->alt_phone
-        ];
-        $user = Lead::create($datalead);
-        $customer_id = $user->id;
+        if ($request->client_type == "old") {
+            $client = Client::where('id', $request->old_client)->first();
+            $client_data = [
+                'project_id' => $request->project_id,
+                'project_type_id' => $request->project_type_id,
+                'inventory_id' => $request->inventory_id,
+                'customer_id' => $client->customer_id,
+                'user_id' => auth()->user()->id,
+                'name' => $client->name,
+                'email' => $client->email,
+                'password' => $client->password,
+                'number' => $client->number,
+                'alt_phone' => $client->alt_phone,
+                'dob' => $client->dob,
+                'address' => $client->address,
+                'cnic' => $client->cnic,
+                'father_name' => $client->father_name,
+                'country_id' => $client->country_id,
+                'state_id' => $client->state_id,
+                'city_id' => $client->city_id,
+                'registration_number' => rand(100, 100000),
+                'hidden_file_number' => "",
+                'down_payment' => $client->down_payment,
+                'comment' => $client->comment,
+                'created_by' => auth()->user()->id,
+                'status' => 'mature',
+            ];
 
-        $client_data = [
-            'project_id' => $client->project_id,
-            'project_type_id' => $client->project_type_id,
-            'inventory_id' => $client->inventory_id,
-            'registration_number' => $client->registration_number,
-            'customer_id' => $customer_id,
-            'user_id' => auth()->user()->id,
-            'name' => $request->name_new,
-            'email' => $request->email_new,
-            'password' => $request->password_new,
-            'number' => $request->phone_number_new,
-            'alt_phone' => $request->alt_phone_new,
-            'address' => $request->address_new,
-            'cnic' => $request->cnic_new,
-            'down_payment' => $request->down_payment,
-            'dob' => $request->dob_new,
-            'father_name' => $request->father_name_new,
-            'country_id' => $request->country_id_new,
-            'state_id' => $request->state_id_new,
-            'city_id' => $request->city_id_new,
-            'hidden_file_number' => "",
-            'down_payment' => $request->down_payment,
-            'created_by' => auth()->user()->id,
-            'status' => 'mature',
-        ];
+        } else {
+
+
+            $client = Client::where('id', $request->client_trnafer_id)->first();
+            $datalead = [
+                'name' => $request->name_new,
+                'number' => $request->phone_number_new,
+                'cnic' => $request->cnic_new,
+                'alt_number' => $request->alt_phone
+            ];
+            $user = Lead::create($datalead);
+            $customer_id = $user->id;
+
+            $client_data = [
+                'project_id' => $request->project_id,
+                'project_type_id' => $request->project_type_id,
+                'inventory_id' => $request->inventory_id,
+                'registration_number' => $client->registration_number,
+                'customer_id' => $customer_id,
+                'user_id' => auth()->user()->id,
+                'name' => $request->name_new,
+                'email' => $request->email_new,
+                'password' => $request->password_new,
+                'number' => $request->phone_number_new,
+                'alt_phone' => $request->alt_phone_new,
+                'address' => $request->address_new,
+                'cnic' => $request->cnic_new,
+                'down_payment' => $request->down_payment,
+                'dob' => $request->dob_new,
+                'father_name' => $request->father_name_new,
+                'country_id' => $request->country_id_new,
+                'state_id' => $request->state_id_new,
+                'city_id' => $request->city_id_new,
+                'hidden_file_number' => "",
+                'down_payment' => $request->down_payment,
+                'created_by' => auth()->user()->id,
+                'status' => 'mature',
+            ];
+        }
 
         $client_res = Client::create($client_data);
         $client_id = $client_res->id;
@@ -482,8 +531,12 @@ class ClientController extends Controller
         $installmentData = [
             'client_id' => $client_id
         ];
-
-        ClientInstallment::where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->where('client_id', $client->id)->where('status', 'not_paid')->update($installmentData);
+//         $check  = ClientInstallment::where('project_type_id', $request->project_type_id)->where('inventory_id', $request->inventory_id)->where('client_id', $client->id)->where('status', 'not_paid')->get();
+// echo '<pre>';
+// print_r($check->toArray());
+// echo '<pre>';
+// die();
+        ClientInstallment::where('project_type_id', $request->project_type_id)->where('inventory_id', $request->inventory_id)->where('client_id', $request->client_trnafer_id)->where('status', 'not_paid')->update($installmentData);
 
         // if ($client->project_type_id == "1") {
         //     //building
@@ -535,6 +588,21 @@ class ClientController extends Controller
     public function active(Request $request, $id)
     {
 
+        $request->validate([
+            // 'building_id' => 'required',
+            'inventory_id' => 'required',
+
+            'name_new' => 'required',
+            'phone_number_new' => 'required|unique:leads,number',
+            'phone_number_new' => 'unique:leads,alt_number',
+            'email_new' => 'unique:leads,email',
+            'father_name_new' => 'required',
+            'cnic_new' => 'required',
+            'address_new' => 'required',
+            'dob_new' => 'required',
+            'password_new' => 'required',
+            'down_payment' => 'required',
+        ]);
 
         if (!empty($request->building_id)) {
             $project_id = json_decode($request->building_id)->id;
@@ -576,7 +644,6 @@ class ClientController extends Controller
             'status' => 'mature',
         ];
         $response = Client::where('id', $id)->update($client_data);
-
         // Change Status In Inventory Sold   
         if ($type_id == '1') {
             $soldornot = BuildingInventory::where('id', $request->inventory_id)->first();
@@ -698,9 +765,16 @@ class ClientController extends Controller
         $users = get_user_by_projects();
 
 
-        $clientHistory = ClientHistory::with('from', 'to', 'sale_person')->whereIn('user_id', $users)->where('status', 'transfered')->get();
+        $clientHistory = ClientHistory::with('from', 'to', 'sale_person')->whereIn('user_id', $users)->where('status', 'Transfered')->get();
 
         return view('user.client.sale_history.index', get_defined_vars());
+    }
+    public function history_sale($client_id)
+    {
+        $client = Client::findOrFail($client_id);
+        $client_installment = ClientInstallment::where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
+
+        return view('user.client.sale_history.show', get_defined_vars());
     }
     //Inventory Sale History
 }

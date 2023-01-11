@@ -19,7 +19,7 @@
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.7",
+        
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
@@ -35,9 +35,11 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-
-            "app/Helpers/Helpers.php"
-
+            "app/Helpers/Helpers.php",
+            "app/Helpers/CResult.php",
+            "app/Helpers/CConManager.php",
+            "app/Helpers/Ccommon.php",
+            "app/Helpers/CAccount.php"
         ]
     },
     "autoload-dev": {

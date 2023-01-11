@@ -8,9 +8,6 @@
     <section class="section">
         <div class="section-body">
             <div class="row">
-                @foreach($errors->all() as $error)
-                <div>{{ $error }}</div>
-                @endforeach
                 <div class="col-12 col-md-12 col-lg-12">
                     <form method="POST" action="{{ route('clients.active', ['RolePrefix' => RolePrefix(), $client->id]) }}" novalidate>
                         @csrf
@@ -62,10 +59,19 @@
                                         </div>
                                         <!-- Building -->
                                         <!-- Society -->
+
                                         <div class="form-group col-md-4" id="premiumSocity">
                                             <div class="form-group">
-                                                <label>Society</label>
-                                                <select class="form-control" name="inventory_id" id="selectPremiumScocity" required>
+                                                <label>Society Block</label>
+                                                <select class="form-control" name="societyBlock" id="selectPremiumScocity" required>
+                                                    <option label="" disabled selected>Select Society Block ...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-4" id="blockSocity">
+                                            <div class="form-group">
+                                                <label>Society Inventory</label>
+                                                <select class="form-control" name="inventory_id" id="selectblock_id" required>
                                                     <option label="" disabled selected>Select Society Inventory ...</option>
                                                 </select>
                                             </div>
@@ -278,12 +284,14 @@
         // City Select
         $('select[name="state_id_new"]').on('change', function() {
             var state_id = $(this).val();
+
             if (state_id) {
                 $.ajax({
                     url: "{{ url(RolePrefix().'/city') }}/" + state_id,
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
+                        console.log(data);
                         $('select[name="city_id_new"]').empty();
                         if (data.length === 0) {
                             $('select[name="city_id_new"]').append('<option value="">N/A</option>');
@@ -311,11 +319,10 @@
                     // dataType: "json",
                     success: function(response) {
                         var data = JSON.parse(response);
-                        console.log(data);
                         $.each(data, function(i, item) {
                             $('#selectBuildingFloorInventory').append($('<option>', {
                                 value: item.id,
-                                text: item.id
+                                text: item.unit_id
                             }));
                         });
                         // data.forEach(element => {
@@ -334,6 +341,7 @@
         // Bulding Invertory
         $('select[name="societyBlock"]').on('change', function() {
             var id = $(this).val();
+
             if (id) {
                 $.ajax({
                     url: "{{ url(RolePrefix().'/societyBlock_inventory') }}/" + id,
@@ -343,9 +351,9 @@
                         var data = JSON.parse(response);
                         console.log(data);
                         $.each(data, function(i, item) {
-                            $('#selectsocietyBlockInventory').append($('<option>', {
+                            $('#selectblock_id').append($('<option>', {
                                 value: item.id,
-                                text: item.id
+                                text: item.unit_id
                             }));
                         });
                         // data.forEach(element => {
@@ -361,6 +369,7 @@
                 alert('Building Floor Data Found');
             }
         });
+
 
 
         //Old Client
@@ -392,6 +401,7 @@
     document.getElementById("buildingfloor").style.display = "none";
     document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
     document.getElementById("premiumSocity").style.display = "none";
+    document.getElementById("blockSocity").style.display = "none";
 
     function submitForm() {
         // var project = document.getElementById("selectProject").value;
@@ -432,9 +442,10 @@
                     });
                 } else if (project.type_id == 2) {
                     block.forEach(element => {
+                        console.log(element.block);
                         var option = document.createElement('option');
-                        option.text = element.id;
-                        option.value = element.id;
+                        option.text = element.block.name;
+                        option.value = element.block.id;
                         document.getElementById("selectPremiumScocity").append(option);
                     });
                 } else if (project.type_id == 3) {
@@ -460,22 +471,26 @@
         project = JSON.parse(project);
         switch (project.type_id) {
             case 1:
+                document.getElementById("blockSocity").style.display = "none";
                 document.getElementById("premiumSocity").style.display = "none";
                 document.getElementById("buildingfloor").style.display = "block";
                 document.getElementById("selectBuildingFloorInventoryHide").style.display = "block";
 
                 break;
             case 2:
+                document.getElementById("blockSocity").style.display = "block";
                 document.getElementById("premiumSocity").style.display = "block";
                 document.getElementById("buildingfloor").style.display = "none";
                 document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
                 break;
             case 3:
+                document.getElementById("blockSocity").style.display = "none";
                 document.getElementById("premiumSocity").style.display = "none";
                 document.getElementById("buildingfloor").style.display = "none";
                 document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
                 break;
             case 4:
+                document.getElementById("blockSocity").style.display = "none";
                 document.getElementById("premiumSocity").style.display = "none";
                 document.getElementById("buildingfloor").style.display = "none";
                 document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";

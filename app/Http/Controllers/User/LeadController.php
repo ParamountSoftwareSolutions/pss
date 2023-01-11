@@ -46,7 +46,7 @@ class LeadController extends Controller
         $building = get_all_projects();
         $users = get_user_by_projects();
         $lead = get_leads_from_user($users);
-//        dd($lead->get());
+        //        dd($lead->get());
         /**
          * /////////////////////////////////////////////Filters/////////////////////////////////
          */
@@ -210,6 +210,9 @@ class LeadController extends Controller
         $pushed = count($pushed_data);
         //lead Count
         $lead_count = $lead->count();
+        //Today FollowUp Count
+        $today_follow_up_count = $lead->where('status', 'follow_up')->whereDate('updated_at', Carbon::now())->count();
+
         //Facebook lead Count
         $facebook_count = $lead->where('type', 'facebook_lead')->count();
         /**
@@ -234,10 +237,10 @@ class LeadController extends Controller
      */
     public function create()
     {
+
         $country = Country::get();
         $users = get_user_by_projects();
         $project = get_all_projects();
-
         $projects = Project::whereIn('id', $project->pluck('id')->toArray())->get();
         $sale_persons = User::whereIn('id', $users)
             ->whereHas('roles', function ($q) {
@@ -253,9 +256,15 @@ class LeadController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(LeadStoreRequest $request)
+    public function store(Request $request)
     {
-
+        $request->validate([
+            'name' => 'required',
+            'phone_number' => 'required|unique:leads,number',
+            'phone_number' => 'unique:leads,alt_number',
+            'email' => 'unique:leads,email',
+            'cnic' => 'unique:leads,cnic',
+        ]);
         $rpoject_id_val = (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null;
         $data = [
             'project_id' => $rpoject_id_val,
@@ -264,6 +273,8 @@ class LeadController extends Controller
             'size_id' => $request->size,
             'quantity' => $request->quantity,
             'premia_id' => $request->premium,
+            'inventory_id' => $request->inventory_id,
+            'interested' => $request->interested,
 
             'user_id' => ($request->sale_person_id) ? $request->sale_person_id : auth()->user()->id,
             'created_by' => auth()->user()->id,
@@ -711,21 +722,20 @@ class LeadController extends Controller
             }
             if ($collection['sale_person_id'] === "") {
                 return back()->with($this->message('Sale person id is required', 'error'));
-            }else{
+            } else {
                 $user = User::find($collection['sale_person_id']);
-                if(!$user){
-                    return back()->with($this->message('Sale person id '.$collection['sale_person_id'].' does not exsist.. try again', 'error'));
+                if (!$user) {
+                    return back()->with($this->message('Sale person id ' . $collection['sale_person_id'] . ' does not exsist.. try again', 'error'));
                 }
             }
             if ($collection['id']) {
                 $lead = Lead::where('id', $collection['id'])->first();
-                if(!$lead){
-                    return back()->with($this->message('Lead id '.$collection['id'].' does not exsist.. try again ', 'error'));
-                }
-                else{
-                    $lead = Lead::where('number',$collection['phone_number'])->where('id','!==',$collection['id'])->first();
-                    if($lead){
-                        return back()->with($this->message('Phone number '.$collection['phone_number'].' already exsist.. try again', 'error'));
+                if (!$lead) {
+                    return back()->with($this->message('Lead id ' . $collection['id'] . ' does not exsist.. try again ', 'error'));
+                } else {
+                    $lead = Lead::where('number', $collection['phone_number'])->where('id', '!==', $collection['id'])->first();
+                    if ($lead) {
+                        return back()->with($this->message('Phone number ' . $collection['phone_number'] . ' already exsist.. try again', 'error'));
                     }
                 }
             }
@@ -743,7 +753,7 @@ class LeadController extends Controller
                 if (!$lead) {
                     $lead = new Lead;
                 }
-                if($lead->user_id != $collection['sale_person_id']){
+                if ($lead->user_id != $collection['sale_person_id']) {
                     $lead_history = [
                         'lead_id' => $lead->id,
                         'status' => 'lead_assign',
@@ -768,7 +778,7 @@ class LeadController extends Controller
                 if ($number_lead) {
                     return back()->with($this->message("Phone number '" . $collection['phone_number'] . "' already exist!", "error"));
                 }
-                if($lead->user_id != $collection['sale_person_id']){
+                if ($lead->user_id != $collection['sale_person_id']) {
                     $lead_history = [
                         'lead_id' => $lead->id,
                         'status' => 'lead_assign',
@@ -805,9 +815,4 @@ class LeadController extends Controller
         }
         return (new FastExcel($storage))->download('/public/assets/lead.xlsx');
     }
-
-
-
-
-
 }

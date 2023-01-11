@@ -140,7 +140,7 @@ if (!function_exists('get_inventory')) {
 if (!function_exists('get_inventory_by_project')) {
     function get_inventory_by_project($project_id)
     {
-        if($project_id){
+        if ($project_id) {
             $project = Project::findOrFail($project_id);
             if ($project->type_id == 1) {
                 $inventories = BuildingInventory::where('project_id',$project_id);
@@ -171,7 +171,7 @@ if (!function_exists('get_inventory_by_project')) {
             } else {
                 $inventories = Property::where('project_id',$project_id);
             }
-        }else{
+        } else {
             $inventories = null;
         }
 
@@ -395,3 +395,136 @@ if (!function_exists('task_count_increment')) {
         return true;
     }
 }
+
+////////////Acountss Helper Dunctions//////////////
+
+
+// function html_escape($var, $double_encode = TRUE)
+// {
+// 	if (empty($var))
+// 	{
+// 		return $var;
+// 	}
+
+// 	if (is_array($var))
+// 	{
+// 		foreach (array_keys($var) as $key)
+// 		{
+// 			$var[$key] = html_escape($var[$key], $double_encode);
+// 		}
+
+// 		return $var;
+// 	}
+
+// 	return htmlspecialchars($var, ENT_QUOTES, config_item('charset'), $double_encode);
+// }
+if (!function_exists('display')) {
+    function display($text = null)
+    {
+        // $ci = &get_instance();
+        // $ci->load->database();
+        // $ci->load->library('session');
+        $table  = 'language';
+        $phrase = 'phrase';
+        $setting_table = 'setting';
+        $default_lang  = 'english';
+
+        //set language  
+        // $data = DB::get($setting_table)->row();
+        // if ($ci->session->has_userdata('language')) {
+        //     $language = $ci->session->userdata('language');
+        // } elseif (!empty($data->language)) {
+        //     $language = $data->language;
+        // } else {
+        $language = $default_lang;
+        // }
+
+        if (!empty($text)) {
+
+            // if ($ci->db->table_exists($table)) {
+
+            //     if ($ci->db->field_exists($phrase, $table)) {
+
+            //         if ($ci->db->field_exists($language, $table)) {
+
+            $row = DB::table('language')->select($language)
+                // ->from($table)
+                ->where($phrase, $text)
+                ->first();
+            // ->row();
+
+            if (!empty($row->$language)) {
+                return htmlspecialchars($row->$language);
+            } else {
+                return false;
+            }
+            //     } else {
+            //         return false;
+            //     }
+            // } else {
+            //     return false;
+            // }
+            // } else {
+            //     return false;
+            // }
+        } else {
+            return false;
+        }
+    }
+}
+if (!function_exists('set_value')) {
+    function set_value($field, $default = '', $html_escape = TRUE)
+    {
+        // $CI =& get_instance();
+
+        // $value = (isset($CI->form_validation) && is_object($CI->form_validation) && $CI->form_validation->has_rule($field))
+        // 	? $CI->form_validation->set_value($field, $default)
+        // 	: $CI->input->post($field, FALSE);
+
+        isset($value) or $value = $default;
+        return ($html_escape) ? htmlspecialchars($value) : $value;
+    }
+}
+if (!function_exists('allpheadtable')) {
+    function allpheadtable($headlist)
+    {
+
+        foreach ($headlist as $menu) {
+            echo '<tr><td>' . $menu->HeadCode . '</td><td>' . $menu->HeadName . '</td><td>' . $menu->PHeadName . '</td><td>' . $menu->HeadType . '</td><td>&nbsp;</td></tr>';
+            if (!empty($menu->sub)) {
+                all_subpheadtable($menu->sub);
+            }
+        }
+    }
+}
+if (!function_exists('all_subpheadtable')) {
+    function all_subpheadtable($sub_menu)
+    {
+
+        foreach ($sub_menu as $menu) {
+            $update = '';
+            $remove = '';
+            $alerttxt = "You Can not Remove this Head!!! Because the Head have some Child Head";
+            // $ci = &get_instance();
+            // if ($ci->permission->method('accounts', 'update')->access()) :
+            $update = '<input name="url" type="hidden" id="url_' . $menu->HeadCode . '" value="' . url("accounts/accounts/updatecoa") . '" /><a onclick="editinfo(' . $menu->HeadCode . ')" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="left" title="Update"><i class="fa fa-pencil" aria-hidden="true"></i></a>&nbsp;';
+            // endif;
+            // if ($ci->permission->method('accounts', 'delete')->access()) :
+            $exitid = DB::table('acc_coa')->select("*")->where('PHeadName', $menu->HeadName)->first();
+            if (!empty($exitid)) {
+                $remove = '<a  onclick="return confirm(\'' . $alerttxt . '\')" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="right" title="Delete "><i class="fa fa-trash" aria-hidden="true"></i></a>';
+            } else {
+                $remove = '<a href="' . url("accounts/deletehead/$menu->HeadCode") . '" onclick="return confirm(\'' . "are_you_sure" . '\')" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="right" title="Delete "><i class="fa fa-trash" aria-hidden="true"></i></a>';
+            }
+            // endif;
+
+
+            echo '<tr><td>' . $menu->HeadCode . '</td><td>' . $menu->HeadName . '</td><td>' . $menu->PHeadName . '</td><td>' . $menu->HeadType . '</td><td>' . $update . $remove . '</td></tr>';
+            if (!empty($menu->sub)) {
+                all_subpheadtable($menu->sub);
+            }
+        }
+    }
+}
+
+    ////////////Acountss Helper Dunctions//////////////

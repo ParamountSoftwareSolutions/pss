@@ -44,9 +44,9 @@ class SocietyInventoryController extends Controller
         $society = Society::with('project')->findOrFail($society_id);
         $category = Category::whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
         $premium = Premium::whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
-        $bed = Size::where('unit', 'bed')->whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
-        $bath = Size::where('unit', 'bath')->whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
-        $plot_size = Size::whereIn('unit', ['marla', 'kanal'])->whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
+        $bed = Size::whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
+        $bath = Size::whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
+        $plot_size = Size::whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
         $nature = Type::whereHas('project_type', function ($q) {$q->where('name', 'society');})->get();
         return view('user.society_inventory.create', compact('society_id', 'block_id', 'society', 'category', 'premium', 'bed', 'bath', 'plot_size', 'nature'));
     }
