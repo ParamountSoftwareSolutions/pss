@@ -34,7 +34,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::latest()->get();
+        $projects = get_all_projects();
         return view('user.project.index', compact('projects'));
     }
 
@@ -90,6 +90,8 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+////        dd($request->all());
+//        dd(json_encode($request->apartment_size));
         $request->validate([
             'project_type_id' => 'required',
             'name' => 'required',
@@ -131,17 +133,18 @@ class ProjectController extends Controller
                     'noc_type_id' => $request->noc_type_id,
                     'type' => json_encode($request->society_type),
                     'block' => json_encode($request->society_block),
-                    'size' => json_encode($request->society_size),
                     'created_by' => Auth::user()->id,
                     ];
                 $response = Society::create($society);
                 $data = [];
-                foreach ($request->society as $key => $detail){
-                    $size = [];
-                    foreach ($detail['sizes'] as $key1 => $val){
-                        $size[$key1 ] = ['size'=>$val['size'],'price'=>$val['price']];
+                if(!empty($request->society)){
+                    foreach ($request->society as $key => $detail){
+                        $size = [];
+                        foreach ($detail['sizes'] as $key1 => $val){
+                            $size[$key1 ] = ['size'=>$val['size'],'price'=>$val['price']];
+                        }
+                        $data[$key] = ['price' => $detail['price'], 'sizes' => $size];
                     }
-                    $data[$key] = ['price' => $detail['price'], 'sizes' => $size];
                 }
                 $data = json_encode($data);
             } elseif ($type == 'building') {
@@ -162,11 +165,13 @@ class ProjectController extends Controller
                 ];
                 $response = Building::create($building);
                 $data = [];
-                foreach ($request->detail as $key => $detail){
-                    $data['bed'][$key] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $key, 'bath' => $detail['bath'], 'price' => $detail['price']];
-                }
-                foreach ($request->shop_detail as $key => $detail){
-                    $data[$key] = ['floor' => $detail['floor'], 'area' => $detail['floor_area'], 'price' => $detail['floor_price']];
+                if(!empty($request->detail)){
+                    foreach ($request->detail as $key => $detail){
+                        $data['bed'][$key] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $key, 'bath' => $detail['bath'], 'price' => $detail['price']];
+                    }
+                    foreach ($request->shop_detail as $key => $detail){
+                        $data[$key] = ['floor' => $detail['floor'], 'area' => $detail['floor_area'], 'price' => $detail['floor_price']];
+                    }
                 }
                 $data = json_encode($data);
             } elseif ($type == 'farm_house') {
@@ -185,12 +190,13 @@ class ProjectController extends Controller
                 ];
                 $response = Farmhouse::create($farmhouse);
                 $data = [];
-                foreach ($request->farmhouse as $key => $detail){
-                    $data[$key] = ['area' => $detail['area'],'price' => $detail['price']];
+                if(!empty($request->farmhouse)){
+                    foreach ($request->farmhouse as $key => $detail){
+                        $data[$key] = ['area' => $detail['area'],'price' => $detail['price']];
+                    }
                 }
                 $data = json_encode($data);
             }
-
             $plot_feature = isset($request->plot_feature) ? json_encode($request->plot_feature) : null;
             $communication_feature = isset($request->communication_feature) ? json_encode($request->communication_feature) : null;
             $community_feature = isset($request->community_feature) ? json_encode($request->community_feature) : null;
@@ -345,7 +351,6 @@ class ProjectController extends Controller
                 'noc_type_id' => $request->noc_type_id,
                 'type' => json_encode($request->society_type),
                 'block' => json_encode($request->society_block),
-                'size' => json_encode($request->society_size),
                 'created_by' => Auth::user()->id,
             ];
             $response = Society::where('project_id',$id)->first()->update($society);

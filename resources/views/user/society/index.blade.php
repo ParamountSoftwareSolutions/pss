@@ -23,10 +23,10 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->project->name }}</td>
                                                 <td>
-                                                    <a href="{{ route('society.edit', ['RolePrefix' => RolePrefix(), 'society' => $data->id]) }}"
+                                                    {{--<a href="{{ route('society.edit', ['RolePrefix' => RolePrefix(), 'society' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
-                                                    </a>
+                                                    </a>--}}
                                                     @if($data->block !== null)
                                                     <a href="{{ route('society.show', ['RolePrefix' => RolePrefix(), 'society' =>
                                                     $data->id]) }}"

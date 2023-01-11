@@ -31,7 +31,7 @@
                                                         'floor' => (int) $data])
                                                          }}"
                                                            class="btn btn-primary px-1 py-0" title="Edit">
-                                                            <i class="fa fa-edit"></i>
+                                                            <i class="fa fa-eye"></i>
                                                         </a>
                                                     </td>
                                                 </tr>

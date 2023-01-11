@@ -14,7 +14,6 @@ return new class extends Migration
     public function up()
     {
         Schema::create('acc_coa', function (Blueprint $table) {
-            // $table->dropPrimary('id');
             $table->integer('HeadCode')->nullable();
             $table->integer('HeadName')->unsigned()->change();
             $table->integer('HeadLevel')->nullable();

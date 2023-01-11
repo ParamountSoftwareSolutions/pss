@@ -61,25 +61,52 @@
                             <li>
                                 <a href="{{route('project.index', ['RolePrefix' => RolePrefix()])}}">All Project</a>
                             </li>
+                            <li>
+                                <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">Building</a>
+                            </li>
+                            <li>
+                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">Society</a>
+                            </li>
+                            <li>
+                                <a href="{{route('farmhouse.index', ['RolePrefix' => RolePrefix()])}}">Farmhouse</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
-               
-                <li>
-                    <a href="#building" data-toggle="collapse">
+                {{--<li>
+                    <a href="#farmhouse" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
-                        <span> Building Management </span>
+                        <span> Farmhouse </span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="building">
+                    <div class="collapse" id="farmhouse">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">All Building</a>
-                                <a href="{{route('project_extra_detail', ['RolePrefix' => RolePrefix(),'project_type'=>'building'])}}">Building
+                                <a href="{{route('farmhouse.index', ['RolePrefix' => RolePrefix()])}}">All Farmhouse</a>
+                                <a href="{{route('project_extra_detail', ['RolePrefix' => RolePrefix(),'project_type'=>'farm_house'])}}">Farmhouse
                                     Extra Detail</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>--}}
+                <li>
+                    <a href="#inventory-data" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i>
+                        <span> Inventory Extra Data </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="inventory-data">
+                        <ul class="nav-second-level">
+                            <li><a href="{{route('premium.index', ['RolePrefix' => RolePrefix()])}}">Premium</a></li>
+                            <li><a href="{{route('block.index', ['RolePrefix' => RolePrefix()])}}">Block</a></li>
+                            <li><a href="{{route('size.index', ['RolePrefix' => RolePrefix()])}}">Size</a></li>
+                            <li><a href="{{route('type.index', ['RolePrefix' => RolePrefix()])}}">Type</a></li>
+                            <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>
+                            <li><a href="{{route('payment_plan.index', ['RolePrefix' => RolePrefix()])}}">Payment
+                                    Plan</a></li>
+                            <li>
                                 <a href="#building_feature" data-toggle="collapse">
-                                    <i data-feather="shopping-cart"></i>
-                                    <span> Building Features </span>
+                                    <span> Extra Features </span>
                                     <span class="menu-arrow"></span>
                                 </a>
                                 <div class="collapse" id="building_feature">
@@ -102,72 +129,15 @@
                         </ul>
                     </div>
                 </li>
-             
                 <li>
-                    <a href="#society" data-toggle="collapse">
+                    <a href="#form" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
-                        <span> Society Management </span>
+                        <span> Form </span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="society">
+                    <div class="collapse" id="form">
                         <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>
-                                <a href="{{route('project_extra_detail', ['RolePrefix' => RolePrefix(),'project_type'=>'society'])}}">Society
-                                    Extra Detail</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#property" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Property </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="property">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('property.create', ['RolePrefix' => RolePrefix()])}}">Add Property</a>
-                            </li>
-                            <li>
-                                <a href="{{route('property.index', ['RolePrefix' => RolePrefix()])}}">All Property</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li>
-                    <a href="#farmhouse" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Farmhouse </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="farmhouse">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('farmhouse.index', ['RolePrefix' => RolePrefix()])}}">All Farmhouse</a>
-                                <a href="{{route('project_extra_detail', ['RolePrefix' => RolePrefix(),'project_type'=>'farm_house'])}}">Farmhouse
-                                    Extra Detail</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#inventory-data" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Inventory Extra Data </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="inventory-data">
-                        <ul class="nav-second-level">
-                            <li><a href="{{route('premium.index', ['RolePrefix' => RolePrefix()])}}">Premium</a></li>
-                            <li><a href="{{route('block.index', ['RolePrefix' => RolePrefix()])}}">Block</a></li>
-                            <li><a href="{{route('size.index', ['RolePrefix' => RolePrefix()])}}">Size</a></li>
-                            <li><a href="{{route('type.index', ['RolePrefix' => RolePrefix()])}}">Type</a></li>
-                            <li><a href="{{route('category.index', ['RolePrefix' => RolePrefix()])}}">Category</a></li>
-                            <li><a href="{{route('payment_plan.index', ['RolePrefix' => RolePrefix()])}}">Payment
-                                    Plan</a></li>
+                            <li><a href="{{route('membership.index', ['RolePrefix' => RolePrefix()])}}">Membership Form</a></li>
                         </ul>
                     </div>
                 </li>

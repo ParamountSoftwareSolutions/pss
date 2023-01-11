@@ -34,9 +34,7 @@ use App\Http\Controllers\User\PrivacyPolicyController;
 use App\Http\Controllers\User\TermController;
 use App\Http\Controllers\User\BannerController;
 use App\Http\Controllers\User\DealerController;
-use App\Http\Controllers\User\HolidayController;
-use App\Http\Controllers\User\EmployeeController;
-use App\Http\Controllers\User\PayrollController;
+use App\Http\Controllers\User\MemberShipController;
 use App\Http\Controllers\User\LeavesController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Artisan;
@@ -184,6 +182,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //=========================//
     //  Building Management    //
     //=========================//
+
     Route::resource('building', BuildingController::class);
     Route::resource('floor', FloorController::class);
     Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
@@ -347,6 +346,11 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
         Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
         Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
     });
+
+    ///     membership form
+    Route::resource('membership', MemberShipController::class);
+    Route::get('membership-form-print/{id}', [MemberShipController::class,'printForm'])->name('membership.print.form');
+    Route::get('membership-verify/{id}', [MemberShipController::class,'verify'])->name('membership.verify');
 });
 
 
