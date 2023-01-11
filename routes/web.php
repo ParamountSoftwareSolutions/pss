@@ -196,7 +196,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //  Society Management    //
     //=========================//
     Route::resource('society', SocietyController::class);
-    Route::resource('block', SocietyBlockController::class);
+//    Route::resource('block', SocietyBlockController::class);
     Route::resource('society.block.society_inventory', SocietyInventoryController::class);
 
 
@@ -330,18 +330,22 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // //===============//
 
     Route::resource('dealer', DealerController::class);
-    Route::group(['prefix' => 'dealer', 'as' => 'email.'], function () {
-        Route::get('compose', [EmailController::class, 'email_compose'])->name('compose');
-        Route::post('compose/send', [EmailController::class, 'email_compose_send'])->name('compose.send');
-        Route::post('compose/save', [EmailController::class, 'email_compose_save'])->name('compose.save');
-        Route::get('sent', [EmailController::class, 'send_email'])->name('sent');
-        Route::get('detail/{id}', [EmailController::class, 'email_detail'])->name('detail');
-        Route::get('draft', [EmailController::class, 'draft_email'])->name('draft');
-        Route::get('view/{id}', [EmailController::class, 'email_view'])->name('view');
-        Route::post('forward/{id}', [EmailController::class, 'email_forward'])->name('forward');
-        Route::delete('destroy/{id}', [EmailController::class, 'email_destroy'])->name('destroy');
-        Route::post('remove/image', [EmailController::class, 'remove_image_email'])->name('remove_image_email');
-        Route::post('resend/{id}', [EmailController::class, 'email_resend'])->name('resend');
+    Route::get('dealer/{dealer}/create', [DealerController::class,'add_new'])->name('dealer.add_new');
+    Route::post('dealer/{dealer}/store', [DealerController::class,'add_new_store'])->name('dealer.add_new_store');
+    Route::get('dealer/{dealer}/project/{project}', [DealerController::class,'dealer_project'])->name('dealer.project');
+    Route::get('dealer/{dealer}/project/{project}/generate-pdf', [DealerController::class,'generatePDF'])->name('dealer.generate_pdf');
+    Route::group(['prefix' => 'dealer','as'=>'email.'], function () {
+        Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
+        Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
+        Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');
+        Route::get('sent', [EmailController::class,'send_email'])->name('sent');
+        Route::get('detail/{id}', [EmailController::class,'email_detail'])->name('detail');
+        Route::get('draft', [EmailController::class,'draft_email'])->name('draft');
+        Route::get('view/{id}', [EmailController::class,'email_view'])->name('view');
+        Route::post('forward/{id}', [EmailController::class,'email_forward'])->name('forward');
+        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('destroy');
+        Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
+        Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
     });
 });
 

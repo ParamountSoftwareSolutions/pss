@@ -141,7 +141,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div><div class="card card-primary">
+                            </div>
+                            <div class="card card-primary">
                                 <div class="card-header ui-sortable-handle">
                                     <h4>Payment Plan Images <small style="color: red">* (ratio 1:1)</small></h4>
                                 </div>
@@ -342,8 +343,6 @@
                                             @enderror
                                         </div>
                                     </div>
-
-
                                 </div>
 
                                 <div class="card-footer text-right">

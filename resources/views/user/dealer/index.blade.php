@@ -18,10 +18,12 @@
                                         <thead>
                                         <tr>
                                             <th class="text-center">#</th>
+                                            <th>Code</th>
                                             <th>Name</th>
-                                            <th>Email</th>
-                                            <th>CNIC</th>
                                             <th>Phone Number</th>
+                                            <th>State Name</th>
+                                            <th>Received Amount</th>
+                                            <th>Pending Amount</th>
                                             <th>Project</th>
                                             <th>Action</th>
                                         </tr>
@@ -30,22 +32,39 @@
                                         @forelse($dealers as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $data->code }}</td>
                                                 <td>{{ $data->name }}</td>
-                                                <td>{{ $data->email }}</td>
-                                                <td>{{ $data->cnic }}</td>
                                                 <td>{{ $data->number }}</td>
-                                                <td>{{ ucfirst($data->project->name) }}</td>
+                                                <td>{{ $data->agency }}</td>
+                                                <td>{{ number_format((int)$data->received + (int)$data->token) }}</td>
+                                                <td>{{ number_format((int)$data->pending) }}</td>
+                                                <td>
+                                                    @php
+                                                        $arr = [];
+                                                    @endphp
+                                                    @forelse($data->project as $project)
+                                                            @php
+                                                            if(in_array($project->id,$arr)){continue;}
+                                                            $arr[] = $project->id;
+                                                        @endphp
+                                                        {{ $project->name }}@if(!$loop->last),@endif
+                                                    @empty
+                                                    @endforelse
+                                                </td>
                                                 <td>
                                                     <a href="{{ route('dealer.edit',['RolePrefix' => RolePrefix(),'dealer'=>$data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                        <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <button type="button" data-url="{{ route('dealer.destroy',['RolePrefix' => RolePrefix(), 'dealer' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
                                                     <a href="{{ route('dealer.show',['RolePrefix' => RolePrefix(),'dealer'=>$data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="View">
                                                         <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    <button type="button" data-url="{{ route('dealer.destroy',['RolePrefix' => RolePrefix(), 'dealer' => $data->id]) }}" data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                    <a href="{{ route('dealer.add_new', ['RolePrefix' => RolePrefix(), 'dealer' => $data->id]) }}"
+                                                       class="btn btn-primary px-1 py-0" title="Edit">Projects
                                                     </a>
                                                 </td>
                                             </tr>

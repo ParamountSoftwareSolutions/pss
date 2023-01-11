@@ -25,6 +25,11 @@ class BuildingInventory extends Model
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+    public function premium()
+    {
+        return $this->belongsTo(Premium::class, 'premium_id');
+    }
+
     public function file()
     {
         return $this->hasMany(BuildingInventoryFile::class, 'building_inventory_id');

@@ -143,13 +143,33 @@ if (!function_exists('get_inventory_by_project')) {
         if ($project_id) {
             $project = Project::findOrFail($project_id);
             if ($project->type_id == 1) {
-                $inventories = BuildingInventory::where('project_id', $project_id)->get();
+                $inventories = BuildingInventory::where('project_id',$project_id);
             } elseif ($project->type_id == 2) {
-                $inventories = SocietyInventory::where('project_id', $project_id)->get();
+                $inventories = SocietyInventory::where('project_id',$project_id);
             } elseif ($project->type_id == 3) {
-                $inventories = Farmhouse::where('project_id', $project_id)->get();
+                $inventories = Farmhouse::where('project_id',$project_id);
             } else {
-                $inventories = Property::where('project_id', $project_id)->get();
+                $inventories = Property::where('project_id',$project_id);
+            }
+        }else{
+            $inventories = null;
+        }
+
+        return $inventories;
+    }
+}if (!function_exists('get_inventory_by_floor_project')) {
+    function get_inventory_by_floor_project($project_id,$floor_id)
+    {
+        if($project_id){
+            $project = Project::findOrFail($project_id);
+            if ($project->type_id == 1) {
+                $inventories = BuildingInventory::where('project_id',$project_id)->whereIn('building_floor_id',$floor_id);
+            } elseif ($project->type_id == 2) {
+                $inventories = SocietyInventory::where('project_id',$project_id)->whereIn('block_id',$floor_id);
+            } elseif ($project->type_id == 3) {
+                $inventories = Farmhouse::where('project_id',$project_id);
+            } else {
+                $inventories = Property::where('project_id',$project_id);
             }
         } else {
             $inventories = null;

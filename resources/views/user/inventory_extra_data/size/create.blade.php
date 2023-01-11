@@ -42,7 +42,7 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4">
+                                        {{--<div class="form-group col-md-4">
                                             <label>Unit</label>
                                             <select class="form-control" name="unit" required>
                                                 <option label="" disabled selected>Select Unit</option>
@@ -54,7 +54,7 @@
                                             @error('unit')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
-                                        </div>
+                                        </div>--}}
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">

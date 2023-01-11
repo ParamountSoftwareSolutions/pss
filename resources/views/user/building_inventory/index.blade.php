@@ -36,7 +36,7 @@
                                                 <td>{{ $data->project->name }}</td>
                                                 <td>{{ $data->unit_id }}</td>
                                                 <td>{{ $data->area }} square feet</td>
-                                                <td>{{ $data->type->name }}</td>
+                                                <td>{{ $data->type->name ?? '' }}</td>
                                                 <td>{{ $data->category->name }}</td>
                                                 <td>
                                                     <div class="dropdown">

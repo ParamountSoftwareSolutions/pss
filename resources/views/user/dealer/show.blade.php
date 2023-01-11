@@ -17,17 +17,19 @@
                                         <tr>
                                             <th class="text-center">#</th>
                                             <th>Name</th>
-                                            <th>Project</th>
-                                            <th>Status</th>
+                                            <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($inventories as $data)
+                                        @forelse($dealer_projects as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->unit_no }}</td>
-                                                <td>{{ $data->project_name }}</td>
-                                                <td>{{ ucfirst($data->status) }}</td>
+                                                <td>{{ $data->project->name }}</td>
+                                                <td>
+                                                    <a href="{{ route('dealer.project',['RolePrefix' => RolePrefix(),'dealer'=>$dealer->id,'project'=>$data->project_id]) }}"
+                                                       class="btn btn-primary px-1 py-0" title="View">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a></td>
                                             </tr>
                                         @empty
                                             <tr>

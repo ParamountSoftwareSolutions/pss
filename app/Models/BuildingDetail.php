@@ -9,6 +9,8 @@ class BuildingDetail extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function building_detail_file(){
         return $this->belongsTo(BuildingDetailFile::class, 'building_detail_id');
     }

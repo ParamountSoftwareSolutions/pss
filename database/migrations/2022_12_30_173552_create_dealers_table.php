@@ -15,18 +15,20 @@ return new class extends Migration
     {
         Schema::create('dealers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('code')->nullable();
+            $table->string('name')->nullable();
             $table->string('email')->unique()->nullable();
             $table->string('cnic')->unique()->nullable();
             $table->string('number')->unique()->nullable();
             $table->string('alt_number')->unique()->nullable();
             $table->string('address')->nullable();
-            $table->integer('status')->default(1);
+            $table->string('agency')->nullable();
             $table->integer('actual_amount')->nullable();
-            $table->integer('rebate')->nullable();
-            $table->integer('down_payment')->nullable();
-            $table->foreignId('project_id')->unsigned()->nullable()->constrained('projects')->nullOnDelete();
-            $table->text('inventory_list')->nullable();
+            $table->string('rebate')->nullable();
+            $table->integer('token')->nullable();
+            $table->integer('received')->nullable();
+            $table->integer('pending')->nullable();
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

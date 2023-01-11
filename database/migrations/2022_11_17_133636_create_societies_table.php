@@ -19,6 +19,7 @@ class CreateSocietiesTable extends Migration
             $table->string('developer')->nullable();
             $table->text('type')->nullable();
             $table->text('block')->nullable();
+            $table->text('size')->nullable();
             $table->foreignId('noc_type_id')->unsigned()->nullable()->constrained('noc_types')->nullOnDelete();
             $table->string('address')->nullable();
             $table->foreignId('country_id')->unsigned()->nullable()->constrained('countries')->nullOnDelete();
@@ -27,13 +28,6 @@ class CreateSocietiesTable extends Migration
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
             $table->string('area')->nullable();
-            /*$table->string('price')->nullable();
-            $table->text('description')->nullable();
-            $table->text('plot_feature')->nullable();
-            $table->text('business_feature')->nullable();
-            $table->text('community_feature')->nullable();
-            $table->text('healthcare_feature')->nullable();
-            $table->text('other_facilities')->nullable();*/
             $table->text('social_media')->nullable();/*Json data save*/
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
