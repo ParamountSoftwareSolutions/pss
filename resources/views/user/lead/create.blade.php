@@ -18,8 +18,7 @@
                                         <div class="form-group">
                                             <label>Project List <small style="color: red">*</small></label>
                                             <select class="form-control" id="selectProject" onchange="{project(); submitForm()}" name="building_id">
-                                                <option value="" >Select Project ...
-                                                </option>
+                                                <option value="">Select Project ...</option>
                                                 @if (!empty($projects))
                                                 @foreach ($projects as $data)
                                                 <option value="{{ $data }}">{{ $data->name }}</option>
@@ -55,6 +54,14 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-group col-md-4" id="selectBuildingFloorInventoryHide">
+                                            <div class="form-group">
+                                                <label>Building Floor Invetory</label>
+                                                <select class="form-control" name="inventory_id" id="selectBuildingFloorInventory" required>
+                                                    <option label="" selected>Select Building Floor Invetory ... </option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     <div class="form-group col-md-4" id="quantity">
                                         <div class="form-group">
                                             <label>Quatity</label>
@@ -102,11 +109,19 @@
                                         <label>Source</label>
                                         <select class="form-control" name="source">
                                             <option label="" disabled selected>Select Detail</option>
+                                            <option value="Walk In">Walk In</option>
+                                            <option value="Call">Call</option>
+                                            <option value="Reference">Reference</option>
+                                            <option value="Social Media">Social Media</option>
                                         </select>
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Purpose</label>
                                         <input type="text" class="form-control" name="purpose">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Interested In</label>
+                                        <input type="text" class="form-control" name="interested">
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Bugdet From</label>
@@ -135,7 +150,7 @@
                                     <div class="form-group col-md-4">
                                         <label>Country</label>
                                         <select class="form-control" name="country">
-                                            <option label="" disabled selected>Select Detail</option>
+                                            <option label="" value="" selected>Select Detail</option>
                                             @if (!empty($country))
                                             @foreach ($country as $country_value)
                                             <option value="{{$country_value->id}}">{{$country_value->name}}</option>
@@ -157,7 +172,7 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Email</label>
-                                        <input type="email" class="form-control" name="email">
+                                        <input type="email" class="form-control" name="email" placeholder="Your Email">
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Phone</label>
@@ -189,11 +204,45 @@
 @section('script')
 <script>
     $(document).ready(function() {
+//Building Inventory
+        // Bulding Invertory
+        $('select[name="buildingFloor"]').on('change', function() {
+            var id = $(this).val();
+            if (id) {
+                $.ajax({
+                    url: "{{ url(RolePrefix().'/building_inventory') }}/" + id,
+                    type: "GET",
+                    // dataType: "json",
+                    success: function(response) {
+                        var data = JSON.parse(response);
+                        $.each(data, function(i, item) {
+                            $('#selectBuildingFloorInventory').append($('<option>', {
+                                value: item.id,
+                                text: item.unit_id
+                            }));
+                        });
+                        // data.forEach(element => {
+                        //     var options = document.createElement('option');
+                        //     options.text = element.id;
+                        //     options.value = element.id;
+                        //     const select = document.getElementById('selectBuildingFloorInventory');
+                        //     select.appendChild(options);
+                        // });
+                    },
+                });
+            } else {
+                alert('Building Floor Data Found');
+            }
+        });
+
+
+
         $('select[name="country"]').on('change', function() {
             var country_id = $(this).val();
             if (country_id) {
                 $.ajax({
-                    url: "{{route('state', ['RolePrefix' => RolePrefix(),2])}}",
+                    url: "{{ url(RolePrefix().'/state') }}/" + country_id,
+                    // url: "{{route('state', ['RolePrefix' => RolePrefix(),2])}}",
                     type: "GET",
                     dataType: "json",
                     success: function(data) {
@@ -215,6 +264,7 @@
         // City Select
         $('select[name="state"]').on('change', function() {
             var state = $(this).val();
+          
             if (state) {
                 $.ajax({
                     url: "{{ url(RolePrefix().'/city') }}/" + state,
@@ -243,6 +293,7 @@
     document.getElementById("buildingfloor").style.display = "none";
     document.getElementById("premium").style.display = "none";
     document.getElementById("type").style.display = "none";
+    document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
     // array.forEach(element => {
 
     // });
@@ -262,7 +313,7 @@
             cache: false,
             success: function(response) {
                 var data = JSON.parse(response);
-                
+
                 var size = data[0];
                 var floor = data[1];
                 var type = data[2];
@@ -292,7 +343,7 @@
                     });
                 } else if (project.type_id == 2) {
                     size.forEach(element => {
-                      console.log(element.name);
+                        console.log(element.name);
                         var option = document.createElement('option');
                         option.text = element.name + " " + element.unit;
                         option.value = element.id;
@@ -332,6 +383,7 @@
                 document.getElementById("buildingfloor").style.display = "block";
                 document.getElementById("premium").style.display = "none";
                 document.getElementById("type").style.display = "block";
+                document.getElementById("selectBuildingFloorInventoryHide").style.display = "block";
                 break;
             case 2:
                 document.getElementById("size").style.display = "block";
@@ -339,6 +391,7 @@
                 document.getElementById("buildingfloor").style.display = "none";
                 document.getElementById("premium").style.display = "block";
                 document.getElementById("type").style.display = "none";
+                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
                 break;
             case 3:
                 document.getElementById("size").style.display = "block";
@@ -346,6 +399,7 @@
                 document.getElementById("buildingfloor").style.display = "none";
                 document.getElementById("premium").style.display = "block";
                 document.getElementById("type").style.display = "none";
+                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
                 break;
             case 4:
                 document.getElementById("size").style.display = "block";
@@ -353,6 +407,7 @@
                 document.getElementById("buildingfloor").style.display = "none";
                 document.getElementById("premium").style.display = "none";
                 document.getElementById("type").style.display = "none";
+                document.getElementById("selectBuildingFloorInventoryHide").style.display = "none";
                 break;
         }
     }

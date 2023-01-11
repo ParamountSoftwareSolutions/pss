@@ -34,6 +34,10 @@ use App\Http\Controllers\User\PrivacyPolicyController;
 use App\Http\Controllers\User\TermController;
 use App\Http\Controllers\User\BannerController;
 use App\Http\Controllers\User\DealerController;
+use App\Http\Controllers\User\HolidayController;
+use App\Http\Controllers\User\EmployeeController;
+use App\Http\Controllers\User\PayrollController;
+use App\Http\Controllers\User\LeavesController;
 use App\Models\lead;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -53,8 +57,7 @@ Route::get('/fake_leads', function () {
     }
 });
 
-Route::get('/updateapp', function()
-{
+Route::get('/updateapp', function () {
     Artisan::call('dump-autoload');
     echo 'dump-autoload complete';
 });
@@ -72,16 +75,70 @@ Route::get('/updateapp', function()
 
 Route::get('/', [LoginController::class, 'index']);
 Route::get('/login', [LoginController::class, 'index'])->name('/');
-Route::post('login', [LoginController::class, 'store'])->name('login');
+Route::post('/login', [LoginController::class, 'store'])->name('login');
 Route::get('logout', [LoginController::class, 'logout'])->name('logout');
-
+///plac it into admin middleware
 
 Route::group(['middleware' => 'auth:admin'], function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+    Route::get('/permission', [AdminController::class, 'permission'])->name('permission');
+    Route::post('/permission_store', [AdminController::class, 'permission_store'])->name('permission_store');
 });
 
 Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePrefix']], function () {
     Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
+
+    //===============================//
+    // Hrm    // Payroll
+    //===============================//
+
+    Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
+        Route::get('/', [EmployeeController::class, 'index'])->name('index');
+        Route::get('/edit/{id}', [EmployeeController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [EmployeeController::class, 'update'])->name('update');
+        Route::delete('/destroy/{id}', [EmployeeController::class, 'destroy'])->name('destroy');
+        Route::post('/getSaleManagers', [EmployeeController::class, 'getSaleManagers'])->name('getSaleManagers');
+        Route::get('/index', [EmployeeController::class, 'create'])->name('create');
+        Route::post('/add', [EmployeeController::class, 'store'])->name('store');
+
+        Route::get('/permission/{employeeId}', [EmployeeController::class, 'permission']);
+        Route::post('permission', [EmployeeController::class, 'updatePermissions']);
+        Route::get('/delete/{employeeId}', [EmployeeController::class, 'delete']);
+        Route::get('/trash', [EmployeeController::class, 'getTrash']);
+        Route::get('/restore/{employeeId}', [EmployeeController::class, 'restore']);
+    });
+
+
+    Route::group(['prefix' => 'employees', 'as' => 'employees.'], function () {
+
+        Route::get('form/holidays/new', [HolidayController::class, 'holiday'])->name('form/holidays/new');
+        Route::post('form/holidays/save', [HolidayController::class, 'saveRecord'])->name('form/holidays/save');
+        Route::post('form/holidays/update', [HolidayController::class, 'updateRecord'])->name('form/holidays/update');
+
+        Route::get('form/leaves/new', [LeavesController::class, 'leaves'])->name('form/leaves/new');
+        Route::get('form/leavesemployee/new', [LeavesController::class, 'leavesEmployee'])->name('form/leavesemployee/new');
+        Route::post('form/leaves/save', [LeavesController::class, 'saveRecord'])->name('form/leaves/save');
+        Route::post('form/leaves/edit', [LeavesController::class, 'editRecordLeave'])->name('form/leaves/edit');
+        Route::post('form/leaves/edit/delete', [LeavesController::class, 'deleteLeave'])->name('form/leaves/edit/delete');
+    });
+
+    Route::group(['prefix' => 'payroll', 'as' => 'payroll.'], function () {
+        Route::get('form/salary/page', [PayrollController::class, 'salary'])->name('form/salary/page');
+        Route::post('form/salary/save', [PayrollController::class, 'saveRecord'])->name('form/salary/save');
+        Route::post('form/salary/update', [PayrollController::class, 'updateRecord'])->name('form/salary/update');
+        Route::post('form/salary/delete', [PayrollController::class, 'deleteRecord'])->name('form/salary/delete');
+        Route::get('form/salary/view/{user_id}', [PayrollController::class, 'salaryView'])->name('salary-view');
+
+
+        Route::get('form/payroll/items', [PayrollController::class, 'payrollItems'])->name('form/payroll/items');
+
+        Route::get('payrollEdit/{id}', [PayrollController::class, 'editPayroll'])->name('editPayroll');
+        Route::get('payrollView/{id}', [PayrollController::class, 'viewPayroll'])->name('viewPayroll');
+        Route::put('payrollUpdate/{id}', [PayrollController::class, 'updatePayroll'])->name('updatePayroll');
+        Route::get('payrollImport', [PayrollController::class, 'importPayroll'])->name('importPayroll');
+        Route::get('payrollExport', [PayrollController::class, 'exportPayroll'])->name('exportPayroll');
+        Route::post('bulk_import_payroll', [PayrollController::class, 'bulk_import_payroll'])->name('bulk_import_payroll');
+    });
 
     //===============================//
     //  Banner App related Routes    //
@@ -130,7 +187,7 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('building', BuildingController::class);
     Route::resource('floor', FloorController::class);
     Route::resource('building.floor.building_inventory', BuildingInventoryController::class);
-    Route::get('extra_detail/{project_type}', [BuildingExtraDetailController::class,'project_extra_detail'])->name('project_extra_detail');
+    Route::get('extra_detail/{project_type}', [BuildingExtraDetailController::class, 'project_extra_detail'])->name('project_extra_detail');
     Route::resource('project.extra_detail', BuildingExtraDetailController::class);
     Route::post('extra-detail/remove/image', [BuildingExtraDetailController::class, 'image_remove']);
     Route::post('building/inventory/image/remove', [BuildingInventoryController::class, 'image_remove']);
@@ -144,8 +201,8 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
 
 
 
-    Route::get('state/{id}', [HomeController::class, 'state']);
-    Route::get('city/{id}', [HomeController::class, 'city']);
+    // Route::get('state/{id}', [HomeController::class, 'state']);
+    // Route::get('city/{id}', [HomeController::class, 'city']);
     Route::get('get-premium/{type}', [PremiumController::class, 'get_premium']);
     Route::get('get-payment-plan/{premium_id}/{project_type_id}', [PaymentPlanController::class, 'get_payment_plan']);
     Route::get('get-project/{project_type_id}', [ProjectController::class, 'get_project']);
@@ -216,10 +273,11 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::get('building_inventory/{id}', [ClientController::class, 'building_inventory']);
     Route::get('societyBlock_inventory/{id}', [ClientController::class, 'societyBlock_inventory']);
     // Route::get('client/building_inventory/{id}', [ClientController::class, 'building_inventory'])->name('client.building_inventory');
-   
-       //Inventory historys
-       Route::get('sale/history', [ClientController::class, 'history'])->name('lead.history');
-       //Inventory historys
+
+    //Inventory historys
+    Route::get('sale/history', [ClientController::class, 'history'])->name('sale.history');
+    Route::get('sale/history/show/{id}', [ClientController::class, 'history_sale'])->name('sale.show');
+    //Inventory historys
     // //=============//
     // /* Clients */
     // //=============//
@@ -253,18 +311,18 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // /* Email Routes */
     // //=============//
 
-    Route::group(['prefix' => 'email','as'=>'email.'], function () {
-        Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
-        Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
-        Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');
-        Route::get('sent', [EmailController::class,'send_email'])->name('sent');
-        Route::get('detail/{id}', [EmailController::class,'email_detail'])->name('detail');
-        Route::get('draft', [EmailController::class,'draft_email'])->name('draft');
-        Route::get('view/{id}', [EmailController::class,'email_view'])->name('view');
-        Route::post('forward/{id}', [EmailController::class,'email_forward'])->name('forward');
-        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('destroy');
-        Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
-        Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
+    Route::group(['prefix' => 'email', 'as' => 'email.'], function () {
+        Route::get('compose', [EmailController::class, 'email_compose'])->name('compose');
+        Route::post('compose/send', [EmailController::class, 'email_compose_send'])->name('compose.send');
+        Route::post('compose/save', [EmailController::class, 'email_compose_save'])->name('compose.save');
+        Route::get('sent', [EmailController::class, 'send_email'])->name('sent');
+        Route::get('detail/{id}', [EmailController::class, 'email_detail'])->name('detail');
+        Route::get('draft', [EmailController::class, 'draft_email'])->name('draft');
+        Route::get('view/{id}', [EmailController::class, 'email_view'])->name('view');
+        Route::post('forward/{id}', [EmailController::class, 'email_forward'])->name('forward');
+        Route::delete('destroy/{id}', [EmailController::class, 'email_destroy'])->name('destroy');
+        Route::post('remove/image', [EmailController::class, 'remove_image_email'])->name('remove_image_email');
+        Route::post('resend/{id}', [EmailController::class, 'email_resend'])->name('resend');
     });
 
     // //===============//
@@ -272,17 +330,83 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     // //===============//
 
     Route::resource('dealer', DealerController::class);
-    Route::group(['prefix' => 'dealer','as'=>'email.'], function () {
-        Route::get('compose', [EmailController::class,'email_compose'])->name('compose');
-        Route::post('compose/send', [EmailController::class,'email_compose_send'])->name('compose.send');
-        Route::post('compose/save', [EmailController::class,'email_compose_save'])->name('compose.save');
-        Route::get('sent', [EmailController::class,'send_email'])->name('sent');
-        Route::get('detail/{id}', [EmailController::class,'email_detail'])->name('detail');
-        Route::get('draft', [EmailController::class,'draft_email'])->name('draft');
-        Route::get('view/{id}', [EmailController::class,'email_view'])->name('view');
-        Route::post('forward/{id}', [EmailController::class,'email_forward'])->name('forward');
-        Route::delete('destroy/{id}', [EmailController::class,'email_destroy'])->name('destroy');
-        Route::post('remove/image', [EmailController::class,'remove_image_email'])->name('remove_image_email');
-        Route::post('resend/{id}', [EmailController::class,'email_resend'])->name('resend');
+    Route::group(['prefix' => 'dealer', 'as' => 'email.'], function () {
+        Route::get('compose', [EmailController::class, 'email_compose'])->name('compose');
+        Route::post('compose/send', [EmailController::class, 'email_compose_send'])->name('compose.send');
+        Route::post('compose/save', [EmailController::class, 'email_compose_save'])->name('compose.save');
+        Route::get('sent', [EmailController::class, 'send_email'])->name('sent');
+        Route::get('detail/{id}', [EmailController::class, 'email_detail'])->name('detail');
+        Route::get('draft', [EmailController::class, 'draft_email'])->name('draft');
+        Route::get('view/{id}', [EmailController::class, 'email_view'])->name('view');
+        Route::post('forward/{id}', [EmailController::class, 'email_forward'])->name('forward');
+        Route::delete('destroy/{id}', [EmailController::class, 'email_destroy'])->name('destroy');
+        Route::post('remove/image', [EmailController::class, 'remove_image_email'])->name('remove_image_email');
+        Route::post('resend/{id}', [EmailController::class, 'email_resend'])->name('resend');
     });
+});
+
+
+/////////////////////////////////Accounts///////////////////////////
+
+Route::group(['prefix' => 'accounts'], function () {
+    Route::get('C_O_A', [\App\Http\Controllers\AccountsController::class, 'C_O_A']);
+    Route::get('show_tree', [\App\Http\Controllers\AccountsController::class, 'show_tree'])->name('accounts.show_tree');
+    Route::post('insert_coa2', [\App\Http\Controllers\AccountsController::class, 'insert_coa2'])->name('accounts.insert_coa2');
+    Route::post('selectphead', [\App\Http\Controllers\AccountsController::class, 'selectphead']);
+    Route::get('selectedform/{id}', [\App\Http\Controllers\AccountsController::class, 'selectedform']);
+    Route::get('updatecoa/{id}', [\App\Http\Controllers\AccountsController::class, 'updatecoa']);
+    Route::get('deletehead/{id}', [\App\Http\Controllers\AccountsController::class, 'deletehead']);
+
+    Route::get('debit_voucher', [\App\Http\Controllers\AccountsController::class, 'debit_voucher'])->name('accounts.debit_voucher');
+    Route::get('debtvouchercode/{id}', [\App\Http\Controllers\AccountsController::class, 'debtvouchercode'])->name('accounts.debtvouchercode');
+    Route::post('create_debit_voucher', [\App\Http\Controllers\AccountsController::class, 'create_debit_voucher'])->name('accounts.create_debit_voucher');
+
+    Route::get('credit_voucher', [\App\Http\Controllers\AccountsController::class, 'credit_voucher'])->name('accounts.credit_voucher');
+    Route::post('create_credit_voucher', [\App\Http\Controllers\AccountsController::class, 'create_credit_voucher'])->name('accounts.create_credit_voucher');
+
+    Route::get('contra_voucher', [\App\Http\Controllers\AccountsController::class, 'contra_voucher'])->name('accounts.contra_voucher');
+    Route::post('update_contra_voucher', [\App\Http\Controllers\AccountsController::class, 'update_contra_voucher'])->name('accounts.update_contra_voucher');
+    Route::post('create_contra_voucher', [\App\Http\Controllers\AccountsController::class, 'create_contra_voucher'])->name('accounts.create_contra_voucher');
+
+    Route::get('journal_voucher', [\App\Http\Controllers\AccountsController::class, 'journal_voucher'])->name('accounts.journal_voucher');
+    Route::post('create_journal_voucher', [\App\Http\Controllers\AccountsController::class, 'create_journal_voucher'])->name('accounts.create_journal_voucher');
+    Route::get('aprove_v', [\App\Http\Controllers\AccountsController::class, 'aprove_v'])->name('accounts.aprove_v');
+
+    Route::get('voucher_update/{id}', [\App\Http\Controllers\AccountsController::class, 'voucher_update'])->name('accounts.voucher_update');
+    Route::get('visactive/{id}', [\App\Http\Controllers\AccountsController::class, 'isactive'])->name('accounts.isactive');
+
+    Route::get('trial_balance', [\App\Http\Controllers\AccountsController::class, 'trial_balance'])->name('accounts.trial_balance');
+    Route::post('trial_balance_report', [\App\Http\Controllers\AccountsController::class, 'trial_balance_report'])->name('accounts.trial_balance_report');
+
+    Route::get('vouchar_cash/{date}', [\App\Http\Controllers\AccountsController::class, 'vouchar_cash']);
+    Route::get('general_ledger', [\App\Http\Controllers\AccountsController::class, 'general_ledger'])->name('accounts.general_ledger');
+    Route::get('general_led/{Headid}', [\App\Http\Controllers\AccountsController::class, 'general_led'])->name('accounts.general_led');
+
+    Route::post('accounts_report_search', [\App\Http\Controllers\AccountsController::class, 'accounts_report_search'])->name('accounts.accounts_report_search');
+    Route::get('check_status_report', [\App\Http\Controllers\AccountsController::class, 'check_status_report']);
+    Route::any('cash_book', [\App\Http\Controllers\AccountsController::class, 'cash_book'])->name('accounts.cash_book');
+    Route::any('bank_book', [\App\Http\Controllers\AccountsController::class, 'bank_book'])->name('accounts.bank_book');
+    Route::get('voucher_report_print/{id}', [\App\Http\Controllers\AccountsController::class, 'voucher_report_print'])->name('accounts.voucher_report_print');
+    Route::get('vouchar_view/{id}', [\App\Http\Controllers\AccountsController::class, 'vouchar_view'])->name('accounts.vouchar_view');
+    Route::get('voucher_report', [\App\Http\Controllers\AccountsController::class, 'voucher_report'])->name('accounts.voucher_report');
+    Route::post('voucher_report_serach', [\App\Http\Controllers\AccountsController::class, 'voucher_report_serach'])->name('accounts.voucher_report_serach');
+    Route::get('coa_print', [\App\Http\Controllers\AccountsController::class, 'coa_print'])->name('accounts.coa_print');
+    Route::get('profit_loss_report', [\App\Http\Controllers\AccountsController::class, 'profit_loss_report'])->name('accounts.profit_loss_report');
+    Route::post('profit_loss_report_search', [\App\Http\Controllers\AccountsController::class, 'profit_loss_report_search'])->name('accounts.profit_loss_report_search');
+    Route::get('cash_flow_report', [\App\Http\Controllers\AccountsController::class, 'cash_flow_report'])->name('accounts.cash_flow_report');
+    Route::post('cash_flow_report_search', [\App\Http\Controllers\AccountsController::class, 'cash_flow_report_search'])->name('accounts.cash_flow_report_search');
+    Route::get('supplier_headcode/{id}', [\App\Http\Controllers\AccountsController::class, 'supplier_headcode']);
+    Route::get('supplier_payments', [\App\Http\Controllers\AccountsController::class, 'supplier_payments'])->name('accounts.supplier_payments');
+    Route::post('banklist', [\App\Http\Controllers\AccountsController::class, 'banklist']);
+    Route::post('create_supplier_payment', [\App\Http\Controllers\AccountsController::class, 'create_supplier_payment'])->name('accounts.create_supplier_payment');
+    Route::get('supplier_paymentreceipt/{supplier_id}/{voucher_no}/{coaid}', [\App\Http\Controllers\AccountsController::class, 'supplier_paymentreceipt'])->name('accounts.supplier_paymentreceipt');
+    Route::get('cash_adjustment', [\App\Http\Controllers\AccountsController::class, 'cash_adjustment'])->name('accounts.cash_adjustment');
+    Route::post('create_cash_adjustment', [\App\Http\Controllers\AccountsController::class, 'create_cash_adjustment'])->name('accounts.create_cash_adjustment');
+    Route::any('balance_sheet', [\App\Http\Controllers\AccountsController::class, 'balance_sheet'])->name('accounts.balance_sheet');
+
+    Route::get('debit_voucher_code/{id}', [\App\Http\Controllers\AccountsController::class, 'debit_voucher_code']);
+    Route::post('update_journal_voucher', [\App\Http\Controllers\AccountsController::class, 'update_journal_voucher'])->name('accounts.update_journal_voucher');
+
+    Route::post('update_debit_voucher', [\App\Http\Controllers\AccountsController::class, 'update_debit_voucher'])->name('accounts.update_debit_voucher');
+    Route::post('update_credit_voucher', [\App\Http\Controllers\AccountsController::class, 'update_credit_voucher'])->name('accounts.update_credit_voucher');
 });

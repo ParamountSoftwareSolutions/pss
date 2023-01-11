@@ -109,7 +109,7 @@
                                                     <select class="form-control" name="bed">
                                                         <option value="">Select Bed</option>
                                                         @foreach($bed as $data)
-                                                            <option value="{{ $data->id }}">{{ $data->name }} - {{ $data->unit->name }}</option>
+                                                            <option value="{{ $data->id }}">{{ $data->name }}</option>
                                                         @endforeach
                                                     </select>
                                                     @error('bed')

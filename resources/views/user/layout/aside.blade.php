@@ -3,25 +3,20 @@
     <div class="h-100" data-simplebar>
         <!-- User box -->
         <div class="user-box text-center">
-            <img src="{{asset('/')}}/assets/images/users/user-1.jpg" alt="user-img" title="Mat Helme"
-                 class="rounded-circle avatar-md">
+            <img src="{{asset('/assets/images/users/user-1.jpg')}}" alt="user-img" title="Mat Helme" class="rounded-circle avatar-md">
             <div class="dropdown">
-                <a href="javascript: void(0);" class="text-dark dropdown-toggle h5 mt-2 mb-1 d-block"
-                   data-toggle="dropdown">Geneva Kennedy</a>
+                <a href="javascript: void(0);" class="text-dark dropdown-toggle h5 mt-2 mb-1 d-block" data-toggle="dropdown">Geneva Kennedy</a>
                 <div class="dropdown-menu user-pro-dropdown">
-
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
                         <i class="fe-user mr-1"></i>
                         <span>My Account</span>
                     </a>
-
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
                         <i class="fe-settings mr-1"></i>
                         <span>Settings</span>
                     </a>
-
                     <!-- item-->
                     <a href="javascript:void(0);" class="dropdown-item notify-item">
                         <i class="fe-lock mr-1"></i>
@@ -69,6 +64,7 @@
                         </ul>
                     </div>
                 </li>
+                @if($permissions->Building == 'on')
                 <li>
                     <a href="#building" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
@@ -106,6 +102,7 @@
                         </ul>
                     </div>
                 </li>
+                @endif
                 <li>
                     <a href="#society" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
@@ -139,23 +136,7 @@
                         </ul>
                     </div>
                 </li>
-                {{--<li>
-                    <a href="#society" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Society </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="society">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('society.create', ['RolePrefix' => RolePrefix()])}}">Add Society</a>
-                            </li>
-                            <li>
-                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">All Society</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>--}}
+
                 <li>
                     <a href="#farmhouse" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
@@ -209,141 +190,206 @@
                 </li>
 
                 <li>
-                    <a href="#sidebarEcommerce" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Leads </span>
-                        <span class="menu-arrow"></span>
+                    <a href="#employees" data-toggle="collapse">
+                        <i data-feather="shopping-cart"></i> <span> Employees</span> <span class="menu-arrow fa fa-"></span>
                     </a>
-                    <div class="collapse" id="sidebarEcommerce">
+                    <div class="collapse" id="employees">
                         <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('leads.create', ['RolePrefix' => RolePrefix()])}}">Add Lead</a>
-                            </li>
-                            <li>
-                                <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">All Lead</a>
-                            </li>
-                            <li>
-                                <a href="{{route('leads.mature', ['RolePrefix' => RolePrefix()])}}">Matured</a>
-                            </li>
-                            <li>
-                                <a href="{{route('leads.closed', ['RolePrefix' => RolePrefix()])}}">Closed</a>
-                            </li>
-                            <li>
-                                <a href="{{route('webhook.index', ['RolePrefix' => RolePrefix()])}}">Facebook leads</a>
-                            </li>
-                            <li>
-                                <a href="{{route('lead.employee', ['RolePrefix' => RolePrefix()])}}">Employee
-                                    Reports</a>
-                            </li>
-                            <li>
-                                <a href="{{route('lead.refer', ['RolePrefix' => RolePrefix()])}}">Refer Leads</a>
-                            </li>
-                            <li>
-                                <a href="{{route('lead.bulk_import.view', ['RolePrefix' => RolePrefix()])}}">Bulk
-                                    Import</a>
-                            </li>
-                            <li>
-                                <a href="{{route('lead.bulk_export', ['RolePrefix' => RolePrefix()])}}">Bulk Export</a>
-                            </li>
+                            <li><a href="{{ route('employee.index', ['RolePrefix' => RolePrefix()]) }}">All Employees</a></li>
+                            <li><a href="{{ route('employees.form/holidays/new', ['RolePrefix' => RolePrefix()]) }}">Holidays</a></li>
+                            <li><a href="{{ route('employees.form/leaves/new', ['RolePrefix' => RolePrefix()]) }}">Leaves</a></li>
                         </ul>
                     </div>
                 </li>
                 <li>
-                    <a href="#email" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Email </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="email">
+                    <a href="#payroll" data-toggle="collapse"><i data-feather="shopping-cart"></i>
+                        <span> Payroll </span> <span class="menu-arrow fa fa-"></span></a>
+                    <div class="collapse" id="payroll">
                         <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('email.compose', ['RolePrefix' => RolePrefix()])}}">Compose</a>
-                            </li>
-                            <li>
-                                <a href="{{route('email.sent', ['RolePrefix' => RolePrefix()])}}">Sent</a>
-                            </li>
-                            <li>
-                                <a href="{{route('email.draft', ['RolePrefix' => RolePrefix()])}}">Drafts</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#clients_bar" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Clients </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="clients_bar">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('clients.create', ['RolePrefix' => RolePrefix()])}}">Add Client</a>
-                            </li>
-                            <li>
-                                <a href="{{route('clients.index', ['RolePrefix' => RolePrefix()])}}">All Clients</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#banner" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Banner </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="banner">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('banner.index', ['RolePrefix' => RolePrefix()])}}">Banner List</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#dealer" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> Dealer </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="dealer">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('dealer.index', ['RolePrefix' => RolePrefix()])}}">Dealer List</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <a href="#more" data-toggle="collapse">
-                        <i data-feather="shopping-cart"></i>
-                        <span> More </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="more">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="{{route('about.index', ['RolePrefix' => RolePrefix()])}}">About</a>
-                            </li>
-                            <li>
-                                <a href="{{route('faq.index', ['RolePrefix' => RolePrefix()])}}">FAQs</a>
-                            </li>
-                            <li>
-                                <a href="{{route('privacy_policy.index', ['RolePrefix' => RolePrefix()])}}">Privacy Policy</a>
-                            </li>
-                            <li>
-                                <a href="{{route('term.index', ['RolePrefix' => RolePrefix()])}}">Terms</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                            <li><a href="{{ route('payroll.form/salary/page', ['RolePrefix' => RolePrefix()]) }}"> Employee Salary </a></li>
+                            {{-- <li><a href="{{ route('payroll.form/salary/view', ['RolePrefix' => RolePrefix()]) }}"> Payslip </a>
+                </li> --}}
+                <li><a href="{{ route('payroll.form/payroll/items', ['RolePrefix' => RolePrefix()]) }}"> Payroll Items </a></li>
             </ul>
         </div>
         </li>
+        <li>
+            <a href="#task-target1" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> Accounts </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="task-target1">
+                <ul class="nav-second-level">
+                    <li><a class="nav-link" href="{{ route('accounts.show_tree') }}">Chart of Accounts</a></li>
+                    <li><a class="nav-link" href="{{ route('accounts.supplier_payments') }}">Supplier Payment</a></li>
+                    <li><a class="nav-link" href="{{ route('accounts.cash_adjustment') }}">Cash Adjustment</a></li>
+                    <li><a class="nav-link" href="{{ route('accounts.debit_voucher') }}">Debit Voucher</a></li>
+                    <li><a class="nav-link" href="{{ route('accounts.credit_voucher') }}">Credit Voucher</a></li>
+                    <li><a class="nav-link" href="{{ route('accounts.contra_voucher') }}">Contra Voucher</a></li>
+                    <li><a class="nav-link" href="{{ route('accounts.journal_voucher') }}">Journal Voucher</a></li>
+                    <li><a class="nav-link" href="{{ route('accounts.aprove_v') }}">Voucher Approval</a></li>
+                    <li>
+                        <a href="#task-target12" data-toggle="collapse">
+                            <i data-feather="shopping-cart"></i>
+                            <span> Accounts Report </span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse" id="task-target12">
+                            <ul class="nav-second-level">
+                                <li><a class="nav-link" href="{{ route('accounts.voucher_report') }}">Voucher Report</a></li>
+                                <li><a class="nav-link" href="{{ route('accounts.cash_book') }}">Cash Book</a></li>
+                                <li><a class="nav-link" href="{{ route('accounts.bank_book') }}">Bank Book</a></li>
+                                <li><a class="nav-link" href="{{ route('accounts.general_ledger') }}">General Ledger</a></li>
+                                <li><a class="nav-link" href="{{ route('accounts.trial_balance') }}">Trial Balance</a></li>
+                                <li><a class="nav-link" href="{{ route('accounts.profit_loss_report') }}">Profit Loss</a></li>
+                                <li><a class="nav-link" href="{{ route('accounts.cash_flow_report') }}">Cash Flow</a></li>
+                                <li><a class="nav-link" href="{{ route('accounts.coa_print') }}">COA Print</a></li>
+                                <li><a class="nav-link" href="{{ route('accounts.balance_sheet') }}">Balance Sheet</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </li>
 
-
+        <li>
+            <a href="#sidebarEcommerce" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> Leads </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="sidebarEcommerce">
+                <ul class="nav-second-level">
+                    <li>
+                        <a href="{{route('leads.create', ['RolePrefix' => RolePrefix()])}}">Add Lead</a>
+                    </li>
+                    <li>
+                        <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">All Lead</a>
+                    </li>
+                    <li>
+                        <a href="{{route('leads.mature', ['RolePrefix' => RolePrefix()])}}">Matured</a>
+                    </li>
+                    <li>
+                        <a href="{{route('leads.closed', ['RolePrefix' => RolePrefix()])}}">Closed</a>
+                    </li>
+                    <li>
+                        <a href="{{route('webhook.index', ['RolePrefix' => RolePrefix()])}}">Facebook leads</a>
+                    </li>
+                    <li>
+                        <a href="{{route('lead.employee', ['RolePrefix' => RolePrefix()])}}">Employee
+                            Reports</a>
+                    </li>
+                    <li>
+                        <a href="{{route('lead.refer', ['RolePrefix' => RolePrefix()])}}">Refer Leads</a>
+                    </li>
+                    <li>
+                        <a href="{{route('lead.bulk_import.view', ['RolePrefix' => RolePrefix()])}}">Bulk
+                            Import</a>
+                    </li>
+                    <li>
+                        <a href="{{route('lead.bulk_export', ['RolePrefix' => RolePrefix()])}}">Bulk Export</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li>
+            <a href="#email" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> Email </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="email">
+                <ul class="nav-second-level">
+                    <li>
+                        <a href="{{route('email.compose', ['RolePrefix' => RolePrefix()])}}">Compose</a>
+                    </li>
+                    <li>
+                        <a href="{{route('email.sent', ['RolePrefix' => RolePrefix()])}}">Sent</a>
+                    </li>
+                    <li>
+                        <a href="{{route('email.draft', ['RolePrefix' => RolePrefix()])}}">Drafts</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li>
+            <a href="#clients_bar" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> Clients </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="clients_bar">
+                <ul class="nav-second-level">
+                    <li>
+                        <a href="{{route('clients.create', ['RolePrefix' => RolePrefix()])}}">Add Client</a>
+                    </li>
+                    <li>
+                        <a href="{{route('clients.index', ['RolePrefix' => RolePrefix()])}}">All Clients</a>
+                    </li>
+                    <li>
+                        <a href="{{route('sale.history', ['RolePrefix' => RolePrefix()])}}">Sale History</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li>
+            <a href="#banner" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> Banner </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="banner">
+                <ul class="nav-second-level">
+                    <li>
+                        <a href="{{route('banner.index', ['RolePrefix' => RolePrefix()])}}">Banner List</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li>
+            <a href="#dealer" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> Dealer </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="dealer">
+                <ul class="nav-second-level">
+                    <li>
+                        <a href="{{route('dealer.index', ['RolePrefix' => RolePrefix()])}}">Dealer List</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li>
+            <a href="#more" data-toggle="collapse">
+                <i data-feather="shopping-cart"></i>
+                <span> More </span>
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse" id="more">
+                <ul class="nav-second-level">
+                    <li>
+                        <a href="{{route('about.index', ['RolePrefix' => RolePrefix()])}}">About</a>
+                    </li>
+                    <li>
+                        <a href="{{route('faq.index', ['RolePrefix' => RolePrefix()])}}">FAQs</a>
+                    </li>
+                    <li>
+                        <a href="{{route('privacy_policy.index', ['RolePrefix' => RolePrefix()])}}">Privacy Policy</a>
+                    </li>
+                    <li>
+                        <a href="{{route('term.index', ['RolePrefix' => RolePrefix()])}}">Terms</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
         </ul>
     </div>
-    <!-- End Sidebar -->
-    <div class="clear-fix"></div>
+    </li>
+    </ul>
+</div>
+<!-- End Sidebar -->
+<div class="clear-fix"></div>
 </div>
 <!-- Sidebar -left -->

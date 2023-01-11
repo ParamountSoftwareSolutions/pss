@@ -141,7 +141,7 @@ class SocietyController extends Controller
         })->get();
         $size = Size::whereHas('project_type', function ($q) {
             $q->where('name', 'society');
-        })->whereIn('unit', ['marla', 'kanal'])->get();
+        })->get();
         $noc = NocType::get();
         $country = Country::get();
         $block = Block::whereHas('project_type', function ($q){

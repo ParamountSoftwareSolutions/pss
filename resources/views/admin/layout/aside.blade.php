@@ -1,8 +1,6 @@
 <!-- ========== Left Sidebar Start ========== -->
 <div class="left-side-menu">
-
     <div class="h-100" data-simplebar>
-
         <!-- User box -->
         <div class="user-box text-center">
             <img src="{{asset('/')}}/assets/images/users/user-1.jpg" alt="user-img" title="Mat Helme" class="rounded-circle avatar-md">
@@ -46,51 +44,33 @@
 
                 <li class="menu-title">Navigation</li>
                 <li>
-                    <a href="{{route('dashboard', ['RolePrefix' => RolePrefix()])}}">
+                    <a href="{{route('admin', ['RolePrefix' => RolePrefix()])}}">
                         <i data-feather="airplay"></i>
                         <span> Dashboard </span>
                     </a>
                 </li>
                 <li class="menu-title mt-2">Apps</li>
-
                 <li>
-                    <a href="#sidebarEcommerce" data-toggle="collapse">
+                    <a href="#project" data-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
-                        <span> Leads </span>
+                        <span> Permissions </span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarEcommerce">
+                    <div class="collapse" id="project">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="{{route('leads.create', ['RolePrefix' => RolePrefix()])}}">Add Lead</a>
-                            </li>
-                            <li>
-                                <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">All Lead</a>
-                            </li>
-                            <li>
-                                <a href="{{route('leads.mature', ['RolePrefix' => RolePrefix()])}}">Matured</a>
-                            </li>
-                            <li>
-                                <a href="{{route('leads.closed', ['RolePrefix' => RolePrefix()])}}">Closed</a>
-                            </li>
-                            <li>
-                                <a href="{{route('webhook.index', ['RolePrefix' => RolePrefix()])}}">Facebook leads</a>
-                            </li>
-                            <li>
-                                <a href="{{route('lead.employee', ['RolePrefix' => RolePrefix()])}}">Employee Reports</a>
-                            </li>
-                            <li>
-                                <a href="{{route('lead.refer', ['RolePrefix' => RolePrefix()])}}">Refer Leads</a>
+                                <a href="{{route('permission', ['RolePrefix' => RolePrefix()])}}">Add Permissions</a>
                             </li>
                         </ul>
                     </div>
                 </li>
-            </ul>
-        </div>
-        <!-- End Sidebar -->
-        <div class="clear-fix"></div>
+       
+        </ul>
     </div>
-    <!-- Sidebar -left -->
-
+    </li>
+    </ul>
 </div>
-<!-- Left Sidebar End -->
+<!-- End Sidebar -->
+<div class="clear-fix"></div>
+</div>
+<!-- Sidebar -left -->

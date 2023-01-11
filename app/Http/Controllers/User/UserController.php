@@ -11,6 +11,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\City;
 use App\Models\State;
+
 class UserController extends Controller
 {
     public function index()
@@ -27,7 +28,7 @@ class UserController extends Controller
         //     'password' => Hash::make(12345678),
         // ]);
         // $user->assignRole($role);
-   
+
         return view('user.index');
     }
     public function state($country_id)
@@ -40,7 +41,6 @@ class UserController extends Controller
 
     public function city($state_id)
     {
-    
         $state = City::where('state_id', $state_id)->get();
         return json_encode($state);
     }

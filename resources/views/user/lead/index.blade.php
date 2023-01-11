@@ -27,6 +27,7 @@
                 <h4 class="header-title">Leads Filters</h4>
                 <div class="row d-flex mb-3 pt-3">
                     <a href="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}" class="btn btn-success">All Leads</a>
+                    <a href="{{route('leads.create', ['RolePrefix' => RolePrefix()])}}" class="btn btn-success">Add Lead</a>
                     <a href="javascript:void(0)" class="btn btn-success arrange ml-1" type="button">Meetings ({{$arrange}})</a>
                     <a href="javascript:void(0)" class="btn btn-success pushed ml-1" type="button">Meetings Pushed ({{$pushed}})</a>
                     <form id="countryForm" class="form-inline float-right" method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
@@ -169,7 +170,7 @@
                         </div>
                         <form method="GET" action="{{route('leads.index', ['RolePrefix' => RolePrefix()])}}">
                             <input type="hidden" name="today_followup" value="today_followup">
-                            <button type="submit" class="btn fb_lead">Today Followup</button>
+                            <button type="submit" class="btn fb_lead">Today Followup ({{$today_follow_up_count}})</button>
                         </form>
                     </div>
                 </div>
@@ -251,7 +252,8 @@
                             <td>{{ (!empty($data['building']['name'])) ? $data['building']['name'] : 'N/A'}}</td>
                             <td>
                                 <div class="dropdown">
-                                    <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-success" aria-expanded="false">{{($data->status == 'arrange_meeting') ? 'Reschedule Meeting' : $data->status }}</a>
+                                    <!-- <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-success" aria-expanded="false">{{($data->status == 'arrange_meeting') ? 'Reschedule Meeting' : $data->status }}</a> -->
+                                    <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-success" aria-expanded="false">{{($data->status == 'arrange_meeting') ? 'Arrange Meeting' : $data->status }}</a>
                                     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
                                         <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="follow_up">Follow Up</a>
                                         <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="arrange_meeting">{{($data->status == 'arrange_meeting') ? 'Reschedule Meeting' : 'Arrange Meeting' }}</a>

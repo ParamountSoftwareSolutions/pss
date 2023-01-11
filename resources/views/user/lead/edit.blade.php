@@ -142,7 +142,7 @@
                                 @if(!empty($lead['country_id ']))
                                 <option value="{{ $lead['country_id'] }}" selected>{{ ($lead['country_id'])?$countrys->name:"" }}</option>
                                 @endif
-                                <option label="" disabled>Select Detail</option>
+                                <option label="" value="">Select Detail</option>
                                 @if (!empty($country))
                                 @foreach ($country as $country_value)
                                 <option value="{{$country_value->id}}">{{$country_value->name}}</option>
@@ -222,6 +222,7 @@
         // City Select
         $('select[name="state"]').on('change', function() {
             var state = $(this).val();
+           
             if (state) {
                 $.ajax({
                     url: "{{ url(RolePrefix().'/city') }}/" + state,

@@ -27,8 +27,8 @@ class LeadStoreRequest extends FormRequest
         return [
             'name' => 'required',
             'phone_number' => 'required|unique:leads,number',
-           // 'email' => 'required|unique:users,email',
-           // 'cnic' => 'required|unique:users,cnic',
+            'email' => 'unique:leads,email',
+            'cnic' => 'unique:leads,cnic',
         ];
     }
 
@@ -40,7 +40,7 @@ class LeadStoreRequest extends FormRequest
     public function messages()
     {
         return [
-           // 'email.required' => 'Email is required!',
+            'email.required' => 'Email is required!',
             'name.required' => 'Name is required!',
             'phone_number.required' => 'Phone Number is required!'
         ];

@@ -8,19 +8,17 @@
     <section class="section">
         <div class="section-body">
             <div class="row">
-                @foreach($errors->all() as $error)
+                <!-- @foreach($errors->all() as $error)
                 <div>{{ $error }}</div>
-                @endforeach
+                @endforeach -->
                 <div class="col-12 col-md-12 col-lg-12">
                     <form method="POST" action="{{ route('clients.store', ['RolePrefix' => RolePrefix()]) }}" novalidate>
                         @csrf
                         <div class="card">
                             <div class="card-header">
                                 <h4>Client Information</h4>
-                                <!-- <button class="btn btn-primary new-client" style="margin-left: auto; display: block;" type="button">New Client
-                                </button> -->
-                                <!-- <button class="btn btn-primary old-client" style="margin-left: 5px; display: block;" type="button">Old Client
-                                </button> -->
+                                <button class="btn btn-primary new-client" style="margin-left: auto; display: block;" type="button">New Client</button>
+                                <button class="btn btn-primary old-client" style="margin-left: 5px; display: block;" type="button">Old Client</button>
                             </div>
                             <input type="hidden" name="client_type" value="new">
                             {{-- New Client Form --}}
@@ -28,21 +26,21 @@
                                 <div class="row">
                                     <div class="form-group col-md-4">
                                         <label>Name <small style="color: red">*</small></label>
-                                        <input type="text" class="form-control" name="name_new" autocomplete="false" required>
+                                        <input type="text" class="form-control" name="name_new" autocomplete="false" required value="{{ old('name_new') }}">
                                         @error('name_new')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Father Name <small style="color: red">*</small></label>
-                                        <input type="text" class="form-control" name="father_name_new" autocomplete="false" required>
+                                        <input type="text" class="form-control" name="father_name_new" autocomplete="false" required value="{{ old('father_name_new') }}">
                                         @error('fathername_new')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>CNIC Number <small style="color: red">*</small></label>
-                                        <input type="number" class="form-control" name="cnic_new" autocomplete="off" required>
+                                        <input type="number" class="form-control" name="cnic_new" autocomplete="off" required value="{{ old('cnic_new') }}">
                                         @error('cnic_new')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
@@ -51,21 +49,21 @@
                                 <div class="row">
                                     <div class="form-group col-md-4">
                                         <label>Email <small style="color: red">*</small></label>
-                                        <input type="email" class="form-control" name="email_new" required>
+                                        <input type="email" class="form-control" name="email_new" required value="{{ old('email_new') }}">
                                         @error('email_new')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Password <small style="color: red">*</small></label>
-                                        <input type="password" class="form-control" name="password_new" autocomplete="off" required>
+                                        <input type="password" class="form-control" name="password_new" autocomplete="off" required value="{{ old('password_new') }}">
                                         @error('password_new')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Phone <small style="color: red">*</small></label>
-                                        <input type="number" class="form-control" name="phone_number_new" required>
+                                        <input type="number" class="form-control" name="phone_number_new" required value="{{ old('phone_number_new') }}">
                                         @error('phone_number_new')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
@@ -81,10 +79,8 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Sales Person</label>
-                                        <select class="form-control" name="sale_person_id" required>
-
+                                        <select class="form-control" name="sale_person_id" required value="{{ old('sale_person_id') }}">
                                             <option value="" disabled>Select Sale Person ...</option>
-
                                             @if (!empty($sale_persons))
                                             @foreach ($sale_persons as $sale_person_val)
                                             <option value="{{ $sale_person_val->id }}">{{ $sale_person_val->name }}</option>
@@ -94,30 +90,30 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Down Payment<small style="color: red">*</small></label>
-                                        <input type="number" class="form-control" name="down_payment" required>
+                                        <input type="number" class="form-control" name="down_payment" required value="{{ old('down_payment') }}">
                                         @error('down_payment')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Address <small style="color: red">*</small></label>
-                                        <input type="text" class="form-control" name="address_new" autocomplete="off" required>
+                                        <input type="text" class="form-control" name="address_new" autocomplete="off" required value="{{ old('address_new') }}">
                                         @error('address_new')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label>Date of birth <small style="color: red">*</small></label>
-                                        <input type="date" class="form-control" name="dob_new" autocomplete="off" required>
+                                        <input type="date" class="form-control" name="dob_new" autocomplete="off" required value="{{ old('dob_new') }}">
                                         @error('dob_new')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="form-group col-md-4">
+                                <!-- <div class="row"> -->
+                                <!-- <div class="form-group col-md-4">
                                         <label for="country">Country <small style="color: red">*</small></label>
-                                        <select class="form-control" name="country_id_new" required>
+                                        <select class="form-control" name="country_id_new" required value="{{ old('name_new') }}">
 
                                             <option>Select Country</option>
                                             @foreach($country as $data)
@@ -131,7 +127,7 @@
                                     <div class="form-group col-md-4">
                                         <div class="form-group">
                                             <label>State <small style="color: red">*</small></label>
-                                            <select class="form-control" name="state_id_new" required>
+                                            <select class="form-control" name="state_id_new" required value="{{ old('name_new') }}">
 
                                                 <option label="" disabled>Select State</option>
                                             </select>
@@ -139,25 +135,25 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="row">
+                                    </div> -->
+                                <!-- <div class="row">
                                         <div class="form-group col-md-4">
                                             <label>Email <small style="color: red">*</small></label>
-                                            <input type="email" class="form-control" name="email_new" required>
+                                            <input type="email" class="form-control" name="email_new" required value="{{ old('name_new') }}">
                                             @error('email_new')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Password <small style="color: red">*</small></label>
-                                            <input type="password" class="form-control" name="password_new" autocomplete="off" required>
+                                            <input type="password" class="form-control" name="password_new" autocomplete="off" required value="{{ old('name_new') }}">
                                             @error('password_new')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Phone <small style="color: red">*</small></label>
-                                            <input type="number" class="form-control" name="phone_number_new" required>
+                                            <input type="number" class="form-control" name="phone_number_new" required value="{{ old('name_new') }}">
                                             @error('phone_number_new')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
@@ -173,7 +169,7 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Sales Person</label>
-                                            <select class="form-control" name="sale_person_id" required>
+                                            <select class="form-control" name="sale_person_id" required value="{{ old('name_new') }}">
 
                                                 <option value="" disabled>Select Sale Person ...</option>
 
@@ -186,84 +182,109 @@
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Down Payment<small style="color: red">*</small></label>
-                                            <input type="number" class="form-control" name="down_payment" required>
+                                            <input type="number" class="form-control" name="down_payment" required value="{{ old('name_new') }}">
                                             @error('down_payment')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Address <small style="color: red">*</small></label>
-                                            <input type="text" class="form-control" name="address_new" autocomplete="off" required>
+                                            <input type="text" class="form-control" name="address_new" autocomplete="off" required value="{{ old('name_new') }}">
                                             @error('address_new')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Date of birth <small style="color: red">*</small></label>
-                                            <input type="date" class="form-control" name="dob_new" autocomplete="off" required>
+                                            <input type="date" class="form-control" name="dob_new" autocomplete="off" required value="{{ old('name_new') }}">
                                             @error('dob_new')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group col-md-4">
-                                            <label for="country">Country <small style="color: red">*</small></label>
-                                            <select class="form-control" name="country_id_new" required>
+                                    </div> -->
+                                <div class="row">
+                                    <div class="form-group col-md-4">
+                                        <label for="country">Country <small style="color: red"></small></label>
+                                        <select class="form-control" name="country_id_new" required value="{{ old('country_id_new') }}">
 
-                                                <option>Select Country</option>
-                                                @foreach($country as $data)
-                                                    <option value="{{ $data->id }}">{{ $data->name }}</option>
-                                                @endforeach
+                                            <option>Select Country</option>
+                                            @foreach($country as $data)
+                                            <option value="{{ $data->id }}">{{ $data->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('country_id_new')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <div class="form-group">
+                                            <label>State <small style="color: red"></small></label>
+                                            <select class="form-control" name="state_id_new" required value="{{ old('state_id_new') }}">
+
+                                                <option label="" disabled>Select State</option>
                                             </select>
-                                            @error('country_id_new')
+                                            @error('state_id_new')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="form-group col-md-4">
-                                            <div class="form-group">
-                                                <label>State <small style="color: red">*</small></label>
-                                                <select class="form-control" name="state_id_new" required>
-
-                                                    <option label="" disabled>Select State</option>
-                                                </select>
-                                                @error('state_id_new')
-                                                <div class="text-danger mt-2">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                            <div class="form-group">
-                                                <label>City</label>
-                                                <select class="form-control" name="city_id_new">
-                                                    @if(!empty($client->city_id))
-                                                        <option value="{{$client->city_id}}" selected>{{$client->city->name}}</option>
-                                                    @endif
-                                                    <option label="" disabled>Select Detail</option>
-                                                </select>
-                                                @error('city_id_new')
-                                                <div class="text-danger mt-2">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <div class="form-group">
+                                            <label>City</label>
+                                            <select class="form-control" name="city_id_new">
+                                                @if(!empty($client->city_id))
+                                                <option value="{{$client->city_id}}" selected>{{$client->city->name}}</option>
+                                                @endif
+                                                <option label="" disabled>Select Detail</option>
+                                            </select>
+                                            @error('city_id_new')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
-                                {{-- Old Client Form --}}
+                                <!-- </div> -->
 
                                 <div class="card-footer text-right">
                                     <button class="btn btn-primary" type="submit">Submit</button>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                            {{-- Old Client Form --}}
+                            <div class="card-body old-client-form">
+                                <div class="row">
+                                    <div class="form-group col-md-12">
+                                        <div class="form-group">
+                                            <label>Clients</label>
+                                            <select class="form-control" name="old_client">
+                                                <option label="" disabled>Select Detail</option>
+                                                @if(!empty($old_clients))
+                                                @foreach($old_clients as $old_clients_value)
+                                                <option value="{{$old_clients_value->id}}" selected>{{$old_clients_value->name}}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            @error('old_client')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-right">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
+</div>
 @endsection
 @section('script')
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
 
         // State Select
         $('select[name="country_id_new"]').on('change', function() {
@@ -413,41 +434,41 @@
 
         project = JSON.parse(project);
         $.ajax({
-            url: "{{ route('lead.getInventory', ['RolePrefix' => RolePrefix()]) }}",
-            data: {
-                id: project.id,
-                type_id: project.type_id,
-                _token: $('#csrf-token')[0].content
-            },
-            method: 'POST',
-            cache: false,
-            success: function(response) {
-                var data = JSON.parse(response);
-                console.log(data);
-                var size = data[0];
-                var floor = data[1];
-                var type = data[2];
-                var premium = data[3];
-                var block = data[4];
-                // console.log(block);
-                $('#selectSize').empty();
-                $('#selectBuildingFloor :first-child').nextAll().remove();
+                url: "{{ route('lead.getInventory', ['RolePrefix' => RolePrefix()]) }}",
+                data: {
+                    id: project.id,
+                    type_id: project.type_id,
+                    _token: $('#csrf-token')[0].content
+                },
+                method: 'POST',
+                cache: false,
+                success: function(response) {
+                    var data = JSON.parse(response);
+                    console.log(data);
+                    var size = data[0];
+                    var floor = data[1];
+                    var type = data[2];
+                    var premium = data[3];
+                    var block = data[4];
+                    // console.log(block);
+                    $('#selectSize').empty();
+                    $('#selectBuildingFloor :first-child').nextAll().remove();
 
-                // emptyOp.nextAll().remove();
-                $('#selectBuildingFloorInventory').empty();
-                $('#selectType').empty();
-                $('#selectPremium').empty();
-                if (project.type_id == 1) {
-                    floor.forEach(element => {
-                        var option = document.createElement('option');
-                        option.text = element.name;
-                        option.value = element.id;
-                        document.getElementById("selectBuildingFloor").append(option);
-                    });
-                } else {
-                    alert('danger');
-                }
-            });
+                    // emptyOp.nextAll().remove();
+                    $('#selectBuildingFloorInventory').empty();
+                    $('#selectType').empty();
+                    $('#selectPremium').empty();
+                    if (project.type_id == 1) {
+                        floor.forEach(element => {
+                            var option = document.createElement('option');
+                            option.text = element.name;
+                            option.value = element.id;
+                            document.getElementById("selectBuildingFloor").append(option);
+                        });
+                    } else {
+                        alert('danger');
+                    }
+                });
             // City Select
             $('select[name="state_id_new"]').on('change', function() {
                 var state_id = $(this).val();
@@ -513,8 +534,8 @@
                     break;
             }
         }
-    </script>
-    <script>
+</script>
+<script>
 
-    </script>
+</script>
 @endsection

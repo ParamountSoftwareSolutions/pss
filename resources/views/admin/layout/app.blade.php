@@ -2,175 +2,99 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-    <title>Psm Property</title>
-    <!-- General CSS Files -->
-    <link rel="stylesheet" href="{{  asset('public/panel/assets/css/app.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/panel/assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('public/panel/assets/bundles/datatables/datatables.min.css') }}">
-    <!-- Extra Style Link -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css">
-    <!-- Template CSS -->
-    <link rel="stylesheet" href="{{  asset('public/panel/assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{  asset('public/panel/assets/css/components.css') }}">
 
-    <link rel="stylesheet" href="{{  asset('public/panel/assets/css/all.min.css') }}">
-    <!-- Custom style CSS -->
-    <link rel="stylesheet" href="{{  asset('public/panel/assets/css/custom.css') }}">
-    <link rel='shortcut icon' type='image/x-icon' href='{{ asset('public/panel/assets/img/favicon.ico') }}'/>
+    <meta charset="utf-8" />
+    <title>Psm Property | @yield('title')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="csrf-token" id="csrf-token" content="{{ csrf_token() }}">
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{{asset('/assets/images/favicon.ico')}}">
+
+    <!-- App css -->
+    <link href="{{asset('/assets/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" id="bs-default-stylesheet" />
+    <link href="{{asset('/assets/css/app.min.css')}}" rel="stylesheet" type="text/css" id="app-default-stylesheet" />
+
+    <link rel="stylesheet" href="{{ asset('assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/bundles/datatables/datatables.min.css') }}">
+
+    <link href="{{asset('assets/css/bootstrap-dark.min.css')}}" rel="stylesheet" type="text/css" id="bs-dark-stylesheet" disabled />
+    <link href="{{asset('assets/css/app-dark.min.css')}}" rel="stylesheet" type="text/css" id="app-dark-stylesheet" disabled />
+
+    <!-- icons -->
+    <link href="{{asset('assets/css/icons.min.css')}}" rel="stylesheet" type="text/css" />
+    @yield('style')
 </head>
 
-<body>
-<div class="loader"></div>
-<div id="app">
-    <div class="main-wrapper main-wrapper-1">
-        @include('admin.header')
-        @include('admin.aside')
-        @yield('content')
-        @include('admin.footer')
+<body data-layout='{"mode": "light", "width": "fluid", "menuPosition": "fixed", "sidebar": { "color": "light", "size": "default", "showuser": false}, "topbar": {"color": "dark"}, "showRightSidebarOnPageLoad": true}'>
+    <!-- Begin page -->
+    <div id="wrapper">
+        @include('admin.layout.header')
+        @include('admin.layout.aside')
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+        <div class="content-page">
+            <div class="content">
+                <!-- Start Content-->
+                <div class="container-fluid">
+                    @yield('content')
+                </div> <!-- container -->
+            </div> <!-- content -->
+            @include('admin.layout.footer')
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
+
+
     </div>
-</div>
+    <!-- END wrapper -->
 
-<!-- General JS Scripts -->
-<script src="{{ asset('public/panel/assets/js/app.min.js') }}"></script>
-<!-- JS Libraies -->
-<script src="{{ asset('public/panel/assets/bundles/apexcharts/apexcharts.min.js') }}"></script>
-<!-- Page Specific JS File -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.js"></script>
-<script src="{{ asset('public/panel/assets/js/page/index.js') }}"></script>
-<script src="{{ asset('public/panel/assets/bundles/jquery-selectric/jquery.selectric.min.js') }}"></script>
-<!-- Page Specific JS File -->
-<script src="{{ asset('public/panel/assets/js/page/forms-advanced-forms.js') }}"></script>
-<!-- Template JS File -->
-<script src="{{ asset('public/panel/assets/js/scripts.js') }}"></script>
-<!-- Custom JS File -->
-<script src="{{ asset('public/panel/assets/js/custom.js') }}"></script>
-<!-- Sweet Alert -->
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    $('body').on('click','.deleteBtn',function (e) {
-        e.preventDefault();
-        let url = $(this).data('url');
-        let _token = $(this).data('token');
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    data: '_token='+_token,
-                    type: "DELETE",
-                    success: function (data) {
-                        if(data.status == 'success'){
-                            successMsg(data.message);
-                            setTimeout(function () {
-                                location.reload();
-                            },1000);
-                        }else{
-                            errorMsg(data.message);
-                        }
-                    },
-                });
-            }
-        })
-    })
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        width: '27rem',
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    })
-        @if (Session()->has('message'))
-    var type = "{{ Session::get('alert') }}";
-    switch (type) {
-        case'info':
-            Toast.fire({
-                icon: 'info',
-                title: '{{ Session::get("message") }}'
-            })
-            break;
-        case 'success':
-            Toast.fire({
-                icon: 'success',
-                title: '{{ Session::get("message") }}'
-            })
-            break;
-        case 'warning':
-            Toast.fire({
-                icon: 'warning',
-                title: '{{ Session::get("message") }}'
-            })
-            break;
-        case'error':
-            Toast.fire({
-                icon: 'error',
-                title: '{{ Session::get("message") }}'
-            })
-            break;
-    }
-    @endif
-    $(".custom-file-input").on("change", function () {
-        var fileName = $(this).val().split("\\").pop();
-        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-    });
-    function errorMsg(msg){
-        Toast.fire({
-            icon: 'error',
-            title: msg,
-        });
-    }
-    function successMsg(msg){
-        Toast.fire({
-            icon: 'success',
-            title: msg,
-        });
-    }
 
-    function showLoader(){
-        $(".loader").fadeIn("slow");
-    }
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js" integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA=" crossorigin="anonymous"></script> -->
+    <!-- Vendor js -->
+    <script src="{{asset('assets/js/vendor.min.js')}}"></script>
 
-    function hideLoader(){
-        $(".loader").fadeOut("slow");
-    }
-</script>
-<script>
-    $(document).ready(function() {
-        setTimeout(function() {
-            /*$("#signInButton").trigger('click');*/
-            $.ajax({
-                url: "{{ url('property-manager/latest/notification') }}",
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    console.log(data)
-                    /*$('select[name="floor_id"]').empty();
-                    if (data.length === 0) {
-                        $('select[name="floor_id"]').append('<option value="">Null</option>');
-                    } else {
-                        $('select[name="floor_id"]').append('<option value="">Please Select</option>');
-                        $.each(data, function (key, value) {
-                            $('select[name="floor_id"]').append('<option value="' + value.id + '">' + value.name + '</option>');
-                        });
-                    }*/
-                },
-            });
-        }, 5000);
-    });
-</script>
+    <!-- App js-->
+    <script src="{{asset('assets/js/app.min.js')}}"></script>
+    <!-- third party js -->
+
+    <script src="{{ asset('assets/bundles/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/bundles/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/js/page/datatables.js') }}"></script>
+{{--    <script src="{{asset('assets/libs/datatables.net/js/jquery.dataTables.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.html5.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.flash.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-buttons/js/buttons.print.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-keytable/js/dataTables.keyTable.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/datatables.net-select/js/dataTables.select.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/pdfmake/build/pdfmake.min.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/libs/pdfmake/build/vfs_fonts.js')}}"></script>--}}
+    <!-- third party js ends -->
+    <!-- Datatables init -->
+{{--    <script src="{{asset('assets/js/pages/datatables.init.js')}}"></script>--}}
+{{--    <script src="{{asset('assets/js/pages/datatables.init.js')}}"></script>--}}
+    <!-- Ckeditor -->
+    <script src="{{asset('assets/js/ckeditor.js')}}"></script>
+    <script src="{{asset('assets/js/spartan-multi-image-picker.js')}}"></script>
+{{--    <script src="{{asset('assets/js/resumble.min.js')}}"></script>--}}
+
+    <!-- Sweetalert -->
+    @include('admin.layout.sweetalert')
+
+    @yield('script')
+
 </body>
-
 </html>

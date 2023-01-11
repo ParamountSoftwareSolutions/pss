@@ -29,21 +29,25 @@
                                             <th>Status</th>
                                             <th>Comment</th>
                                             <th>Date</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php if (!empty($clientHistory)) { ?>
                                             <?php foreach ($clientHistory as $value) { ?>
                                                 <tr>
-                                                    <td><?php echo $value->id ?></td>
-                                                    <td><?php echo $value->inventory_id ?></td>
-                                                    <td><?php echo $value->from->name ?></td>
-                                                    <td><?php echo $value->to->name ?></td>
-                                                    <td><?php echo $value->sale_person->name ?></td>
-                                                    <td><?php echo $value->price ?></td>
-                                                    <td><?php echo $value->status ?></td>
-                                                    <td><?php echo $value->comment ?></td>
-                                                    <td><?php echo $value->created_at ?></td>
+                                                    <td><?php echo $value['id'] ?></td>
+                                                    <td><?php echo $value['inventory_id'] ?></td>
+                                                    <td><?php echo $value['from']['name']; ?></td>
+                                                    <td><?php echo $value['to']['name'] ?></td>
+                                                    <td><?php echo $value['sale_person']['name'] ?></td>
+                                                    <td><?php echo $value['price'] ?></td>
+                                                    <td><?php echo $value['status'] ?></td>
+                                                    <td><?php echo $value['comment'] ?></td>
+                                                    <td><?php echo $value['created_at'] ?></td>
+                                                    <td>
+                                                        <a href="{{route('sale.show', ['RolePrefix' => RolePrefix(),$value['from']['id']])}}" class="btn btn-primary btn-sm px-1 py-0" title="Edit"><i class="fa fa-eye"></i></a>
+                                                    </td>
                                                 </tr>
                                             <?php } ?>
                                         <?php } ?>

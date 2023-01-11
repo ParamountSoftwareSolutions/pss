@@ -144,6 +144,7 @@
                             <th>Client Contact Number</th>
                             <th>Sales Person</th>
                             <th>Building</th>
+                            <th>Unit No</th>
                             <th>Status</th>
                             <th>Priority</th>
                             <th>Action</th>
@@ -165,11 +166,20 @@
                             <td>{{ $data->number ?? '' }}</td>
                             <td>{{ (!empty($data['user']['name'])) ? $data['user']['name'] : 'N/A'}}</td>
                             <td>{{ (!empty($data['project']['name'])) ? $data['project']['name'] : 'N/A'}}</td>
+
+                            <?php
+                            if (!empty($data['inventory_id'] && $data['project']['type_id'])) {
+                                $unit_number = get_inventory($data['project']['type_id'], $data['inventory_id'])['unit_id'];
+                            } else {
+                                $unit_number = 'N/A';
+                            }
+                            ?>
+                            <td>{{$unit_number}}</td>
                             <td>
                                 <div class="dropdown">
                                     <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-success" aria-expanded="false">{{$data->status }}</a>
+                                    @if($data->status != 'transfered')
                                     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-
                                         @if($data->status != 'active')
                                         <a href="{{ route('client.active', ['RolePrefix' => RolePrefix(), $data->id]) }}" class="dropdown-item has-icon">Active</a>
                                         @endif
@@ -177,6 +187,7 @@
                                         <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="Cancelled">Cancelled</a>
                                         <a href="{{ route('client.transfered', ['RolePrefix' => RolePrefix(), $data->id]) }}" class="dropdown-item has-icon">Transfered</a>
                                     </div>
+                                    @endif
                                 </div>
                             </td>
                             <td>
