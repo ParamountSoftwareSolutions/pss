@@ -13,7 +13,7 @@
                         @csrf
                         <!-- @method('PUT') -->
                         <?php if ($client->inventory_id) { ?>
-                            <input type="hidden" name="inventory_id" value="{{$client->inventory_id}}">
+                            <input type="hidden" name="client_inventory_id" value="{{$client->inventory_id}}">
                             <input type="hidden" name="project_id" value="{{$client->project_id}}">
                             <input type="hidden" name="project_type_id" value="{{$client->project_type_id}}">
                         <?php } else { ?>
@@ -52,8 +52,8 @@
                                         <div class="form-group col-md-4" id="selectBuildingFloorInventoryHide">
                                             <div class="form-group">
                                                 <label>Building Floor Invetory</label>
-                                                <select class="form-control" name="inventory_id" id="selectBuildingFloorInventory" required>
-                                                    <option label="" selected>Select Building Floor Invetory ... </option>
+                                                <select class="form-control" name="building_inventory_id" id="selectBuildingFloorInventory" required>
+                                                    <option label=""  value="" selected>Select Building Floor Invetory ... </option>
                                                 </select>
                                             </div>
                                         </div>
@@ -64,15 +64,15 @@
                                             <div class="form-group">
                                                 <label>Society Block</label>
                                                 <select class="form-control" name="societyBlock" id="selectPremiumScocity" required>
-                                                    <option label="" disabled selected>Select Society Block ...</option>
+                                                    <option label=""  value=""  selected>Select Society Block ...</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group col-md-4" id="blockSocity">
                                             <div class="form-group">
                                                 <label>Society Inventory</label>
-                                                <select class="form-control" name="inventory_id" id="selectblock_id" required>
-                                                    <option label="" disabled selected>Select Society Inventory ...</option>
+                                                <select class="form-control" name="society_inventory_id" id="selectblock_id" required>
+                                                    <option label="" value="" selected>Select Society Inventory ...</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -319,6 +319,7 @@
                     // dataType: "json",
                     success: function(response) {
                         var data = JSON.parse(response);
+                        $('#selectBuildingFloorInventory').empty();
                         $.each(data, function(i, item) {
                             $('#selectBuildingFloorInventory').append($('<option>', {
                                 value: item.id,
@@ -349,7 +350,7 @@
                     // dataType: "json",
                     success: function(response) {
                         var data = JSON.parse(response);
-                        console.log(data);
+                        $('#selectblock_id').empty();
                         $.each(data, function(i, item) {
                             $('#selectblock_id').append($('<option>', {
                                 value: item.id,
@@ -425,6 +426,7 @@
                 var type = data[2];
                 var premium = data[3];
                 var block = data[4];
+                console.log(block);
                 // console.log(block);
                 $('#selectSize').empty();
                 $('#selectBuildingFloor :first-child').nextAll().remove();
@@ -444,8 +446,8 @@
                     block.forEach(element => {
                         console.log(element.block);
                         var option = document.createElement('option');
-                        option.text = element.block.name;
-                        option.value = element.block.id;
+                        option.text = element.name;
+                        option.value = element.id;
                         document.getElementById("selectPremiumScocity").append(option);
                     });
                 } else if (project.type_id == 3) {

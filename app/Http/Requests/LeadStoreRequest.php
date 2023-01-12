@@ -27,7 +27,7 @@ class LeadStoreRequest extends FormRequest
         return [
             'name' => 'required',
             'phone_number' => 'required|unique:leads,number',
-            'email' => 'unique:leads,email',
+            'email' => 'nullable|sometimes|unique:leads,email',
             'cnic' => 'unique:leads,cnic',
         ];
     }

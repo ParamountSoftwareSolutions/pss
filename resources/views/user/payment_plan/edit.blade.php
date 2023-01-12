@@ -96,10 +96,13 @@
                                 </div>
                             </div>
                             <div class="card">
-                                <div class="card-header">
+                                <div class="card-header d-flex justify-content-between align-items-center">
                                     <h4>Payment Information</h4>
+                                    <input type="hidden" name="payment_method" value="installment">
+                                    <button type="button" class="btn btn-primary baloon change_plan" data-val="baloon" style="margin-left: auto; display: block;">Baloon Payment</button>
+                                    <button type="button" class="btn btn-primary install change_plan" data-val="install" style="margin-left: auto; display: block;">Installment Payment</button>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body baloon">
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label class="d-block">Down Payment (In % or Rs.)</label>
@@ -166,7 +169,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="possession_price" value="{{old('possession_price',$payment_plan->confirmation_amount)}}">
+                                                       name="possession_price" value="{{old('possession_price',$payment_plan->possession_price)}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -319,8 +322,29 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="card-body install install_body">
+                                    <div class="row">
+                                        <div class="form-group col-md-4">
+                                            <label class="d-block">Date</label>
+                                            <input type="date" class="form-control" name="baloon[0][date]">
+                                        </div>
+                                        <div class="form-group col-md-4 down_payment">
+                                            <label class="d-block">Amount</label>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">RS</span>
+                                                </div>
+                                                <input type="number" class="form-control baloon_amount" name="baloon[0][amount]">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">.00</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="card-footer text-right">
-                                    <button id="payment_plan" class="btn btn-primary" type="button">Submit</button>
+                                    <button id="payment_plan" class="btn btn-primary baloon" type="button">Submit</button>
+                                    <button id="baloon_plan" class="btn btn-primary install" type="button">Submit</button>
                                 </div>
                             </div>
                         </form>
@@ -329,6 +353,7 @@
             </div>
         </section>
     </div>
+    <input type="hidden" name="baloon_data" value="{{$payment_plan->baloon}}">
 @endsection
 @section('script')
     <script>
@@ -338,10 +363,97 @@
             installmentPlan(plan);
             getPremium(project_type_id);
             price_after_commission();
-            var premium = $('select[name="project_type_id"] :selected').val();
-            if(premium){
+            var payment_method = "{{$payment_plan->payment_method}}";
+            if(payment_method == 'installment'){
+                $('.install').hide()
+                $('.baloon').show()
+                $('input[name="payment_method"]').val('installment');
+            }else{
+                $('input[name="payment_method"]').val('baloon');
+                $('input[name="no_of_month"]').removeAttr('required')
+                $('input[name="monthly_installment"]').removeAttr('required')
+                $('input[name="no_of_half"]').removeAttr('required')
+                $('input[name="half_year_installment"]').removeAttr('required')
+                $('input[name="no_of_quarter"]').removeAttr('required')
+                $('input[name="quarterly_installment"]').removeAttr('required')
+                $('input[name="rent_price"]').removeAttr('required')
+                $('input[name="rent_installment"]').removeAttr('required')
+                $('.baloon').hide()
+                $('.install').show()
+                var baloon_data = $('input[name="baloon_data"]').val();
+                if(baloon_data){
+                    baloon_data = JSON.parse(baloon_data);
+                }
+                var count = baloon_data.length - 1;
+                var btn = '<div class="add_new_btn form-group col-md-4 pb-1">' +
+                    '       <input type="hidden" name="row_count" value="'+count+'">' +
+                    '       <button class="btn btn-light btn-sm add_new" type="button">+</button>' +
+                    '       <button class="btn btn-light btn-sm remove" type="button">-</button>' +
+                    '      </div>';
+                var detail = '';
+                for(var i = 0; i < baloon_data.length; i++){
+                    var input = '<div class="row">' +
+                        '               <div class="form-group col-md-4">' +
+                        '                   <label class="d-block">Date</label>' +
+                        '                   <input type="date" class="form-control" name="baloon['+i+'][date]" value="'+baloon_data[i]['date']+'">' +
+                        '               </div>' +
+                        '               <div class="form-group col-md-4 down_payment">' +
+                        '                   <label class="d-block">Amount</label>' +
+                        '                   <div class="input-group mb-3">' +
+                        '                       <div class="input-group-prepend">' +
+                        '                           <span class="input-group-text">RS</span>' +
+                        '                       </div>' +
+                        '                       <input type="number" class="form-control baloon_amount" name="baloon['+i+'][amount]" value="'+baloon_data[i]['amount']+'">' +
+                        '                       <div class="input-group-append">' +
+                        '                           <span class="input-group-text">.00</span>' +
+                        '                       </div>' +
+                        '                   </div>' +
+                        '               </div>' +
+                        '           </div>';
+                    detail = detail+input;
+                }
+                detail = detail+btn;
+                $('.install_body').empty();
+                $('.install_body').append(detail);
+            }
+            $('.add_new').click(function () {
+                var count = Number($('input[name="row_count"]').val());
+                count = count + 1;
+                $('input[name="row_count"]').val(count);
+                var bulk_input = '<div class="row">' +
+                    '               <div class="form-group col-md-4">' +
+                    '                   <label class="d-block">Date</label>' +
+                    '                   <input type="date" class="form-control" name="baloon['+count+'][date]">' +
+                    '               </div>' +
+                    '               <div class="form-group col-md-4 down_payment">' +
+                    '                   <label class="d-block">Amount</label>' +
+                    '                   <div class="input-group mb-3">' +
+                    '                       <div class="input-group-prepend">' +
+                    '                           <span class="input-group-text">RS</span>' +
+                    '                       </div>' +
+                    '                       <input type="number" class="form-control baloon_amount" name="baloon['+count+'][amount]">' +
+                    '                       <div class="input-group-append">' +
+                    '                           <span class="input-group-text">.00</span>' +
+                    '                       </div>' +
+                    '                   </div>' +
+                    '               </div>' +
+                    '           </div>';
+                $('.add_new_btn').before(bulk_input);
+            })
+
+            $('.remove').click(function () {
+                var count = Number($('input[name="row_count"]').val());
+                count = count - 1;
+                $('input[name="row_count"]').val(count);
+                $('.add_new_btn').prev().remove();
+            })
+
+            var premium = $('select[name="premium_id"] :selected').val();
+            if(premium && premium != 'regular'){
+                $('.commission-box').show();
                 var price = Number("{{$payment_plan->after_commission_price}}");
             }else{
+                $('.commission-box').hide();
                 var price = Number("{{$payment_plan->total_price}}");
             }
             var downPayment = Number("{{$payment_plan->down_payment}}")
@@ -366,6 +478,8 @@
                 if(val !== 'regular'){
                     $('.commission-box').show();
                 }else{
+                    $('input[name="commission"]').val('');
+                    $('input[name="after_commission_price"]').val('');
                     $('.commission-box').hide();
                 }
                 downPaymentPercent()
@@ -440,10 +554,38 @@
                             $('#payment_plan_form').submit();
                         }
                     }
-
                     var remaining = total_amount - installment;
+
+                    if(remaining != 0){
+                        if(!(remaining <= 100 && remaining >= -100)){
+                            errorMsg('Payment plan calculation error....');
+                            return;
+                        }
+                    }
+                    $('#payment_plan_form').submit();
+                }else{
+                    errorMsg('Please select type first');
+                    return;
+                }
+            });
+            $('#baloon_plan').click(function (e) {
+                e.preventDefault();
+                var premium_id = $('select[name="premium_id"] option:selected').val();
+                if(premium_id){
+                    if (premium_id == 'regular') {
+                        var total_price = Number($('input[name="total_price"]').val());
+                    } else {
+                        var total_price = Number($('input[name="after_commission_price"]').val());
+                    }
+                    var count = $('input[name="row_count"]').val();
+                    var sum = 0;
+                    for(var i = 0; i<=count; i++){
+                        var amount = Number($('input[name="baloon['+i+'][amount]"]').val());
+                        sum = sum + amount;
+                    }
+                    var remaining = total_price - sum;
                     if(!(remaining <= 100 || remaining >= -100)){
-                        errorMsg('Payment plan calculation error....');
+                        errorMsg('Payment calculation error....');
                         return;
                     }
                     $('#payment_plan_form').submit();

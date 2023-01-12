@@ -74,6 +74,31 @@ class ClientController extends Controller
         if ($request->statusFilter) {
             $lead->where('status', $request->statusFilter);
         }
+        //Table filter_date
+
+        if ($request->filter_date) {
+            if ($request->filter_date == 'today') {
+                $current_date = Carbon::now();
+                $lead->whereDate('created_at', $current_date);
+            } else if ($request->filter_date == 'yesterday') {
+                $date = Carbon::now()->subDay();
+                $lead->whereDate('created_at', $date);
+            } else if ($request->filter_date == 'this_week') {
+                $current_date = Carbon::now();
+                $date = Carbon::now()->subDays(7);
+                $lead->whereBetween('created_at', [$date, $current_date]);
+            } else if ($request->filter_date == 'this_month') {
+                $month = Carbon::now()->format('m');
+                $year = Carbon::now()->format('Y');
+                $lead->whereMonth('created_at', $month)->whereYear('created_at', $year);
+            } else {
+                $last_month = Carbon::now()->subMonth();
+                $month = $last_month->format('m');
+                $year = $last_month->format('Y');
+                $lead->whereMonth('created_at', $month)->whereYear('created_at', $year);
+            }
+        }
+
         $clients = $lead->orderBy('updated_at', 'desc')->get();
 
         $sale_persons = User::whereIn('id', $users)->get();
@@ -264,10 +289,11 @@ class ClientController extends Controller
         $client = Client::findOrFail($id);
 
         if ($client->status == "transfered" || $client->status == 'Transfered') {
-            $client_installment = ClientInstallment::where('client_id', $id)->where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
+            $client_installment = ClientInstallment::where('client_id', $id)->where('project_id', $client->project_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
         } else {
-            $client_installment = ClientInstallment::where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
+            $client_installment = ClientInstallment::where('project_id', $client->project_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
         }
+
         return view('user.client.show', get_defined_vars());
     }
 
@@ -483,7 +509,6 @@ class ClientController extends Controller
                 'created_by' => auth()->user()->id,
                 'status' => 'mature',
             ];
-
         } else {
 
 
@@ -531,12 +556,12 @@ class ClientController extends Controller
         $installmentData = [
             'client_id' => $client_id
         ];
-//         $check  = ClientInstallment::where('project_type_id', $request->project_type_id)->where('inventory_id', $request->inventory_id)->where('client_id', $client->id)->where('status', 'not_paid')->get();
-// echo '<pre>';
-// print_r($check->toArray());
-// echo '<pre>';
-// die();
-        ClientInstallment::where('project_type_id', $request->project_type_id)->where('inventory_id', $request->inventory_id)->where('client_id', $request->client_trnafer_id)->where('status', 'not_paid')->update($installmentData);
+        //         $check  = ClientInstallment::where('project_type_id', $request->project_type_id)->where('inventory_id', $request->inventory_id)->where('client_id', $client->id)->where('status', 'not_paid')->get();
+        // echo '<pre>';
+        // print_r($check->toArray());
+        // echo '<pre>';
+        // die();
+        ClientInstallment::where('project_id', $request->project_id)->where('inventory_id', $request->inventory_id)->where('client_id', $request->client_trnafer_id)->where('status', 'not_paid')->update($installmentData);
 
         // if ($client->project_type_id == "1") {
         //     //building
@@ -588,10 +613,10 @@ class ClientController extends Controller
     public function active(Request $request, $id)
     {
 
+
         $request->validate([
             // 'building_id' => 'required',
-            'inventory_id' => 'required',
-
+            // 'inventory_id' => 'required',
             'name_new' => 'required',
             'phone_number_new' => 'required|unique:leads,number',
             'phone_number_new' => 'unique:leads,alt_number',
@@ -614,12 +639,17 @@ class ClientController extends Controller
         } else {
             $type_id = $request->project_type_id;
         }
-        if (is_numeric($request->inventory_id)) {
-            $inventory_id = $request->inventory_id;
-        } else {
-            $inventory_id = $request->inventory_id;
-        }
 
+        if (!empty($request->client_inventory_id)) {
+            $inventory_id = $request->client_inventory_id;
+        } elseif (!empty($request->building_inventory_id)) {
+            $inventory_id = $request->building_inventory_id;
+        } elseif (!empty($request->society_inventory_id)) {
+            $inventory_id = $request->society_inventory_id;
+        }
+        if (empty($inventory_id)) {
+            return redirect()->back()->with($this->message('Select Inventory First', 'error'));
+        }
         $client_data = [
             'project_id' => $project_id,
             'project_type_id' => $type_id,
@@ -643,20 +673,23 @@ class ClientController extends Controller
             'created_by' => auth()->user()->id,
             'status' => 'mature',
         ];
+
         $response = Client::where('id', $id)->update($client_data);
         // Change Status In Inventory Sold   
         if ($type_id == '1') {
-            $soldornot = BuildingInventory::where('id', $request->inventory_id)->first();
+            $soldornot = BuildingInventory::where('id', $inventory_id)->first();
+
             if ($soldornot->status == 'available') {
                 $update_status = [
                     'status' => 'sold',
                 ];
-                BuildingInventory::where('id', $request->inventory_id)->update($update_status);
-                $get_inventory_id = $request->inventory_id;
+                BuildingInventory::where('id', $inventory_id)->update($update_status);
+                $get_inventory_id = $inventory_id;
                 $get_inventory_project_type_id = $type_id;
                 $get_inventory_inventory_id = $get_inventory_id;
                 $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
                 $installment = installment($inventory->payment_plan_id);
+
                 if ($installment['total_price'] == $installment['payment_plan']->total_price) {
                     $inventory->status = 'sold';
                     $inventory->save();
@@ -664,13 +697,13 @@ class ClientController extends Controller
                 }
             }
         } elseif ($type_id == '2') {
-            $soldornot = SocietyInventory::where('id', $request->inventory_id)->first();
+            $soldornot = SocietyInventory::where('id', $inventory_id)->first();
             if ($soldornot->status == 'available') {
                 $update_status = [
                     'status' => 'sold',
                 ];
-                SocietyInventory::where('id', $request->inventory_id)->update($update_status);
-                $get_inventory_id = $request->inventory_id;
+                SocietyInventory::where('id', $inventory_id)->update($update_status);
+                $get_inventory_id = $inventory_id;
                 $get_inventory_project_type_id = $type_id;
                 $get_inventory_inventory_id = $get_inventory_id;
                 $inventory = get_inventory($get_inventory_project_type_id, $get_inventory_inventory_id);
@@ -682,7 +715,7 @@ class ClientController extends Controller
                 }
             }
         } elseif ($type_id == '3') {
-            $soldornot = Farmhouse::where('id', $request->inventory_id)->first();
+            $soldornot = Farmhouse::where('id', $inventory_id)->first();
             if ($soldornot->status == 'available') {
                 $update_status = [
                     'status' => 'sold',
@@ -700,7 +733,7 @@ class ClientController extends Controller
                 }
             }
         } elseif ($type_id == '4') {
-            $soldornot = Property::where('id', $request->inventory_id)->first();
+            $soldornot = Property::where('id', $inventory_id)->first();
             if ($soldornot->status == 'available') {
                 $update_status = [
                     'status' => 'sold',
@@ -772,7 +805,8 @@ class ClientController extends Controller
     public function history_sale($client_id)
     {
         $client = Client::findOrFail($client_id);
-        $client_installment = ClientInstallment::where('project_type_id', $client->project_type_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
+
+        $client_installment = ClientInstallment::where('project_id', $client->project_id)->where('inventory_id', $client->inventory_id)->orderBy('due_date', 'ASC')->get();
 
         return view('user.client.sale_history.show', get_defined_vars());
     }

@@ -27,7 +27,7 @@
                             <th>Status</th>
                             <th>Date</th>
                             <th>Comment</th>
-                            <th>CreatedAt</th>
+                            <!-- <th>CreatedAt</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -36,9 +36,9 @@
                         <tr>
                             <td>{{ $key + 1 }}</td>
                             <td>{{ $value->status ?? '' }}</td>
-                            <td>{{ $value->date ?? '' }}</td>
+                            <td>{{ $value->date ?? $value->created_at }}</td>
                             <td>{{ $value->comment ?? '' }}</td>
-                            <td>{{ $value->created_at }}</td>
+                            <!-- <td>{{ $value->created_at }}</td> -->
                         </tr>
                         @endforeach
                         @else

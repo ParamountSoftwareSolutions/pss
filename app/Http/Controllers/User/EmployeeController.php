@@ -19,9 +19,10 @@ class EmployeeController extends Controller
     {
         //$building = Helpers::custom_building_detail();
         //$employee_list = Employee::whereIn('building_id', $building->pluck('id')->toArray())->get()->pluck('user_id')->toArray();
-        $employee = User::whereHas('roles', function ($q) {
-                $q->whereIn('name', ['sale_person', 'office_staff', 'accountant']);
-            })->get();
+        // $employee = User::whereHas('roles', function ($q) {
+        //         $q->whereIn('name', ['sale_person', 'office_staff', 'accountant']);
+        //     })->get();
+        $employee = User::get();
         //->whereIn('id', $employee_list)->get();
         return view('user.employee.index', compact('employee'));
     }
@@ -72,11 +73,11 @@ class EmployeeController extends Controller
             'phone_number' => 'required|unique:users,phone_number',
             'working_days' => 'required|max:31'
         ]);
-        if ($request->job_title == 'sale_person') {
-            $request->validate([
-                'sale_manager_id' => 'required',
-            ]);
-        }
+        // if ($request->job_title == 'sale_person') {
+        //     $request->validate([
+        //         'sale_manager_id' => 'required',
+        //     ]);
+        // }
         
         $employee = new User();
         $employee->name = $request->name;
@@ -89,7 +90,7 @@ class EmployeeController extends Controller
         $employee->phone_number = $request->phone_number;
         $employee->cnic = $request->cnic;
         $employee->project = $request->building_id;
-        $employee->sale_manager_id = $request->sale_manager_id;
+        // $employee->sale_manager_id = $request->sale_manager_id ?? null;
         $employee->cnic = $request->cnic;
         $employee->address = $request->address;
         $employee->account_no = $request->account_no;
@@ -160,17 +161,17 @@ class EmployeeController extends Controller
             'phone_number' => 'required|unique:users,phone_number,' . $id,
             'working_days' => 'required|max:31'
         ]);
-        if ($request->job_title == 'sale_person') {
-            $request->validate([
-                'sale_manager_id' => 'required',
-            ]);
-        }
+        // if ($request->job_title == 'sale_person') {
+        //     $request->validate([
+        //         'sale_manager_id' => 'required',
+        //     ]);
+        // }
         $employee = User::findOrFail($id);
         $employee->name = $request->name;
         $employee->email = $request->email;
         $employee->phone_number = $request->phone_number;
         $employee->project = $request->building_id;
-        $employee->sale_manager_id = $request->sale_manager_id;
+        // $employee->sale_manager_id = $request->sale_manager_id;
         $employee->cnic = $request->cnic;
         $employee->address = $request->address;
         $employee->account_no = $request->account_no;

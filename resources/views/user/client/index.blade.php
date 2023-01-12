@@ -38,8 +38,8 @@
                             <select name="project" class="form-control ml-auto" style="border-radius: 5px">
                                 <option value="" disabled selected style="color:rgb(75, 106, 108)">Search By Projects</option>
                                 @if (!empty($building))
-                                @foreach ($building as $data_building)
-                                <option value="{{ ($data_building->id !== null) ? $data_building->id :"" }}">{{ ($data_building['name']!== null) ? $data_building['name'] :"" }}</option>
+                                @foreach ($building as $value_building)
+                                <option value="{{ ($value_building->id !== null) ? $value_building->id :"" }}">{{ ($value_building['name']!== null) ? $value_building['name'] :"" }}</option>
                                 @endforeach
                                 @endif
                             </select>
@@ -152,83 +152,87 @@
                     </thead>
                     <tbody>
                         @if(!empty($clients))
-                        @foreach($clients as $key => $data)
+                        @foreach($clients->toArray() as $key => $value)
                         <tr>
                             <td class="p-0 text-center">
                                 <div class="custom-checkbox custom-control">
-                                    <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input" id="checkbox-{{ $data->id }}" name="sale[]" value="{{ $data->id }}">
-                                    <label for="checkbox-{{ $data->id }}" class="custom-control-label">&nbsp;</label>
+                                    <input type="checkbox" data-checkboxes="mygroup" class="custom-control-input" id="checkbox-{{ $value['id'] }}" name="sale[]" value="{{ $value['id'] }}">
+                                    <label for="checkbox-{{ $value['id'] }}" class="custom-control-label">&nbsp;</label>
                                 </div>
                             </td>
-                            <td>{{ $data->id }}</td>
-                            <td>{{ $data->name ?? '' }}</td>
-                            <td>{{ $data->email ?? '' }}</td>
-                            <td>{{ $data->number ?? '' }}</td>
-                            <td>{{ (!empty($data['user']['name'])) ? $data['user']['name'] : 'N/A'}}</td>
-                            <td>{{ (!empty($data['project']['name'])) ? $data['project']['name'] : 'N/A'}}</td>
+                            <td>{{ $value['id'] }}</td>
+                            <td>{{ $value['name'] ?? '' }}</td>
+                            <td>{{ $value['email'] ?? '' }}</td>
+                            <td>{{ $value['number'] ?? '' }}</td>
+                            <td>{{ (!empty($value['user']['name'])) ? $value['user']['name'] : 'N/A'}}</td>
+
+                            <td>{{ (!empty($value['project']['name'])) ? $value['project']['name'] : 'N/A'}}</td>
 
                             <?php
-                            if (!empty($data['inventory_id'] && $data['project']['type_id'])) {
-                                $unit_number = get_inventory($data['project']['type_id'], $data['inventory_id'])['unit_id'];
+                         
+                            if (!empty($value['inventory_id']) && !empty($value['project']['type_id'])) {
+                                $unit_number = get_inventory($value['project']['type_id'], $value['inventory_id'])['unit_id'];
                             } else {
                                 $unit_number = 'N/A';
                             }
+
                             ?>
+
                             <td>{{$unit_number}}</td>
                             <td>
                                 <div class="dropdown">
-                                    <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-success" aria-expanded="false">{{$data->status }}</a>
-                                    @if($data->status != 'transfered')
+                                    <a href="javascript:void(0)" data-toggle="dropdown" class="badge badge-success" aria-expanded="false">{{$value['status'] }}</a>
+                                    @if($value['status'] != 'transfered')
                                     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                        @if($data->status != 'active')
-                                        <a href="{{ route('client.active', ['RolePrefix' => RolePrefix(), $data->id]) }}" class="dropdown-item has-icon">Active</a>
+                                        @if($value['status'] != 'active')
+                                        <a href="{{ route('client.active', ['RolePrefix' => RolePrefix(), $value['id']]) }}" class="dropdown-item has-icon">Active</a>
                                         @endif
-                                        <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="Suspended">Suspended</a>
-                                        <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$data->id}}" data-value="Cancelled">Cancelled</a>
-                                        <a href="{{ route('client.transfered', ['RolePrefix' => RolePrefix(), $data->id]) }}" class="dropdown-item has-icon">Transfered</a>
+                                        <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$value['id']}}" data-value="Suspended">Suspended</a>
+                                        <a href="javascript:void(0)" class="dropdown-item has-icon  change_status" data-id="{{$value['id']}}" data-value="Cancelled">Cancelled</a>
+                                        <a href="{{ route('client.transfered', ['RolePrefix' => RolePrefix(), $value['id']]) }}" class="dropdown-item has-icon">Transfered</a>
                                     </div>
                                     @endif
                                 </div>
                             </td>
                             <td>
                                 <div class="dropdown">
-                                    <a href="javascript:void(0)" data-toggle="dropdown" class="badge @if($data->priority == 'very_hot')
-                                                                    badge-danger @elseif($data->priority == 'hot')
-                                                                    badge-warning @elseif($data->priority == 'moderate')
-                                                                    badge-primary @elseif($data->priority == 'cold')
+                                    <a href="javascript:void(0)" data-toggle="dropdown" class="badge @if($value['priority'] == 'very_hot')
+                                                                    badge-danger @elseif($value['priority'] == 'hot')
+                                                                    badge-warning @elseif($value['priority'] == 'moderate')
+                                                                    badge-primary @elseif($value['priority'] == 'cold')
                                                                     badge-info @else
                                                                     badge-secondary @endif
                                                                     " aria-expanded="false">
-                                        @if($data->priority == null)
+                                        @if($value['priority'] == null)
                                         Not Selected
                                         @else
-                                        {{ ucfirst(Illuminate\Support\Str::replace('_', ' ', $data->priority)) }}
+                                        {{ ucfirst(Illuminate\Support\Str::replace('_', ' ', $value['priority'])) }}
                                         @endif
                                     </a>
                                     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                                        <a href="{{ route('client.change_priority', ['RolePrefix' => RolePrefix(), 'very_hot',$data->id]) }}" class="dropdown-item has-icon @if($data->priority == 'very_hot') d-none  @endif">Very Hot
+                                        <a href="{{ route('client.change_priority', ['RolePrefix' => RolePrefix(), 'very_hot',$value['id']]) }}" class="dropdown-item has-icon @if($value['priority'] == 'very_hot') d-none  @endif">Very Hot
                                         </a>
-                                        <a href="{{ route('client.change_priority', ['RolePrefix' => RolePrefix(), 'hot',$data->id])}}" class="dropdown-item has-icon @if($data->priority == 'hot') d-none @endif">Hot
+                                        <a href="{{ route('client.change_priority', ['RolePrefix' => RolePrefix(), 'hot',$value['id']])}}" class="dropdown-item has-icon @if($value['priority'] == 'hot') d-none @endif">Hot
                                         </a>
-                                        <a href="{{ route('client.change_priority', ['RolePrefix' => RolePrefix(), 'moderate',$data->id])}}" class="dropdown-item has-icon @if($data->priority == 'moderate') d-none @endif">Moderate
+                                        <a href="{{ route('client.change_priority', ['RolePrefix' => RolePrefix(), 'moderate',$value['id']])}}" class="dropdown-item has-icon @if($value['priority'] == 'moderate') d-none @endif">Moderate
                                         </a>
-                                        <a href="{{ route('client.change_priority', ['RolePrefix' => RolePrefix(), 'cold',$data->id])}}" class="dropdown-item has-icon @if($data->priority == 'cold') d-none @endif">Cold
+                                        <a href="{{ route('client.change_priority', ['RolePrefix' => RolePrefix(), 'cold',$value['id']])}}" class="dropdown-item has-icon @if($value['priority'] == 'cold') d-none @endif">Cold
                                         </a>
                                     </div>
                                 </div>
                             </td>
 
                             <td>
-                                <a href="{{route('clients.edit', ['RolePrefix' => RolePrefix(),$data->id])}}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
+                                <a href="{{route('clients.edit', ['RolePrefix' => RolePrefix(),$value['id']])}}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
                                     <i class="fa fa-edit"></i>
                                 </a>
-                                <a href="{{route('clients.show', ['RolePrefix' => RolePrefix(),$data->id])}}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
+                                <a href="{{route('clients.show', ['RolePrefix' => RolePrefix(),$value['id']])}}" class="btn btn-primary btn-sm px-1 py-0" title="Edit">
                                     <i class="fa fa-eye"></i>
                                 </a>
                                 <!-- <button type="button" title="Delete" data-url="" data-token="{!! csrf_token() !!}" class="btn btn-danger btn-sm px-1 py-0 deleteBtn">
                                     <i class="fa fa-trash"></i>
                                 </button> -->
-                                <a href="{{route('client.comments', ['RolePrefix' => RolePrefix(),$data->id])}}" class="btn btn-info btn-sm px-1 py-0"><i class="fa fa-comments"></i></a>
+                                <a href="{{route('client.comments', ['RolePrefix' => RolePrefix(),$value['id']])}}" class="btn btn-info btn-sm px-1 py-0"><i class="fa fa-comments"></i></a>
                             </td>
                         </tr>
                         @endforeach

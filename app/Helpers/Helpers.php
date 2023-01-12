@@ -59,19 +59,20 @@ if (!function_exists('get_clients_from_user')) {
     function get_clients_from_user($users)
     {
         if (Auth::user()->hasRole('sale_person')) {
-            return Client::where('user_id', Auth::id());
+            return Client::with('project', 'user', 'customer')->where('user_id', Auth::id());
         }
         if (Auth::user()->hasRole('sale_manager')) {
-            return Client::whereIn('user_id', $users);
+            return Client::with('project', 'user', 'customer')->whereIn('user_id', $users);
         }
         if (Auth::user()->hasRole('property_manager')) {
             return  Client::with('project', 'user', 'customer')->whereIn('user_id', $users);
         }
         if (Auth::user()->hasRole('property_admin')) {
-            return Client::with('sale_person');
+            return Client::with('sale_person','project', 'user', 'customer');
         }
     }
 }
+
 /**
  * get_user_by_projects
  *
@@ -82,6 +83,11 @@ if (!function_exists('get_user_by_projects')) {
     {
         if (Auth::user()->roles[0]->name == 'property_admin') {
             $project = ProjectAssignUser::get();
+        //     $user = User::get()->pluck('id');
+        //     return $user->toArray();
+
+        //     $a2 = array(Auth::user()->id);
+        //    return array_merge($user->toArray(), $a2);
         } else {
             $project = ProjectAssignUser::where('user_id', auth()->user()->id)->get();
         }
@@ -106,10 +112,21 @@ if (!function_exists('get_all_projects')) {
     function get_all_projects($type = null)
     {
         if ($type !== null) {
+            //for admin
+            if (Auth::user()->roles[0]->name == 'property_admin') {
+                $project_type = project_type($type);
+                return Project::where('type_id', $project_type)->get();
+            }
+            //for admin
             $project_type = project_type($type);
             $list = ProjectAssignUser::where('user_id', Auth::id())->get();
             return Project::whereIn('id', $list->pluck('project_id')->toArray())->where('type_id', $project_type)->get();
         } else {
+            //for admin
+            if (Auth::user()->roles[0]->name == 'property_admin') {
+                return Project::get();
+            }
+            //for admin
             $list = ProjectAssignUser::where('user_id', Auth::id())->get();
             return Project::whereIn('id', $list->pluck('project_id')->toArray())->get();
         }
@@ -184,146 +201,155 @@ if (!function_exists('installment')) {
     {
         $payment_plan = PaymentPlan::findOrFail($payment_plan_id);
         $a1 = [];
-        $a2 = [];
-        $a3 = [];
-        $a4 = [];
-        $total = [];
-        $total_per_year_price = 0;
-        // Calculation Payment Plan
-        $current_date = Carbon::now()->format('Y-m-d');
-        $total_month = $payment_plan->total_month_installment;
-        $after_installment_date = Carbon::now()->addMonths($total_month)->addDay()->format('Y-m-d');
-        $extra_total_price = [
-            'down_payment' => [$payment_plan->down_payment, $current_date],
-            'confirmation_amount' => [$payment_plan->confirmation_amount, $current_date],
-            'balloting' => [$payment_plan->balloting_price, $after_installment_date],
-            'possession' => [$payment_plan->possession_price, $after_installment_date],
-        ];
-        foreach ($extra_total_price as $key => $data) {
-            array_push($a1, [
-                'title' => $key,
-                'amount' => $data[0],
-                'due_date' => $data[1],
-                'created_at' => $current_date,
-            ]);
-        }
+        if($payment_plan->payment_method == 'installment'){
+            $a3 = [];
+            $a4 = [];
+            // Calculation Payment Plan
+            $current_date = Carbon::now()->format('Y-m-d');
+            $total_month = $payment_plan->total_month_installment;
+            $after_installment_date = Carbon::now()->addMonths($total_month)->addDay()->format('Y-m-d');
+            $extra_total_price = [
+                'down_payment' => [$payment_plan->down_payment, $current_date],
+                'confirmation_amount' => [$payment_plan->confirmation_amount, $current_date],
+                'balloting' => [$payment_plan->balloting_price, $after_installment_date],
+                'possession' => [$payment_plan->possession_price, $after_installment_date],
+            ];
+            foreach ($extra_total_price as $key => $data) {
+                array_push($a1, [
+                    'title' => $key,
+                    'amount' => $data[0],
+                    'due_date' => $data[1],
+                    'created_at' => $current_date,
+                ]);
+            }
 
-        if ($payment_plan->installment_plan == 'monthly') {
-            for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
-                $a3[$i] = $payment_plan->monthly_installment;
-            }
-            $month_date = Carbon::now();
-            foreach ($a3 as $key => $data) {
-                array_push($a1, [
-                    'title' => 'installment',
-                    'amount' => $data,
-                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
-            }
-        }
-        elseif ($payment_plan->installment_plan == 'bi_anually'){
-            for ($i = 1; $payment_plan->no_of_half >= $i; $i++) {
-                $a3[$i] = $payment_plan->half_year_installment;
-            }
-            $month_date = Carbon::now();
-            foreach ($a3 as $key => $data) {
-                array_push($a1, [
-                    'title' => 'bi_annually',
-                    'amount' => $data,
-                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
-                $month_date->addMonths(5);
-            }
-        }
-        elseif ($payment_plan->installment_plan == 'quartrly'){
-            for ($i = 1; $payment_plan->no_of_quarter >= $i; $i++) {
-                $a3[$i] = $payment_plan->quarterly_installment;
-            }
-            $month_date = Carbon::now();
-            foreach ($a3 as $key => $data) {
-                array_push($a1, [
-                    'title' => 'quarterly',
-                    'amount' => $data,
-                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
-                $month_date->addMonths(2);
-            }
-        }
-        elseif ($payment_plan->installment_plan == 'monthly_bi'){
-            for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
-                $a3[$i] = $payment_plan->monthly_installment;
-            }
-            $count = count($a3);
-            $skip_month = [];
-            $i = 5;
-            while($i <= $count){
-                $skip_month[] = $i;
-                $i = $i + 5;
-            }
-            $month_date = Carbon::now();
-            foreach ($a3 as $key => $data) {
-                array_push($a1, [
-                    'title' => 'installment',
-                    'amount' => $data,
-                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
-                if(in_array($key, $skip_month)){
-                    $month_date->addMonth();;
+            if ($payment_plan->installment_plan == 'monthly') {
+                for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
+                    $a3[$i] = $payment_plan->monthly_installment;
+                }
+                $month_date = Carbon::now();
+                foreach ($a3 as $key => $data) {
+                    array_push($a1, [
+                        'title' => 'installment',
+                        'amount' => $data,
+                        'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                        'created_at' => Carbon::now()->addMonths($key),
+                    ]);
                 }
             }
-            for ($i = 1; $payment_plan->no_of_half >= $i; $i++) {
-                $a4[$i] = $payment_plan->half_year_installment;
-            }
-            $month_date = Carbon::now();
-            foreach ($a4 as $key => $data) {
-                $month_date->addMonths(6);
-                array_push($a1, [
-                    'title' => 'bi_annually',
-                    'amount' => $data,
-                    'due_date' => $month_date->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
-            }
-        }
-        elseif ($payment_plan->installment_plan == 'monthly_qa'){
-            for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
-                $a3[$i] = $payment_plan->monthly_installment;
-            }
-            $count = count($a3);
-            $skip_month = [];
-            $i = 2;
-            while($i <= $count){
-                $skip_month[] = $i;
-                $i = $i + 2;
-            }
-            $month_date = Carbon::now();
-            foreach ($a3 as $key => $data) {
-                array_push($a1, [
-                    'title' => 'installment',
-                    'amount' => $data,
-                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
-                if(in_array($key, $skip_month)){
-                    $month_date->addMonth();;
+            elseif ($payment_plan->installment_plan == 'bi_anually'){
+                for ($i = 1; $payment_plan->no_of_half >= $i; $i++) {
+                    $a3[$i] = $payment_plan->half_year_installment;
+                }
+                $month_date = Carbon::now();
+                foreach ($a3 as $key => $data) {
+                    array_push($a1, [
+                        'title' => 'bi_annually',
+                        'amount' => $data,
+                        'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                        'created_at' => Carbon::now()->addMonths($key),
+                    ]);
+                    $month_date->addMonths(5);
                 }
             }
-            for ($i = 1; $payment_plan->no_of_quarter >= $i; $i++) {
-                $a4[$i] = $payment_plan->quarterly_installment;
+            elseif ($payment_plan->installment_plan == 'quartrly'){
+                for ($i = 1; $payment_plan->no_of_quarter >= $i; $i++) {
+                    $a3[$i] = $payment_plan->quarterly_installment;
+                }
+                $month_date = Carbon::now();
+                foreach ($a3 as $key => $data) {
+                    array_push($a1, [
+                        'title' => 'quarterly',
+                        'amount' => $data,
+                        'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                        'created_at' => Carbon::now()->addMonths($key),
+                    ]);
+                    $month_date->addMonths(2);
+                }
             }
-            $month_date = Carbon::now();
-            foreach ($a4 as $key => $data) {
-                $month_date->addMonths(3);
-                array_push($a1, [
-                    'title' => 'quarterly',
-                    'amount' => $data,
-                    'due_date' => $month_date->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
+            elseif ($payment_plan->installment_plan == 'monthly_bi'){
+                for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
+                    $a3[$i] = $payment_plan->monthly_installment;
+                }
+                $count = count($a3);
+                $skip_month = [];
+                $i = 5;
+                while($i <= $count){
+                    $skip_month[] = $i;
+                    $i = $i + 5;
+                }
+                $month_date = Carbon::now();
+                foreach ($a3 as $key => $data) {
+                    array_push($a1, [
+                        'title' => 'installment',
+                        'amount' => $data,
+                        'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                        'created_at' => Carbon::now()->addMonths($key),
+                    ]);
+                    if(in_array($key, $skip_month)){
+                        $month_date->addMonth();;
+                    }
+                }
+                for ($i = 1; $payment_plan->no_of_half >= $i; $i++) {
+                    $a4[$i] = $payment_plan->half_year_installment;
+                }
+                $month_date = Carbon::now();
+                foreach ($a4 as $key => $data) {
+                    $month_date->addMonths(6);
+                    array_push($a1, [
+                        'title' => 'bi_annually',
+                        'amount' => $data,
+                        'due_date' => $month_date->format('Y-m-d'),
+                        'created_at' => Carbon::now()->addMonths($key),
+                    ]);
+                }
+            }
+            elseif ($payment_plan->installment_plan == 'monthly_qa'){
+                for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
+                    $a3[$i] = $payment_plan->monthly_installment;
+                }
+                $count = count($a3);
+                $skip_month = [];
+                $i = 2;
+                while($i <= $count){
+                    $skip_month[] = $i;
+                    $i = $i + 2;
+                }
+                $month_date = Carbon::now();
+                foreach ($a3 as $key => $data) {
+                    array_push($a1, [
+                        'title' => 'installment',
+                        'amount' => $data,
+                        'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                        'created_at' => Carbon::now()->addMonths($key),
+                    ]);
+                    if(in_array($key, $skip_month)){
+                        $month_date->addMonth();;
+                    }
+                }
+                for ($i = 1; $payment_plan->no_of_quarter >= $i; $i++) {
+                    $a4[$i] = $payment_plan->quarterly_installment;
+                }
+                $month_date = Carbon::now();
+                foreach ($a4 as $key => $data) {
+                    $month_date->addMonths(3);
+                    array_push($a1, [
+                        'title' => 'quarterly',
+                        'amount' => $data,
+                        'due_date' => $month_date->format('Y-m-d'),
+                        'created_at' => Carbon::now()->addMonths($key),
+                    ]);
+                }
+            }
+        }else{
+            $baloon_data = json_decode($payment_plan->baloon,true);
+            foreach ($baloon_data as $data){
+                $a1[] = [
+                    'title' => 'baloon',
+                    'amount' => $data['amount'],
+                    'due_date' => $data['date'],
+                    'created_at' => Carbon::now(),
+                ];
             }
         }
         $amount = $a1;
@@ -337,12 +363,12 @@ if (!function_exists('installment')) {
     }
 }
 if (!function_exists('create_installment_plan')) {
-    function create_installment_plan($client_id, $project_type_id, $inventory_id, $installment, $down_payment)
+    function create_installment_plan($client_id, $project_id, $inventory_id, $installment, $down_payment)
     {
         $installment_check = ClientInstallment::where('client_id', $client_id)->first();
-        if ($installment_check == null) {
+        if (!$installment_check) {
 
-            if ($down_payment !== $installment['payment_plan']->total_price) {
+            if ($down_payment !== $installment['total_price']) {
                 foreach ($installment['amount'] as $data) {
                     if (in_array($data['title'], ['down_payment', 'confirmation_amount'])) {
                         $status = 'paid';
@@ -354,7 +380,7 @@ if (!function_exists('create_installment_plan')) {
                     }
                     ClientInstallment::create([
                         'client_id' => $client_id,
-                        'project_type_id' => $project_type_id,
+                        'project_id' => $project_id,
                         'inventory_id' => $inventory_id,
                         'title' => $data['title'],
                         'installment_amount' => $data['amount'],

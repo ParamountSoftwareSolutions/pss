@@ -21,10 +21,13 @@ class CreatePaymentPlansTable extends Migration
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->integer('commission')->nullable();
             $table->integer('after_commission_price')->nullable();
+            $table->string('payment_method')->nullable();
             $table->integer('down_payment')->nullable();
+            $table->string('down_payment_percent')->nullable();
             $table->integer('confirmation_amount')->nullable();
             $table->integer('balloting_price')->nullable();
             $table->integer('possession_price')->nullable();
+            $table->string('installment_plan')->nullable();
             $table->integer('no_of_month')->nullable();
             $table->integer('monthly_installment')->nullable();
             $table->integer('no_of_half')->nullable();
@@ -34,6 +37,7 @@ class CreatePaymentPlansTable extends Migration
             $table->integer('discount')->nullable();
             $table->integer('rent_price')->nullable();
             $table->integer('rent_installment')->nullable();
+            $table->text('baloon')->nullable();
             $table->timestamps();
         });
     }
