@@ -45,6 +45,10 @@
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
+                                                    <a href="{{ route('project.show', ['RolePrefix' => RolePrefix(), 'project' => $data->id]) }}"
+                                                       class="btn btn-primary px-1 py-0" title="View">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
                                                     <button type="button" data-url="{{ route('project.destroy',['RolePrefix' => RolePrefix(), 'project' => $data->id]) }}"
                                                             data-token="{{csrf_token()}}" title="Delete" class="btn btn-danger px-1 py-0 deleteBtn">
                                                         <i class="fa fa-trash"></i>

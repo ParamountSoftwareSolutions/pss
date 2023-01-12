@@ -61,15 +61,6 @@
                             <li>
                                 <a href="{{route('project.index', ['RolePrefix' => RolePrefix()])}}">All Project</a>
                             </li>
-                            <li>
-                                <a href="{{route('building.index', ['RolePrefix' => RolePrefix()])}}">Building</a>
-                            </li>
-                            <li>
-                                <a href="{{route('society.index', ['RolePrefix' => RolePrefix()])}}">Society</a>
-                            </li>
-                            <li>
-                                <a href="{{route('farmhouse.index', ['RolePrefix' => RolePrefix()])}}">Farmhouse</a>
-                            </li>
                         </ul>
                     </div>
                 </li>

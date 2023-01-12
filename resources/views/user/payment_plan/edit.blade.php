@@ -93,16 +93,6 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h4>Payment Information</h4>
-                                    <input type="hidden" name="payment_method" value="installment">
-                                    <button type="button" class="btn btn-primary baloon change_plan" data-val="baloon" style="margin-left: auto; display: block;">Baloon Payment</button>
-                                    <button type="button" class="btn btn-primary install change_plan" data-val="install" style="margin-left: auto; display: block;">Installment Payment</button>
-                                </div>
-                                <div class="card-body baloon">
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label class="d-block">Down Payment (In % or Rs.)</label>
@@ -128,6 +118,34 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                        <div class="form-group col-md-4 discount">
+                                            <label class="d-block">Discount Amount</label>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">RS</span>
+                                                </div>
+                                                <input type="number" class="form-control" aria-label="Amount"
+                                                       name="discount" value="{{old('discount',$payment_plan->discount)}}">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">.00</span>
+                                                </div>
+                                            </div>
+                                            @error('discount')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4>Payment Information</h4>
+                                    <input type="hidden" name="payment_method" value="installment">
+                                    <button type="button" class="btn btn-primary baloon change_plan" data-val="baloon" style="margin-left: auto; display: block;">Baloon Payment</button>
+                                    <button type="button" class="btn btn-primary install change_plan" data-val="install" style="margin-left: auto; display: block;">Installment Payment</button>
+                                </div>
+                                <div class="card-body baloon">
+                                    <div class="row">
                                         <div class="form-group col-md-4 down_payment">
                                             <label class="d-block">Confirmation Amount</label>
                                             <div class="input-group mb-3">
@@ -144,8 +162,6 @@
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="form-group col-md-4">
                                             <label class="d-block">Balloting Amount</label>
                                             <div class="input-group mb-3">
@@ -272,22 +288,6 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="form-group col-md-4 discount">
-                                            <label class="d-block">Discount Amount</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">RS</span>
-                                                </div>
-                                                <input type="number" class="form-control" aria-label="Amount"
-                                                       name="discount" value="{{old('discount',$payment_plan->discount)}}">
-                                                <div class="input-group-append">
-                                                    <span class="input-group-text">.00</span>
-                                                </div>
-                                            </div>
-                                            @error('discount')
-                                            <div class="text-danger mt-2">{{ $message }}</div>
-                                            @enderror
-                                        </div>
                                         <div class="form-group col-md-4 rent">
                                             <label class="d-block">Rent Amount</label>
                                             <div class="input-group mb-3">
@@ -326,7 +326,7 @@
                                     <div class="row">
                                         <div class="form-group col-md-4">
                                             <label class="d-block">Date</label>
-                                            <input type="date" class="form-control" name="baloon[0][date]">
+                                            <input type="date" min="{{date('Y-m-d')}}" class="form-control" name="baloon[0][date]">
                                         </div>
                                         <div class="form-group col-md-4 down_payment">
                                             <label class="d-block">Amount</label>
@@ -358,6 +358,7 @@
 @section('script')
     <script>
         $(document).ready(function () {
+            var date = get_date();
             var project_type_id = {{$payment_plan->project_type_id}};
             var plan = "{{$payment_plan->installment_plan}}";
             installmentPlan(plan);
@@ -395,7 +396,7 @@
                     var input = '<div class="row">' +
                         '               <div class="form-group col-md-4">' +
                         '                   <label class="d-block">Date</label>' +
-                        '                   <input type="date" class="form-control" name="baloon['+i+'][date]" value="'+baloon_data[i]['date']+'">' +
+                        '                   <input type="date" min="'+date+'" class="form-control" name="baloon['+i+'][date]" value="'+baloon_data[i]['date']+'">' +
                         '               </div>' +
                         '               <div class="form-group col-md-4 down_payment">' +
                         '                   <label class="d-block">Amount</label>' +
@@ -423,7 +424,7 @@
                 var bulk_input = '<div class="row">' +
                     '               <div class="form-group col-md-4">' +
                     '                   <label class="d-block">Date</label>' +
-                    '                   <input type="date" class="form-control" name="baloon['+count+'][date]">' +
+                    '                   <input type="date" min="'+date+'" class="form-control" name="baloon['+count+'][date]">' +
                     '               </div>' +
                     '               <div class="form-group col-md-4 down_payment">' +
                     '                   <label class="d-block">Amount</label>' +
@@ -584,9 +585,11 @@
                         sum = sum + amount;
                     }
                     var remaining = total_price - sum;
-                    if(!(remaining <= 100 || remaining >= -100)){
-                        errorMsg('Payment calculation error....');
-                        return;
+                    if(remaining != 0){
+                        if(!(remaining <= 100 && remaining >= -100)){
+                            errorMsg('Payment plan calculation error....');
+                            return;
+                        }
                     }
                     $('#payment_plan_form').submit();
                 }else{

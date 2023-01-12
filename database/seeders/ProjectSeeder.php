@@ -43,42 +43,6 @@ class ProjectSeeder extends Seeder
                 'name' => 'Maham Apartment',
                 'type_id' => 1
             ],
-            [
-                'name' => 'Al_Raheem Garden',
-                'type_id' => 2,
-            ],
-            [
-                'name' => 'DHA Phase 1',
-                'type_id' => 2,
-            ],
-            [
-                'name' => 'Smart City',
-                'type_id' => 2,
-            ],
-            [
-                'name' => 'Ch House',
-                'type_id' => 3,
-            ],
-            [
-                'name' => 'jutt house',
-                'type_id' => 3,
-            ],
-            [
-                'name' => 'shujaat House',
-                'type_id' => 3,
-            ],
-            [
-                'name' => 'amir House',
-                'type_id' => 4,
-            ],
-            [
-                'name' => 'qasim House',
-                'type_id' => 4,
-            ],
-            [
-                'name' => 'faisal House',
-                'type_id' => 4,
-            ],
         ]);
 
 

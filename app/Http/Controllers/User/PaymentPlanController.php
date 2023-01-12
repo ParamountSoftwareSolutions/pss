@@ -24,8 +24,6 @@ class PaymentPlanController extends Controller
      */
     public function index()
     {
-        $abc = installment(2);
-        dd($abc);
         $payment_plan = PaymentPlan::get();
         return view('user.payment_plan.index', compact('payment_plan'));
     }
@@ -54,6 +52,8 @@ class PaymentPlanController extends Controller
             'name' => 'required',
             'total_price' => 'required',
             'premium_id' => 'required',
+            'down_payment' => 'required',
+            'down_payment_percent' => 'required',
             'payment_method' => 'required',
         ]);
         if($request->premium_id !== "regular"){
@@ -187,6 +187,8 @@ class PaymentPlanController extends Controller
             'name' => 'required',
             'total_price' => 'required',
             'premium_id' => 'required',
+            'down_payment' => 'required',
+            'down_payment_percent' => 'required',
             'payment_method' => 'required',
         ]);
         if($request->premium_id !== "regular"){

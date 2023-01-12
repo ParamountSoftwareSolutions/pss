@@ -35,6 +35,7 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = get_all_projects();
+//        dd($projects);
         return view('user.project.index', compact('projects'));
     }
 
@@ -90,15 +91,31 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        ////        dd($request->all());
-        //        dd(json_encode($request->apartment_size));
         $request->validate([
             'project_type_id' => 'required',
             'name' => 'required',
             'address' => 'required',
             'total_area' => 'required',
         ]);
-        if ($request->project_type_id == 4) {
+
+        if ($request->project_type_id == 1) {
+            $request->validate([
+                'floor_list' => 'required',
+                'apartment_size' => 'required',
+                'building_type' => 'required',
+            ]);
+        }elseif ($request->project_type_id == 2) {
+            $request->validate([
+                'noc_type_id' => 'required',
+                'society_type' => 'required',
+                'society_block' => 'required',
+            ]);
+        }elseif ($request->project_type_id == 3) {
+            $request->validate([
+                'farmhouse_type' => 'required',
+                'farmhouse_block' => 'required',
+            ]);
+        }else{
             return redirect()->back()->with($this->message('Project Type is not defined', 'warning'));
         }
 
@@ -120,11 +137,6 @@ class ProjectController extends Controller
 
 
             if ($type == 'society') {
-                $request->validate([
-                    'noc_type_id' => 'required',
-                    'society_type' => 'required',
-                    'society_block' => 'required',
-                ]);
                 $society = [
                     'project_id' => $project->id,
                     'address' => $request->address,
@@ -148,11 +160,6 @@ class ProjectController extends Controller
                 }
                 $data = json_encode($data);
             } elseif ($type == 'building') {
-                $request->validate([
-                    'floor_list' => 'required',
-                    'apartment_size' => 'required',
-                    'building_type' => 'required',
-                ]);
                 $building = [
                     'project_id' => $project->id,
                     'address' => $request->address,
@@ -178,10 +185,6 @@ class ProjectController extends Controller
 
                 $data = json_encode($data);
             } elseif ($type == 'farm_house') {
-                $request->validate([
-                    'farmhouse_type' => 'required',
-                    'farmhouse_block' => 'required',
-                ]);
                 $farmhouse = [
                     'project_id' => $project->id,
                     'address' => $request->address,
@@ -276,7 +279,26 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-        //
+        $project = Project::findOrFail($id);
+        if ($project->type_id == 1) {
+            $building = Building::where('project_id',$id)->first();
+            return view('user.building.floor_index', compact('building'));
+        } elseif ($project->type_id == 2) {
+            $society_block = Society::where('project_id',$id)->first();
+            $blocks = json_decode($society_block->block,true);
+            $block_id = $blocks ? $blocks : [];
+            $blocks = Block::whereIn('id',$block_id)->get();
+            return view('user.society.show', get_defined_vars());
+        } elseif ($project->type_id == 3) {
+            $farmhouse_block = Farmhouse::where('project_id',$id)->first();
+            dd($farmhouse_block);
+            $blocks = json_decode($farmhouse_block->block,true);
+            $block_id = $blocks ? $blocks : [];
+            $blocks = Block::whereIn('id',$block_id)->get();
+            return view('user.farmhouse.show',get_defined_vars());
+        } else {
+            return redirect()->back()->with(['message' => 'Project not found', 'alert' => 'success']);
+        }
     }
 
     /**
@@ -333,16 +355,31 @@ class ProjectController extends Controller
             'total_area' => 'required',
         ]);
         $project = Project::findOrFail($id);
-        $project->name = $request->name;
-        $project->save();
-        $type = ProjectType::findOrFail($project->type_id)->name;
-
-        if ($type == 'society') {
+        if ($project->type_id == 1) {
+            $request->validate([
+                'floor_list' => 'required',
+                'apartment_size' => 'required',
+                'building_type' => 'required',
+            ]);
+        }elseif ($project->type_id == 2) {
             $request->validate([
                 'noc_type_id' => 'required',
                 'society_type' => 'required',
                 'society_block' => 'required',
             ]);
+        }elseif ($project->type_id == 3) {
+            $request->validate([
+                'farmhouse_type' => 'required',
+                'farmhouse_block' => 'required',
+            ]);
+        }else{
+            return redirect()->back()->with($this->message('Project Type is not defined', 'warning'));
+        }
+        $project->name = $request->name;
+        $project->save();
+        $type = ProjectType::findOrFail($project->type_id)->name;
+
+        if ($type == 'society') {
             $society = [
                 'project_id' => $project->id,
                 'address' => $request->address,
@@ -353,22 +390,20 @@ class ProjectController extends Controller
                 'block' => json_encode($request->society_block),
                 'created_by' => Auth::user()->id,
             ];
-            $response = Society::where('project_id', $id)->first()->update($society);
+            $response = Society::where('project_id', $id)->update($society);
             $data = [];
-            foreach ($request->society as $key => $detail) {
-                $size = [];
-                foreach ($detail['sizes'] as $key1 => $val) {
-                    $size[$key1] = ['size' => $val['size'], 'price' => $val['price']];
+            if (!empty($request->society)) {
+                foreach ($request->society as $key => $detail) {
+                    $size = [];
+                    foreach ($detail['sizes'] as $key1 => $val) {
+                        $size[$key1] = ['size' => $val['size'], 'price' => $val['price']];
+                    }
+                    $data[$key] = ['price' => $detail['price'], 'sizes' => $size];
                 }
-                $data[$key] = ['price' => $detail['price'], 'sizes' => $size];
             }
+
             $data = json_encode($data);
         } elseif ($type == 'building') {
-            $request->validate([
-                'floor_list' => 'required',
-                'apartment_size' => 'required',
-                'building_type' => 'required',
-            ]);
             $building = [
                 'project_id' => $project->id,
                 'address' => $request->address,
@@ -379,20 +414,21 @@ class ProjectController extends Controller
                 'apartment_size' => json_encode($request->apartment_size),
                 'created_by' => Auth::user()->id,
             ];
-            $response = Building::where('project_id', $id)->first()->update($building);
+            $response = Building::where('project_id', $id)->update($building);
             $data = [];
-            foreach ($request->detail as $key => $detail) {
-                $data['bed'][$key] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $key, 'bath' => $detail['bath'], 'price' => $detail['price']];
-            }
-            foreach ($request->shop_detail as $key => $detail) {
-                $data[$key] = ['floor' => $detail['floor'], 'area' => $detail['floor_area'], 'price' => $detail['floor_price']];
+
+            if (!empty($request->detail)) {
+                foreach ($request->detail as $key => $detail) {
+                    $data['bed'][$key] = ['building' => $detail['building'], 'area' => $detail['area'], 'bed' => $key, 'bath' => $detail['bath'], 'price' => $detail['price']];
+                }}
+
+            if (!empty($request->shop_detail)) {
+                foreach ($request->shop_detail as $key => $detail) {
+                    $data[$key] = ['floor' => $detail['floor'], 'area' => $detail['floor_area'], 'price' => $detail['floor_price']];
+                }
             }
             $data = json_encode($data);
         } elseif ($type == 'farm_house') {
-            $request->validate([
-                'farmhouse_type' => 'required',
-                'farmhouse_block' => 'required',
-            ]);
             $farmhouse = [
                 'project_id' => $project->id,
                 'address' => $request->address,
@@ -402,10 +438,13 @@ class ProjectController extends Controller
                 'block' => json_encode($request->farmhouse_block),
                 'created_by' => Auth::user()->id,
             ];
-            $response = Farmhouse::where('project_id', $id)->first()->update($farmhouse);
+            $response = Farmhouse::where('project_id', $id)->update($farmhouse);
             $data = [];
-            foreach ($request->farmhouse as $key => $detail) {
-                $data[$key] = ['area' => $detail['area'], 'price' => $detail['price']];
+
+            if (!empty($request->farmhouse)) {
+                foreach ($request->farmhouse as $key => $detail) {
+                    $data[$key] = ['area' => $detail['area'], 'price' => $detail['price']];
+                }
             }
             $data = json_encode($data);
         }
@@ -431,7 +470,8 @@ class ProjectController extends Controller
             'other_feature' => $other_feature,
             'created_by' => Auth::user()->id,
         ];
-        $building_detail = BuildingDetail::where('project_id', $id)->first()->update($extra_detail);
+//        dd($extra_detail);
+        $building_detail = BuildingDetail::where('project_id', $id)->update($extra_detail);
         if ($building_detail) {
             if ($request->has('logo_images')) {
                 foreach ($request->file('logo_images') as $file) {

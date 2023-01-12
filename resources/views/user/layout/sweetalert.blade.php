@@ -106,5 +106,15 @@
     function hideLoader(){
         $(".loader").fadeOut("slow");
     }
+    function get_date() {
+        var month_arr = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+        var day_arr = ["00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"];
+        var date = new Date();
+        var month = month_arr[date.getMonth()];
+        var day = day_arr[date.getDate()];
+        var year = date.getFullYear();
+        var a = year+'-'+month+'-'+day;
+        return a;
+    }
 
 </script>
