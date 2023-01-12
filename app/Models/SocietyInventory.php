@@ -28,7 +28,7 @@ class SocietyInventory extends Model
 
     public function nature()
     {
-        return $this->belongsTo(type::class, 'type_id');
+        return $this->belongsTo(Type::class, 'type_id');
     }
 
     public function payment_plan()

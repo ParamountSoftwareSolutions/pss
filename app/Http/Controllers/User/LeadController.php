@@ -263,8 +263,8 @@ class LeadController extends Controller
             'name' => 'required',
             'phone_number' => 'required|unique:leads,number',
             'phone_number' => 'unique:leads,alt_number',
-            'email' => 'unique:leads,email',
-            'cnic' => 'unique:leads,cnic',
+            'email' => 'nullable|unique:leads,email',
+            'cnic' => 'nullable|unique:leads,cnic',
         ]);
         $rpoject_id_val = (!empty(json_decode($request->building_id)->id)) ? json_decode($request->building_id)->id : Null;
         $data = [

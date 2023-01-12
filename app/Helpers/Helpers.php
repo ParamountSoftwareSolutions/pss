@@ -59,19 +59,20 @@ if (!function_exists('get_clients_from_user')) {
     function get_clients_from_user($users)
     {
         if (Auth::user()->hasRole('sale_person')) {
-            return Client::where('user_id', Auth::id());
+            return Client::with('project', 'user', 'customer')->where('user_id', Auth::id());
         }
         if (Auth::user()->hasRole('sale_manager')) {
-            return Client::whereIn('user_id', $users);
+            return Client::with('project', 'user', 'customer')->whereIn('user_id', $users);
         }
         if (Auth::user()->hasRole('property_manager')) {
             return  Client::with('project', 'user', 'customer')->whereIn('user_id', $users);
         }
         if (Auth::user()->hasRole('property_admin')) {
-            return Client::with('sale_person');
+            return Client::with('sale_person','project', 'user', 'customer');
         }
     }
 }
+
 /**
  * get_user_by_projects
  *

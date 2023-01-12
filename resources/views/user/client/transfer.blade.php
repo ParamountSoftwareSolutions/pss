@@ -192,6 +192,13 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Price<small style="color: red">*</small></label>
+                                        <input type="number" class="form-control" name="price" required>
+                                        @error('price')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                                 <div class="card-footer text-right">
                                     <button class="btn btn-primary" type="submit">Submit</button>

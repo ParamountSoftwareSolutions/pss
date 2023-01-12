@@ -64,7 +64,7 @@
                                             <div class="form-group">
                                                 <label>Society Block</label>
                                                 <select class="form-control" name="societyBlock" id="selectPremiumScocity" required>
-                                                    <option label="" disabled selected>Select Society Block ...</option>
+                                                    <option label=""  value=""  selected>Select Society Block ...</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -319,6 +319,7 @@
                     // dataType: "json",
                     success: function(response) {
                         var data = JSON.parse(response);
+                        $('#selectBuildingFloorInventory').empty();
                         $.each(data, function(i, item) {
                             $('#selectBuildingFloorInventory').append($('<option>', {
                                 value: item.id,
@@ -349,7 +350,7 @@
                     // dataType: "json",
                     success: function(response) {
                         var data = JSON.parse(response);
-                        console.log(data);
+                        $('#selectblock_id').empty();
                         $.each(data, function(i, item) {
                             $('#selectblock_id').append($('<option>', {
                                 value: item.id,
