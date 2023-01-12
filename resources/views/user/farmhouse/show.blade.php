@@ -1,5 +1,5 @@
 @extends('user.layout.app')
-@section('title', 'All Project List')
+@section('title', 'Block List')
 @section('content')
     <div class="main-content">
         <section class="section">
@@ -7,41 +7,31 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>Inventory History</h4>
-                            </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="text-center table table-striped" id="table-1">
+                                    <table class="table table-striped" id="table-1">
                                         <thead>
                                         <tr>
-                                            <th class="text-center">#</th>
-                                            <th>Status</th>
-                                            <th>Amount</th>
+                                            <th>#</th>
                                             <th>Name</th>
-                                            <th>Email</th>
-                                            <th>CNIC</th>
-                                            <th>Phone Number</th>
-                                            <th>Comment</th>
-                                            <th>Date</th>
+                                            <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse($inventory_histories as $data)
+                                        @forelse($blocks as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ ucfirst($data->status) }}</td>
-                                                <td>{{ $data->amount }}</td>
-                                                <td>{{ $data->name }}</td>
-                                                <td>{{ $data->email }}</td>
-                                                <td>{{ $data->cnic }}</td>
-                                                <td>{{ $data->phone_number }}</td>
-                                                <td>{{ $data->comment }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($data->updated_at)->format('M d, Y') }}</td>
+                                                <td>{{$data->name }}</td>
+                                                <td>
+                                                    <a href="{{ route('farmhouse.block.inventory.index', ['RolePrefix' => RolePrefix(), 'farmhouse' => $id, 'block' => $data->id]) }}"
+                                                       class="btn btn-primary px-1 py-0" title="Edit">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9"> No More Data In this Table.</td>
+                                                <td colspan="7"> No More Data In this Table.</td>
                                             </tr>
                                         @endforelse
                                         </tbody>
@@ -54,6 +44,4 @@
             </div>
         </section>
     </div>
-@endsection
-@section('script')
 @endsection

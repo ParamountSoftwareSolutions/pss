@@ -21,8 +21,8 @@ class CreateBuildingInventoriesTable extends Migration
             $table->foreignId('payment_plan_id')->unsigned()->nullable()->constrained('payment_plans')->nullOnDelete();
             $table->string('unit_id');
             $table->string('area')->nullable();
-            $table->foreignId('bed_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
-            $table->foreignId('bath_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
+            $table->integer('bed')->nullable();
+            $table->integer('bath')->nullable();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->foreignId('type_id')->unsigned()->nullable()->constrained('types')->nullOnDelete();
             $table->foreignId('category_id')->unsigned()->nullable()->constrained('categories')->nullOnDelete();

@@ -161,8 +161,6 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     Route::resource('category', CategoryController::class);
     Route::resource('project', ProjectController::class);
     Route::resource('property', PropertyController::class);
-    Route::resource('farmhouse', FarmhouseController::class);
-    Route::resource('farmhouse.inventory', FarmhouseInventoryController::class);
     Route::resource('payment_plan', PaymentPlanController::class);
     Route::resource('society', SocietyController::class);
     Route::resource('society.inventory', SocietyInventoryController::class);
@@ -195,8 +193,13 @@ Route::group(['prefix' => '{RolePrefix}', 'middleware' => ['auth:user', 'RolePre
     //  Society Management    //
     //=========================//
     Route::resource('society', SocietyController::class);
-//    Route::resource('block', SocietyBlockController::class);
     Route::resource('society.block.society_inventory', SocietyInventoryController::class);
+
+    //=========================//
+    //  Farmhouse Management    //
+    //=========================//
+    Route::resource('farmhouse', FarmhouseController::class);
+    Route::resource('farmhouse.block.inventory', FarmhouseInventoryController::class);
 
 
 

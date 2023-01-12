@@ -15,45 +15,45 @@ class SizeSeeder extends Seeder
      */
     public function run()
     {
-        Unit::insert([
-            [
-                'name' => 'bed',
-            ],
-            [
-                'name' => 'bath',
-            ],
-            [
-                'name' => 'marla',
-            ],
-            [
-                'name' => 'kenal',
-            ],
-        ]);
+//        Unit::insert([
+//            [
+//                'name' => 'bed',
+//            ],
+//            [
+//                'name' => 'bath',
+//            ],
+//            [
+//                'name' => 'marla',
+//            ],
+//            [
+//                'name' => 'kenal',
+//            ],
+//        ]);
         Size::insert([
             [
-                'project_type_id' => 1,
-                'name' => 3,
-                'unit' => 'bed',
-            ],
-            [
-                'project_type_id' => 1,
-                'name' => 3,
-                'unit' => 'bath'
-            ],
-            [
                 'project_type_id' => 2,
-                'name' => 10,
-                'unit' => 'marla',
-            ],
-            [
+                'name' => '3 Marla',
+            ],[
                 'project_type_id' => 2,
-                'name' => 5,
-                'unit' => 'marla'
-            ],
-            [
+                'name' => '5 Marla',
+            ],[
                 'project_type_id' => 2,
-                'name' => 3,
-                'unit' => 'kenal'
+                'name' => '10 Marla',
+            ],[
+                'project_type_id' => 2,
+                'name' => '1 Kenal',
+            ],[
+                'project_type_id' => 3,
+                'name' => '3 Marla',
+            ],[
+                'project_type_id' => 3,
+                'name' => '5 Marla',
+            ],[
+                'project_type_id' => 3,
+                'name' => '10 Marla',
+            ],[
+                'project_type_id' => 3,
+                'name' => '1 Kenal',
             ],
         ]);
     }

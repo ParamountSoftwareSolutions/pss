@@ -18,6 +18,7 @@
                                         <tr>
                                             <th class="text-center">#</th>
                                             <th>Name</th>
+                                            <th>Type</th>
                                             <th>Action</th>
                                         </tr>
                                         </thead>
@@ -26,6 +27,18 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->name }}</td>
+                                                <td><span class="badge
+                                                @if($data->project_type->name == 'building')
+                                                        badge-blue
+                                                        @elseif($data->project_type->name == 'society')
+                                                        badge-success
+                                                        @elseif($data->project_type->name == 'farm_house')
+                                                        badge-danger
+                                                        @else
+                                                        badge-primary
+                                                        @endif
+                                                        ">{{ ucwords($data->project_type->name) }} </span></td>
+                                                <td>
                                                 <td>
                                                     <a href="{{ route('type.edit', ['RolePrefix' => RolePrefix(), 'type' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\RolePrefix;
+use App\Models\Block;
 use App\Models\Premium;
 use App\Models\Farmhouse;
 use App\Models\Project;
@@ -13,14 +14,6 @@ use Illuminate\Http\Request;
 
 class FarmhouseController extends Controller
 {
-    private $project_type_id;
-
-    public function __construct()
-    {
-        $id = ProjectType::where('name','farm_house')->first()->id;
-        $this->project_type_id = $id;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -28,8 +21,9 @@ class FarmhouseController extends Controller
      */
     public function index()
     {
-        $projects = get_all_projects('farm_house');
-        return view('user.farmhouse.view', compact('projects'));
+        $project = get_all_projects('farm_house');
+        $farmhouse = Farmhouse::with('project')->whereIn('project_id', $project->pluck('id')->toArray())->latest()->get();
+        return view('user.farmhouse.index', compact('farmhouse'));
     }
 
     /**
@@ -113,7 +107,10 @@ class FarmhouseController extends Controller
      */
     public function show($id)
     {
-        //
+        $farmhouse_block = Farmhouse::findOrFail($id);
+        $block_id = json_decode($farmhouse_block->block);
+        $blocks = Block::whereIn('id',$block_id)->get();
+        return view('user.farmhouse.show',get_defined_vars());
     }
 
     /**

@@ -208,74 +208,9 @@ if (!function_exists('installment')) {
             ]);
         }
 
-        if ($payment_plan->half_year_installment !== null && $total_month >= 12) {
-            $price_per_year = $payment_plan->half_year_installment;
-            $yearly_month = $total_month / 6;
-            $monthly = ($total_month / 12) * 10;
-            $date = Carbon::now();
-
-            for ($i = 0; $yearly_month > $i; $i++) {
-                $a2[$i] = $price_per_year;
-            }
-            foreach ($a2 as $data) {
-                array_push($a1, [
-                    'title' => 'yearly',
-                    'amount' => $data,
-                    'due_date' => $date->addMonths(6)->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths(6),
-                ]);
-            }
-            for ($i = 1; $monthly >= $i; $i++) {
-                $a3[$i] = $payment_plan->per_month_installment;
-            }
-            $end = count($a3) / 5;
-            for ($i = 1; $i <= $end; $i++) {
-                $skip_month[] = $i;
-            }
-            $month_date = Carbon::now();
-            foreach ($a3 as $key => $data) {
-                array_push($a1, [
-                    'title' => 'installment',
-                    'amount' => $data,
-                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
-                $skip = $key / 5;
-                if (in_array($skip, $skip_month)) {
-                    $month_date->addMonth();
-                }
-            }
-        } elseif ($payment_plan->quarterly_payment !== null && $total_month >= 12) {
-            $quarterly_price = $payment_plan->quarterly_payment;
-            $quarterly_month = $total_month / 3;
-            $monthly = ($total_month / 12) * 8;
-            $date = Carbon::now();
-            for ($i = 0; $quarterly_month > $i; $i++) {
-                $a2[$i] = $quarterly_price;
-            }
-            foreach ($a2 as $data) {
-                array_push($a1, [
-                    'title' => 'quarterly',
-                    'amount' => $data,
-                    'due_date' => $date->addMonths(3)->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths(3),
-                ]);
-            }
-            for ($i = 0; $monthly > $i; $i++) {
-                $a3[$i] = $payment_plan->per_month_installment;
-            }
-            $month_date = Carbon::now();
-            foreach ($a3 as $key => $data) {
-                array_push($a1, [
-                    'title' => 'installment',
-                    'amount' => $data,
-                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
-                    'created_at' => Carbon::now()->addMonths($key),
-                ]);
-            }
-        } else {
-            for ($i = 0; $total_month > $i; $i++) {
-                $a3[$i] = $payment_plan->per_month_installment;
+        if ($payment_plan->installment_plan == 'monthly') {
+            for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
+                $a3[$i] = $payment_plan->monthly_installment;
             }
             $month_date = Carbon::now();
             foreach ($a3 as $key => $data) {
@@ -287,7 +222,110 @@ if (!function_exists('installment')) {
                 ]);
             }
         }
-
+        elseif ($payment_plan->installment_plan == 'bi_anually'){
+            for ($i = 1; $payment_plan->no_of_half >= $i; $i++) {
+                $a3[$i] = $payment_plan->half_year_installment;
+            }
+            $month_date = Carbon::now();
+            foreach ($a3 as $key => $data) {
+                array_push($a1, [
+                    'title' => 'bi_annually',
+                    'amount' => $data,
+                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                    'created_at' => Carbon::now()->addMonths($key),
+                ]);
+                $month_date->addMonths(5);
+            }
+        }
+        elseif ($payment_plan->installment_plan == 'quartrly'){
+            for ($i = 1; $payment_plan->no_of_quarter >= $i; $i++) {
+                $a3[$i] = $payment_plan->quarterly_installment;
+            }
+            $month_date = Carbon::now();
+            foreach ($a3 as $key => $data) {
+                array_push($a1, [
+                    'title' => 'quarterly',
+                    'amount' => $data,
+                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                    'created_at' => Carbon::now()->addMonths($key),
+                ]);
+                $month_date->addMonths(2);
+            }
+        }
+        elseif ($payment_plan->installment_plan == 'monthly_bi'){
+            for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
+                $a3[$i] = $payment_plan->monthly_installment;
+            }
+            $count = count($a3);
+            $skip_month = [];
+            $i = 5;
+            while($i <= $count){
+                $skip_month[] = $i;
+                $i = $i + 5;
+            }
+            $month_date = Carbon::now();
+            foreach ($a3 as $key => $data) {
+                array_push($a1, [
+                    'title' => 'installment',
+                    'amount' => $data,
+                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                    'created_at' => Carbon::now()->addMonths($key),
+                ]);
+                if(in_array($key, $skip_month)){
+                    $month_date->addMonth();;
+                }
+            }
+            for ($i = 1; $payment_plan->no_of_half >= $i; $i++) {
+                $a4[$i] = $payment_plan->half_year_installment;
+            }
+            $month_date = Carbon::now();
+            foreach ($a4 as $key => $data) {
+                $month_date->addMonths(6);
+                array_push($a1, [
+                    'title' => 'bi_annually',
+                    'amount' => $data,
+                    'due_date' => $month_date->format('Y-m-d'),
+                    'created_at' => Carbon::now()->addMonths($key),
+                ]);
+            }
+        }
+        elseif ($payment_plan->installment_plan == 'monthly_qa'){
+            for ($i = 1; $payment_plan->no_of_month >= $i; $i++) {
+                $a3[$i] = $payment_plan->monthly_installment;
+            }
+            $count = count($a3);
+            $skip_month = [];
+            $i = 2;
+            while($i <= $count){
+                $skip_month[] = $i;
+                $i = $i + 2;
+            }
+            $month_date = Carbon::now();
+            foreach ($a3 as $key => $data) {
+                array_push($a1, [
+                    'title' => 'installment',
+                    'amount' => $data,
+                    'due_date' => $month_date->addMonth()->format('Y-m-d'),
+                    'created_at' => Carbon::now()->addMonths($key),
+                ]);
+                if(in_array($key, $skip_month)){
+                    $month_date->addMonth();;
+                }
+            }
+            for ($i = 1; $payment_plan->no_of_quarter >= $i; $i++) {
+                $a4[$i] = $payment_plan->quarterly_installment;
+            }
+            $month_date = Carbon::now();
+            foreach ($a4 as $key => $data) {
+                $month_date->addMonths(3);
+                array_push($a1, [
+                    'title' => 'quarterly',
+                    'amount' => $data,
+                    'due_date' => $month_date->format('Y-m-d'),
+                    'created_at' => Carbon::now()->addMonths($key),
+                ]);
+            }
+        }
         $amount = $a1;
         $total_price = array_sum(array_column($a1, 'amount'));
 
@@ -429,7 +467,7 @@ if (!function_exists('display')) {
         $setting_table = 'setting';
         $default_lang  = 'english';
 
-        //set language  
+        //set language
         // $data = DB::get($setting_table)->row();
         // if ($ci->session->has_userdata('language')) {
         //     $language = $ci->session->userdata('language');

@@ -47,45 +47,82 @@ class PaymentPlanController extends Controller
      */
     public function store(Request $request)
     {
-       $request->validate([
-            'project_type_id' => 'required',
-            'name' => 'required',
+//        dd($request->all());
+        $request->validate([
+           'project_type_id' => 'required',
+           'name' => 'required',
            'total_price' => 'required',
            'premium_id' => 'required',
-           'total_month_installment' => 'required',
-           'per_month_installment' => 'required',
-           'down_payment_select' => 'required',
-       ]);
-       if($request->premium_id !== "regular"){
+           'installment_plan' => 'required',
+        ]);
+        if($request->premium_id !== "regular"){
            $request->validate([
                'commission' => 'required',
                'after_commission_price' => 'required',
            ]);
-       }
-        $payment_plan = new PaymentPlan();
-        $payment_plan->project_type_id = $request->project_type_id;
-        $payment_plan->name = $request->name;
-        $payment_plan->total_month_installment = $request->total_month_installment;
-        $payment_plan->total_price = $request->total_price;
-        $payment_plan->per_month_installment = $request->per_month_installment;
-        $payment_plan->half_year_installment = $request->half_year_installment;
-        $payment_plan->quarterly_payment = $request->quarterly_payment;
-        $payment_plan->balloting_price = $request->balloting_price;
-        $payment_plan->possession_price = $request->possession_price;
-        $payment_plan->confirmation_amount = $request->confirmation_amount;
-        $payment_plan->down_payment_select = $request->down_payment_select;
-        $payment_plan->discount = $request->discount;
-        $payment_plan->down_payment = $request->down_payment;
-        if(in_array($request->down_payment_select,['100%','50%'])){
-            $payment_plan->rent_price = $request->rent_price;
-            $payment_plan->rent_installment = $request->rent_installment;
         }
+        $monthly_arr = ['monthly','monthly_bi','monthly_qa'];
+        $half_year_arr = ['bi_anually','monthly_bi','bi_qa'];
+        $quarter_arr = ['quartrly','monthly_qa','bi_qa'];
+
+        if(in_array($request->installment_plan,$monthly_arr)){
+            $request->validate([
+                'no_of_month' => 'required',
+                'monthly_installment' => 'required',
+            ]);
+        }elseif (in_array($request->installment_plan,$half_year_arr)){
+            $request->validate([
+                'no_of_half' => 'required',
+                'half_year_installment' => 'required',
+            ]);
+        }elseif (in_array($request->installment_plan,$quarter_arr)){
+            $request->validate([
+                'no_of_quarter' => 'required',
+                'quarterly_installment' => 'required',
+            ]);
+        }else{
+            $request->validate([
+                'rent_price' => 'required',
+                'rent_installment' => 'required',
+            ]);
+        }
+
+        $plan = [
+            'project_type_id'=> $request->project_type_id,
+            'name'=> $request->name,
+            'total_price'=> $request->total_price,
+            'down_payment'=> $request->down_payment,
+            'confirmation_amount'=> $request->confirmation_amount,
+            'balloting_price'=> $request->balloting_price,
+            'possession_price'=> $request->possession_price,
+            'installment_plan'=> $request->installment_plan,
+            'no_of_month'=> $request->no_of_month,
+            'monthly_installment'=> $request->monthly_installment,
+            'no_of_half'=> $request->no_of_half,
+            'half_year_installment'=> $request->half_year_installment,
+            'no_of_quarter'=> $request->no_of_quarter,
+            'quarterly_installment'=> $request->quarterly_installment,
+            'discount'=> $request->discount,
+            'rent_price'=> $request->rent_price,
+            'rent_installment'=> $request->rent_installment,
+        ];
+        $premium = [];
         if($request->premium_id !== "regular") {
-            $payment_plan->premium_id = $request->premium_id;
-            $payment_plan->commission = $request->commission;
-            $payment_plan->after_commission_price = $request->after_commission_price;
+            $premium = [
+                'premium_id'=>$request->premium_id,
+                'commission'=>$request->commission,
+                'after_commission_price'=>$request->after_commission_price,
+            ];
+        }else{
+            $premium = [
+                'premium_id'=>null,
+                'commission'=>null,
+                'after_commission_price'=>null,
+            ];
         }
-        $payment_plan->save();
+        $plan = $plan + $premium;
+//        dd($plan);
+        $payment_plan = PaymentPlan::create($plan);
         if($payment_plan){
             return redirect()->route('payment_plan.index',RolePrefix())->with(['alert' => 'success', 'message' =>  'Payment Plan has created successfully']);
         } else{
@@ -114,7 +151,7 @@ class PaymentPlanController extends Controller
     {
         $project_type = ProjectType::get();
         $payment_plan = PaymentPlan::findOrFail($id);
-        return view('user.payment_plan.edit', compact('payment_plan','project_type'));
+        return view('user.payment_plan.edit', get_defined_vars());
     }
 
     /**
@@ -131,10 +168,7 @@ class PaymentPlanController extends Controller
             'name' => 'required',
             'total_price' => 'required',
             'premium_id' => 'required',
-            'total_month_installment' => 'required',
-            'per_month_installment' => 'required',
-            'down_payment_select' => 'required',
-            'down_payment' => 'required',
+            'installment_plan' => 'required',
         ]);
         if($request->premium_id !== "regular"){
             $request->validate([
@@ -142,34 +176,67 @@ class PaymentPlanController extends Controller
                 'after_commission_price' => 'required',
             ]);
         }
-        $payment_plan = PaymentPlan::findOrFail($id);
-        $payment_plan->project_type_id = $request->project_type_id;
-        $payment_plan->name = $request->name;
-        $payment_plan->total_month_installment = $request->total_month_installment;
-        $payment_plan->total_price = $request->total_price;
-        $payment_plan->per_month_installment = $request->per_month_installment;
-        $payment_plan->half_year_installment = $request->half_year_installment;
-        $payment_plan->quarterly_payment = $request->quarterly_payment;
-        $payment_plan->balloting_price = $request->balloting_price;
-        $payment_plan->possession_price = $request->possession_price;
-        $payment_plan->confirmation_amount = $request->confirmation_amount;
-        $payment_plan->down_payment_select = $request->down_payment_select;
-        $payment_plan->discount = $request->discount;
-        $payment_plan->down_payment = $request->down_payment;
-        if(in_array($request->down_payment_select,['100%','50%'])){
-            $payment_plan->rent_price = $request->rent_price;
-            $payment_plan->rent_installment = $request->rent_installment;
-        }
-        if($request->premium_id !== "regular") {
-            $payment_plan->premium_id = $request->premium_id;
-            $payment_plan->commission = $request->commission;
-            $payment_plan->after_commission_price = $request->after_commission_price;
+        $monthly_arr = ['monthly','monthly_bi','monthly_qa'];
+        $half_year_arr = ['bi_anually','monthly_bi','bi_qa'];
+        $quarter_arr = ['quartrly','monthly_qa','bi_qa'];
+
+        if(in_array($request->installment_plan,$monthly_arr)){
+            $request->validate([
+                'no_of_month' => 'required',
+                'monthly_installment' => 'required',
+            ]);
+        }elseif (in_array($request->installment_plan,$half_year_arr)){
+            $request->validate([
+                'no_of_half' => 'required',
+                'half_year_installment' => 'required',
+            ]);
+        }elseif (in_array($request->installment_plan,$quarter_arr)){
+            $request->validate([
+                'no_of_quarter' => 'required',
+                'quarterly_installment' => 'required',
+            ]);
         }else{
-            $payment_plan->premium_id = null;
-            $payment_plan->commission = null;
-            $payment_plan->after_commission_price = null;
+            $request->validate([
+                'rent_price' => 'required',
+                'rent_installment' => 'required',
+            ]);
         }
-        $payment_plan->save();
+
+        $plan = [
+            'project_type_id'=> $request->project_type_id,
+            'name'=> $request->name,
+            'total_price'=> $request->total_price,
+            'down_payment'=> $request->down_payment,
+            'confirmation_amount'=> $request->confirmation_amount,
+            'balloting_price'=> $request->balloting_price,
+            'possession_price'=> $request->possession_price,
+            'installment_plan'=> $request->installment_plan,
+            'no_of_month'=> $request->no_of_month,
+            'monthly_installment'=> $request->monthly_installment,
+            'no_of_half'=> $request->no_of_half,
+            'half_year_installment'=> $request->half_year_installment,
+            'no_of_quarter'=> $request->no_of_quarter,
+            'quarterly_installment'=> $request->quarterly_installment,
+            'discount'=> $request->discount,
+            'rent_price'=> $request->rent_price,
+            'rent_installment'=> $request->rent_installment,
+        ];
+        $premium = [];
+        if($request->premium_id !== "regular") {
+            $premium = [
+                'premium_id'=>$request->premium_id,
+                'commission'=>$request->commission,
+                'after_commission_price'=>$request->after_commission_price,
+            ];
+        }else{
+            $premium = [
+                'premium_id'=>null,
+                'commission'=>null,
+                'after_commission_price'=>null,
+            ];
+        }
+        $plan = $plan + $premium;
+        $payment_plan = PaymentPlan::find($id)->update($plan);
         if($payment_plan){
             return redirect()->route('payment_plan.index',RolePrefix())->with(['alert' => 'success', 'message' =>  'Payment Plan updated successfully']);
         } else{

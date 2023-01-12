@@ -14,4 +14,8 @@ class Farmhouse extends Model
     {
         return $this->hasMany(FarmhouseFile::class, 'farmhouse_id');
     }
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
 }

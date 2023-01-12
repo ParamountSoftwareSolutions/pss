@@ -119,7 +119,9 @@ class SocietyController extends Controller
     public function show($id)
     {
         $society_block = Society::findOrFail($id);
-        return view('user.society.show', compact('society_block'));
+        $block_id = json_decode($society_block->block);
+        $blocks = Block::whereIn('id',$block_id)->get();
+        return view('user.society.show', get_defined_vars());
     }
 
     /**

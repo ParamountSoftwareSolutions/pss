@@ -35,6 +35,25 @@ class BlockSeeder extends Seeder
             [
                 'project_type_id' => 2,
                 'name' => 'so block',
+            ],[
+                'project_type_id' => 3,
+                'name' => 'Y block',
+            ],
+            [
+                'project_type_id' => 3,
+                'name' => 'x block',
+            ],
+            [
+                'project_type_id' => 3,
+                'name' => 'z block',
+            ],
+            [
+                'project_type_id' => 3,
+                'name' => 'cream block',
+            ],
+            [
+                'project_type_id' => 3,
+                'name' => 'so block',
             ],
         ]);
     }

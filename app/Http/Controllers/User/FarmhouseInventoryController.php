@@ -9,6 +9,8 @@ use App\Models\BuildingInventory;
 use App\Models\BuildingInventoryFile;
 use App\Models\Category;
 use App\Models\FarmhouseFile;
+use App\Models\FarmhouseInventory;
+use App\Models\FarmhouseInventoryFile;
 use App\Models\InventoryHistory;
 use App\Models\Premium;
 use App\Models\Farmhouse;
@@ -16,6 +18,7 @@ use App\Models\Block;
 use App\Models\Project;
 use App\Models\ProjectType;
 use App\Models\Size;
+use App\Models\Type;
 use http\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,11 +38,12 @@ class FarmhouseInventoryController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function index($id)
+    public function index($farmhouse_id,$block_id)
     {
-        $project = Project::findOrFail($id);
-        $farmhouses = Farmhouse::where('project_id',$id)->latest('updated_at')->get();
-        return view('user.farmhouse.index', compact('farmhouses','project'));
+        $farmhouse = Farmhouse::findOrFail($farmhouse_id);
+        $block = Block::findOrFail($block_id);
+        $inventories = FarmhouseInventory::where(['farmhouse_id'=>$farmhouse_id,'block_id'=>$block_id])->latest('updated_at')->get();
+        return view('user.farmhouse_inventory.index', get_defined_vars());
     }
 
     /**
@@ -47,14 +51,17 @@ class FarmhouseInventoryController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function create($id)
+    public function create($farmhouse_id,$block_id)
     {
-        $project = Project::findOrFail($id);
-        $sizes = Size::get();
-        $project_type_id = $this->project_type_id;
-        $premiums = Premium::where('project_type_id',$project_type_id)->get();
-        $blocks = Block::where('project_type_id',$project_type_id)->get();
-        return view('user.farmhouse.create', compact('project','sizes','premiums','project_type_id','blocks'));
+        $farmhouse = Farmhouse::findOrFail($farmhouse_id);
+        $block = Block::findOrFail($block_id);
+        $type_id = json_decode($farmhouse->type);
+        $category = Category::whereIn('id',$type_id)->get();
+        $sizes = Size::where('project_type_id',project_type('farm_house'))->get();
+        $premiums = Premium::where('project_type_id',project_type('farm_house'))->get();
+        $plot_size = Size::where('project_type_id',project_type('farm_house'))->get();
+        $nature = Type::where('project_type_id',project_type('farm_house'))->get();
+        return view('user.farmhouse_inventory.create', get_defined_vars());
     }
 
     /**
@@ -63,9 +70,11 @@ class FarmhouseInventoryController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request,$id)
+    public function store(Request $request,$farmhouse_id,$block_id)
     {
-        $project = Project::findOrFail($id);
+        $farmhouse = Farmhouse::findOrFail($farmhouse_id);
+        $block = Block::findOrFail($block_id);
+        $project = Project::findOrFail($farmhouse->project_id);
         $request->validate([
             'payment_plan_id' => 'required',
         ]);
@@ -92,27 +101,34 @@ class FarmhouseInventoryController extends Controller
                     $unit_no = $request->start_unit_no + $i;
                     $unit = $request->bulk_unit_no . ' ' . $unit_no;
                 }
-                $farmhouse = new Farmhouse();
-                $farmhouse->project_id = $id;
-                $farmhouse->block_id = $request->block_id;
-                $farmhouse->unit_no = $unit;
-                $farmhouse->size_id = $request->size_id;
-                $farmhouse->premium_id = $premium;
-                $farmhouse->payment_plan_id = $request->payment_plan_id;
-                $farmhouse->save();
+                $farmhouse_inventory = new FarmhouseInventory();
+                $farmhouse_inventory->project_id = $project->id;
+                $farmhouse_inventory->farmhouse_id = $farmhouse_id;
+                $farmhouse_inventory->block_id = $block_id;
+                $farmhouse_inventory->unit_id = $unit;
+                $farmhouse_inventory->category_id = $request->category_id;
+                $farmhouse_inventory->size_id = $request->size_id;
+                $farmhouse_inventory->type_id = $request->nature_id;
+                $farmhouse_inventory->bed = $request->bed;
+                $farmhouse_inventory->bath = $request->bath;
+                $farmhouse_inventory->premium_id = $premium;
+                $farmhouse_inventory->payment_plan_id = $request->payment_plan_id;
+                $farmhouse_inventory->created_by = Auth::id();
+                $farmhouse_inventory->save();
                 if ($request->has('images')) {
                     foreach ($request->file('images') as $file) {
                         $filename = hexdec(uniqid()) . '.' . strtolower($file->getClientOriginalExtension());
                         $file->move('public/images/farmhouse/', $filename);
                         $file = 'images/farmhouse/' . $filename;
-                        FarmhouseFile::create([
-                            'farmhouse_id' => $farmhouse->id,
+                        FarmhouseInventoryFile::create([
+                            'farmhouse_inventory_id' => $farmhouse_inventory->id,
                             'file' => $file,
+                            'type' => 'image',
                         ]);
                     }
                 }
             }
-            return redirect()->route('farmhouse.inventory.index', ['RolePrefix' => RolePrefix(),'farmhouse'=>$id])->with(['message' => 'Farmhouse has created successfully', 'alert' => 'success']);
+            return redirect()->route('farmhouse.block.inventory.index', ['RolePrefix' => RolePrefix(),'farmhouse'=>$farmhouse_id,'block'=>$block_id])->with(['message' => 'Farmhouse inventory has created successfully', 'alert' => 'success']);
         }catch (Exception $e) {
             return redirect()->back()->with($this->message($e->getMessage(), 'error'));
             return redirect()->back()->with(['message' => 'Farmhouse has not created, something went wrong. Try again', 'alert' => 'error']);

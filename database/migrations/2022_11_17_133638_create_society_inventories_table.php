@@ -23,8 +23,8 @@ class CreateSocietyInventoriesTable extends Migration
             $table->foreignId('payment_plan_id')->unsigned()->nullable()->constrained('payment_plans')->nullOnDelete();
             $table->foreignId('type_id')->unsigned()->nullable()->constrained('types')->nullOnDelete();
             $table->foreignId('size_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
-            $table->foreignId('bed_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
-            $table->foreignId('bath_id')->unsigned()->nullable()->constrained('sizes')->nullOnDelete();
+            $table->integer('bed')->nullable();
+            $table->integer('bath')->nullable();
             $table->foreignId('premium_id')->unsigned()->nullable()->constrained('premia')->nullOnDelete();
             $table->foreignId('created_by')->unsigned()->nullable()->constrained('users')->nullOnDelete();
             $table->enum('status', ['available', 'hold', 'sold','token','canceled'])->default('available');

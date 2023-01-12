@@ -55,6 +55,22 @@ class CategorySeeder extends Seeder
                 'project_type_id' => 2,
                 'name' => 'homes',
             ],
+            [
+                'project_type_id' => 3,
+                'name' => 'Plot',
+            ],
+            [
+                'project_type_id' => 3,
+                'name' => 'Files',
+            ],
+            [
+                'project_type_id' => 3,
+                'name' => 'villas',
+            ],
+            [
+                'project_type_id' => 3,
+                'name' => 'homes',
+            ],
         ]);
     }
 }

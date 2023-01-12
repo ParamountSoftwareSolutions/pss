@@ -18,13 +18,13 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @forelse(json_decode($society_block->block) as $data)
+                                        @forelse($blocks as $data)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ block((int) $data) }}</td>
+                                                <td>{{$data->name }}</td>
                                                 <td>
                                                     <a href="{{ route('society.block.society_inventory.index', ['RolePrefix' => RolePrefix(), 'society' =>
-                                                    $society_block->id, 'block' => (int) $data]) }}"
+                                                    $id, 'block' => $data->id]) }}"
                                                        class="btn btn-primary px-1 py-0" title="Edit">
                                                         <i class="fa fa-eye"></i>
                                                     </a>

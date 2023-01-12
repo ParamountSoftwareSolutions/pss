@@ -1,15 +1,14 @@
 @extends('user.layout.app')
-@section('title', 'Payment Plan Edit')
+@section('title', 'Payment Plan Create')
 @section('content')
     <div class="main-content">
         <section class="section">
             <div class="section-body">
                 <div class="row">
                     <div class="col-12 col-md-12 col-lg-12">
-                        <form id="payment_plan_form" method="post" action="{{ route('payment_plan.update',['RolePrefix' => RolePrefix(),'payment_plan'=>$payment_plan->id]) }}">
+                        <form id="payment_plan_form" method="post" action="{{ route('payment_plan.update',['RolePrefix'=>RolePrefix(),'payment_plan'=>$id]) }}">
                             @csrf
                             @method('put')
-
                             <div class="card">
                                 <div class="card-header">
                                     <h4>Basic Information</h4>
@@ -21,7 +20,9 @@
                                             <select class="form-control" name="project_type_id" required>
                                                 <option label="" disabled selected>Select Project Type</option>
                                                 @foreach($project_type as $data)
-                                                    <option value="{{ $data->id }}" {{$payment_plan->project_type_id == $data->id ? 'selected' : ''}}>{{ ucwords($data->name) }}</option>
+                                                    <option value="{{ $data->id }}"
+                                                            @if($payment_plan->project_type_id == $data->id) selected @endif
+                                                    >{{ ucwords($data->name) }}</option>
                                                 @endforeach
                                             </select>
                                             @error('project_type_id')
@@ -82,12 +83,11 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input style="cursor: not-allowed;" type="number" class="form-control" aria-label="Commission"
-                                                       id="after_commission_price" value="{{$payment_plan->after_commission_price}}" disabled>
+                                                       name="after_commission_price" value="{{$payment_plan->after_commission_price}}" readonly>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
                                             </div>
-                                            <input type="hidden" name="after_commission_price" value="{{$payment_plan->after_commission_price}}">
                                             @error('after_commission_price')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
@@ -102,16 +102,10 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="form-group col-md-4">
-                                            <label class="d-block">Select Down Payment</label>
-                                            <div class="input-group mb-3">
-                                                <select class="form-control" name="down_payment_select">
-                                                    <option value="">Please Select</option>
-                                                    <option value="100%" {{$payment_plan->down_payment_select == '100%' ? 'selected' : ''}}>100%</option>
-                                                    <option value="50%" {{$payment_plan->down_payment_select == '50%' ? 'selected' : ''}}>50%</option>
-                                                    <option value="less_50" {{$payment_plan->down_payment_select == 'less_50%' ? 'selected' : ''}}>Less Than 50%</option>
-                                                </select>
-                                            </div>
-                                            @error('down_payment_select')
+                                            <label class="d-block">Down Payment (In % or Rs.)</label>
+                                            <input type="text" class="form-control" aria-label="Amount" id="down_payment_percent"
+                                                   name="down_payment_percent" value="{{old('down_payment_percent', $payment_plan->down_payment_percent)}}">
+                                            @error('down_payment_percent')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -121,7 +115,7 @@
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">RS</span>
                                                 </div>
-                                                <input type="number" class="form-control" aria-label="Amount"
+                                                <input type="number" class="form-control" aria-label="Amount" readonly
                                                        name="down_payment"value="{{old('down_payment',$payment_plan->down_payment)}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
@@ -156,7 +150,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="balloting_price" value="{{old('balloting_price',$payment_plan->balloting_price)}}" required>
+                                                       name="balloting_price" value="{{old('balloting_price',$payment_plan->balloting_price)}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -172,7 +166,7 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="possession_price" value="{{old('possession_price',$payment_plan->possession_price)}}" required>
+                                                       name="possession_price" value="{{old('possession_price',$payment_plan->confirmation_amount)}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
@@ -182,25 +176,52 @@
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label class="d-block">Numbers of Installment</label>
-                                            <input type="number" class="form-control" name="total_month_installment" value="{{old('total_month_installment',$payment_plan->total_month_installment)}}" required>
-                                            @error('total_month_installment')
+                                            <label class="d-block">Choose Installment Plan</label>
+                                            <select class="form-control" name="installment_plan" required>
+                                                <option value="">Select Project Type</option>
+                                                <option value="monthly" @if($payment_plan->installment_plan == 'monthly') selected @endif>Monthly</option>
+                                                <option value="bi_anually" @if($payment_plan->installment_plan == 'bi_anually') selected @endif>Bi-Anually</option>
+                                                <option value="quartrly" @if($payment_plan->installment_plan == 'quartrly') selected @endif>Quaterly</option>
+                                                <option value="monthly_bi" @if($payment_plan->installment_plan == 'monthly_bi') selected @endif>Monthly + Bi-Anually</option>
+                                                <option value="monthly_qa" @if($payment_plan->installment_plan == 'monthly_qa') selected @endif>Monthly + Quaterly</option>
+                                            </select>
+                                            @error('installment_plan')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div id="monthly" class="row">
+                                        <div class="form-group col-md-12"><h5>Monthly</h5></div>
+                                        <div class="form-group col-md-4">
+                                            <label class="d-block">Numbers of Installment (Monthly)</label>
+                                            <input type="number" class="form-control" name="no_of_month" value="{{old('no_of_month',$payment_plan->no_of_month)}}">
+                                            @error('no_of_month')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
                                         <div class="form-group col-md-4">
-                                            <label class="d-block">Monthly Installment</label>
+                                            <label class="d-block">Per Month Installment</label>
                                             <div class="input-group mb-3">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="per_month_installment" id="per_month_installment" value="{{old('per_month_installment',$payment_plan->per_month_installment)}}" required>
+                                                       name="monthly_installment"value="{{old('monthly_installment',$payment_plan->monthly_installment)}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
                                             </div>
-                                            @error('per_month_installment')
+                                            @error('monthly_installment')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div id="bi_anually" class="row">
+                                        <div class="form-group col-md-12"><h5>Bi Annually</h5></div>
+                                        <div class="form-group col-md-4">
+                                            <label class="d-block">Numbers of Installment (Bi Annually)</label>
+                                            <input type="number" class="form-control" name="no_of_half" value="{{old('no_of_half',$payment_plan->no_of_half)}}">
+                                            @error('no_of_half')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -211,12 +232,22 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="half_year_installment" id="half_year_installment" value="{{old('half_year_installment',$payment_plan->half_year_installment)}}">
+                                                       name="half_year_installment" value="{{old('half_year_installment',$payment_plan->half_year_installment)}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
                                             </div>
                                             @error('half_year_installment')
+                                            <div class="text-danger mt-2">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div id="quarterly" class="row">
+                                        <div class="form-group col-md-12"><h5>Quaterly</h5></div>
+                                        <div class="form-group col-md-4">
+                                            <label class="d-block">Numbers of Installment (Quaterly)</label>
+                                            <input type="number" class="form-control" name="no_of_quarter" value="{{old('no_of_quarter',$payment_plan->no_of_quarter)}}">
+                                            @error('no_of_quarter')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -227,15 +258,17 @@
                                                     <span class="input-group-text">RS</span>
                                                 </div>
                                                 <input type="number" class="form-control" aria-label="Amount"
-                                                       name="quarterly_payment" id="quarterly_payment" value="{{old('quarterly_payment',$payment_plan->quarterly_payment)}}">
+                                                       name="quarterly_installment" value="{{old('quarterly_installment',$payment_plan->quarterly_installment)}}">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.00</span>
                                                 </div>
                                             </div>
-                                            @error('quarterly_payment')
+                                            @error('quarterly_installment')
                                             <div class="text-danger mt-2">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="form-group col-md-4 discount">
                                             <label class="d-block">Discount Amount</label>
                                             <div class="input-group mb-3">
@@ -301,14 +334,32 @@
     <script>
         $(document).ready(function () {
             var project_type_id = {{$payment_plan->project_type_id}};
-            var down_payment_select = "{{$payment_plan->down_payment_select}}";
+            var plan = "{{$payment_plan->installment_plan}}";
+            installmentPlan(plan);
             getPremium(project_type_id);
             price_after_commission();
-            downPaymentSelect(down_payment_select);
+            var premium = $('select[name="project_type_id"] :selected').val();
+            if(premium){
+                var price = Number("{{$payment_plan->after_commission_price}}");
+            }else{
+                var price = Number("{{$payment_plan->total_price}}");
+            }
+            var downPayment = Number("{{$payment_plan->down_payment}}")
+            var downPayment = downPayment * 2;
+            if(downPayment >= price){
+                $('input[name="rent_installment"]').attr('required');
+                $('input[name="rent_price"]').attr('required');
+                $('.rent').show();
+                $('.rent_installment').show();
+            }else{
+                $('input[name="rent_installment"]').removeAttr('required');
+                $('input[name="rent_price"]').removeAttr('required');
+                $('.rent').hide();
+                $('.rent_installment').hide();
+            }
             $('select[name="project_type_id"]').change(function () {
                 var type_id = $(this).val();
                 getPremium(type_id);
-                return;
             })
             $('select[name="premium_id"]').change(function () {
                 var val = $(this).val();
@@ -317,105 +368,119 @@
                 }else{
                     $('.commission-box').hide();
                 }
+                downPaymentPercent()
             })
             $('#commission, #total_price').on('change keypress keyup', function (e) {
                 price_after_commission();
             })
-
-            $('select[name="down_payment_select"]').change(function () {
-                var down_payment_select = $(this).val();
-                downPaymentSelect(down_payment_select);
+            $('#commission, #total_price, #down_payment_percent').on('change keypress keyup', function () {
+                downPaymentPercent();
             })
-
+            $('select[name="installment_plan"]').change(function () {
+                var plan = $(this).val();
+                $('input[name="no_of_month"]').val('')
+                $('input[name="monthly_installment"]').val('')
+                $('input[name="no_of_half"]').val('')
+                $('input[name="half_year_installment"]').val('')
+                $('input[name="no_of_quarter"]').val('')
+                $('input[name="quarterly_installment"]').val('')
+                installmentPlan(plan);
+            })
             $('#payment_plan').click(function (e) {
                 e.preventDefault();
                 var premium_id = $('select[name="premium_id"] option:selected').val();
                 if(premium_id){
                     if (premium_id == 'regular') {
-                        var total_amount = Number($('input[name="total_price"]').val());
+                        var total_price = Number($('input[name="total_price"]').val());
                     } else {
-                        var total_amount = Number($('input[name="after_commission_price"]').val());
+                        var total_price = Number($('input[name="after_commission_price"]').val());
                     }
                     var down_payment = Number($('input[name="down_payment"]').val());
                     var balloting_price = Number($('input[name="balloting_price"]').val());
                     var possession_price = Number($('input[name="possession_price"]').val());
                     var confirmation_amount = Number($('input[name="confirmation_amount"]').val());
-                    var total_month_installment = Number($('input[name="total_month_installment"]').val());
-                    var per_month_installment = Number($('input[name="per_month_installment"]').val());
+
+                    var total_amount = total_price - down_payment - balloting_price - possession_price - confirmation_amount;
+
+                    var no_of_month = Number($('input[name="no_of_month"]').val());
+                    var monthly_installment = Number($('input[name="monthly_installment"]').val());
+                    var no_of_half = Number($('input[name="no_of_half"]').val());
                     var half_year_installment = Number($('input[name="half_year_installment"]').val());
-                    var quarterly_payment = Number($('input[name="quarterly_payment"]').val());
-                    total_amount = total_amount - down_payment - balloting_price - possession_price - confirmation_amount;
-                    if(half_year_installment){
-                        var months = parseInt((total_month_installment / 12) * 10);
-                        var half_year = parseInt((total_month_installment / 12) * 2);
-                        var monthly_installment = per_month_installment * months;
-                        var bi_annual = half_year_installment * half_year;
-                        var calculation = total_amount - monthly_installment - bi_annual;
-                        if(calculation != 0){
-                            errorMsg('Payment Calculation Error');
-                            return;
-                        }else{
-                            $('#payment_plan_form').submit();
-                        }
-                    }else if(quarterly_payment){
-                        var months = parseInt((total_month_installment / 12) * 8);
-                        var quaters = parseInt((total_month_installment / 12) * 4);
-                        var monthly_installment = per_month_installment * months;
-                        var quarterly = quarterly_payment * quaters;
-                        var calculation = total_amount - monthly_installment - quarterly;
-                        if(calculation != 0){
-                            errorMsg('Payment Calculation Error');
-                            return;
-                        }else{
-                            $('#payment_plan_form').submit();
-                        }
-                    }else{
-                        var monthly_installment = per_month_installment * total_month_installment;
-                        var calculation = total_amount - monthly_installment;
-                        if(calculation != 0){
-                            errorMsg('Payment Calculation Error');
+                    var no_of_quarter = Number($('input[name="no_of_quarter"]').val());
+                    var quarterly_installment = Number($('input[name="quarterly_installment"]').val());
+
+                    var plan = $('select[name="installment_plan"]').find(":selected").val();
+
+                    var month = no_of_month * monthly_installment;
+                    var half = no_of_half * half_year_installment;
+                    var quarter = no_of_quarter * quarterly_installment;
+
+                    var installment = 0;
+
+                    if(plan == 'monthly'){
+                        installment = month;
+                    }
+                    else if(plan == 'bi_anually'){
+                        installment = half;
+                    }
+                    else if(plan == 'quartrly'){
+                        installment = quarter;
+                    }
+                    else if(plan == 'monthly_bi'){
+                        installment = month + half;
+                    }
+                    else if(plan == 'monthly_qa'){
+                        installment = month + quarter;
+                    }
+                    else{
+                        if(total_price > down_payment ){
+                            errorMsg('Down Payment is not 100%, so installment plan is required');
                             return;
                         }else{
                             $('#payment_plan_form').submit();
                         }
                     }
+
+                    var remaining = total_amount - installment;
+                    if(!(remaining <= 100 || remaining >= -100)){
+                        errorMsg('Payment plan calculation error....');
+                        return;
+                    }
+                    $('#payment_plan_form').submit();
                 }else{
                     errorMsg('Please select type first');
                     return;
                 }
             });
-
         })
-
-        function downPaymentSelect(option) {
-            var premium_id = $('select[name="premium_id"] option:selected').val();
-            if(!premium_id){
-                var premium_id = "{{$payment_plan->premium_id}}";
+        function downPaymentPercent(){
+            let commission = Number($('#commission').val());
+            let totalPrice = Number($('#total_price').val());
+            let comPrice = (commission / 100) * totalPrice;
+            totalPrice = totalPrice+comPrice;
+            let downPaymentPercent = $('#down_payment_percent').val();
+            var str2 = "%";
+            let downPayment = 0;
+            if(downPaymentPercent.indexOf(str2) != -1){
+                var percent = Number(downPaymentPercent .replace('%',''));
+                downPayment = Number((percent * totalPrice) / 100);
+            }else{
+                downPayment = Number(downPaymentPercent);
             }
-            if(premium_id && premium_id != 'regular') {
-                var total_amount = Number($('input[name="after_commission_price"]').val());
-            }else {
-                var total_amount = Number($('input[name="total_price"]').val());
-            }
-            var down_payment = $('input[name="down_payment"]');
-            if(option == '100%'){
-                down_payment.attr('readonly','true');
-                down_payment.val(total_amount);
+            $('input[name="down_payment"]').val(downPayment);
+            downPayment = downPayment * 2;
+            if(downPayment >= totalPrice){
+                $('input[name="rent_installment"]').attr('required');
+                $('input[name="rent_price"]').attr('required');
                 $('.rent').show();
                 $('.rent_installment').show();
-            }else if(option == '50%'){
-                down_payment.attr('readonly','true');
-                down_payment.val(total_amount / 2);
-                $('.rent').show();
-                $('.rent_installment').show();
-            }else if(option == 'less_50'){
-                down_payment.removeAttr('readonly');
-                down_payment.val('');
+            }else{
+                $('input[name="rent_installment"]').removeAttr('required');
+                $('input[name="rent_price"]').removeAttr('required');
                 $('.rent').hide();
                 $('.rent_installment').hide();
             }
         }
-
         function getPremium(id){
             $.ajax({
                 url: "{{ url(RolePrefix().'/get-premium') }}/" + id,
@@ -464,6 +529,76 @@
             else if(down_payment_select == 'less_50'){
                 $('input[name="down_payment"]').attr('max',afterComPrice / 2);
                 $('input[name="down_payment"]').val('');
+            }
+        }
+        function installmentPlan(plan) {
+            if(plan){
+                if(plan == 'monthly'){
+                    $('input[name="no_of_month"]').attr('required')
+                    $('input[name="monthly_installment"]').attr('required')
+                    $('input[name="no_of_half"]').removeAttr('required')
+                    $('input[name="half_year_installment"]').removeAttr('required')
+                    $('input[name="no_of_quarter"]').removeAttr('required')
+                    $('input[name="quarterly_installment"]').removeAttr('required')
+                    $('#monthly').show()
+                    $('#bi_anually').hide()
+                    $('#quarterly').hide()
+                }
+                else if(plan == 'bi_anually'){
+                    $('input[name="no_of_month"]').removeAttr('required')
+                    $('input[name="monthly_installment"]').removeAttr('required')
+                    $('input[name="no_of_half"]').attr('required')
+                    $('input[name="half_year_installment"]').attr('required')
+                    $('input[name="no_of_quarter"]').removeAttr('required')
+                    $('input[name="quarterly_installment"]').removeAttr('required')
+                    $('#monthly').hide()
+                    $('#bi_anually').show()
+                    $('#quarterly').hide()
+                }
+                else if(plan == 'quartrly'){
+                    $('input[name="no_of_month"]').removeAttr('required')
+                    $('input[name="monthly_installment"]').removeAttr('required')
+                    $('input[name="no_of_half"]').removeAttr('required')
+                    $('input[name="half_year_installment"]').removeAttr('required')
+                    $('input[name="no_of_quarter"]').attr('required')
+                    $('input[name="quarterly_installment"]').attr('required')
+                    $('#monthly').hide()
+                    $('#bi_anually').hide()
+                    $('#quarterly').show()
+                }
+                else if(plan == 'monthly_bi'){
+                    $('input[name="no_of_month"]').attr('required')
+                    $('input[name="monthly_installment"]').attr('required')
+                    $('input[name="no_of_half"]').attr('required')
+                    $('input[name="half_year_installment"]').attr('required')
+                    $('input[name="no_of_quarter"]').removeAttr('required')
+                    $('input[name="quarterly_installment"]').removeAttr('required')
+                    $('#monthly').show()
+                    $('#bi_anually').show()
+                    $('#quarterly').hide()
+                }
+                else if(plan == 'monthly_qa'){
+                    $('input[name="no_of_month"]').attr('required')
+                    $('input[name="monthly_installment"]').attr('required')
+                    $('input[name="no_of_half"]').removeAttr('required')
+                    $('input[name="half_year_installment"]').removeAttr('required')
+                    $('input[name="no_of_quarter"]').attr('required')
+                    $('input[name="quarterly_installment"]').attr('required')
+                    $('#monthly').show()
+                    $('#bi_anually').hide()
+                    $('#quarterly').show()
+                }
+                else{
+                    $('input[name="no_of_month"]').removeAttr('required')
+                    $('input[name="monthly_installment"]').removeAttr('required')
+                    $('input[name="no_of_half"]').removeAttr('required')
+                    $('input[name="half_year_installment"]').removeAttr('required')
+                    $('input[name="no_of_quarter"]').removeAttr('required')
+                    $('input[name="quarterly_installment"]').removeAttr('required')
+                    $('#monthly').hide()
+                    $('#bi_anually').hide()
+                    $('#quarterly').hide()
+                }
             }
         }
     </script>

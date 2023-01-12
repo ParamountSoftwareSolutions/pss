@@ -132,7 +132,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-group col-md-4">
-                                                <label>Premium Location</label>
+                                                <label>Location Type</label>
                                                 <select class="form-control" name="premium_id">
                                                     <option value="">Select Types</option>
                                                     <option value="regular">Regular</option>
